@@ -13,6 +13,31 @@
         </div>
     @endif
 
+    <!-- Active Seat Banner -->
+    @if ($activeSeat)
+        <div class="p-3.5 rounded-2xl bg-gradient-to-r from-red-950/40 via-[#141824] to-[#0a0c10] border border-red-500/30 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <p class="text-xs font-semibold text-zinc-200">
+                    กำลังเล่นอยู่ที่เครื่อง <span class="font-black text-white underline">{{ $activeSeat->seat_number }}</span> ({{ $activeSeat->zone->name }}) &bull; อาหารจะถูกเสิร์ฟมาที่โต๊ะนี้โดยอัตโนมัติ
+                </p>
+            </div>
+            <span class="salai-badge-red text-[10px] hidden sm:inline-flex">AUTO DELIVER</span>
+        </div>
+    @else
+        <div class="p-3.5 rounded-2xl bg-amber-950/40 border border-amber-500/40 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <span class="text-base">⚠️</span>
+                <p class="text-xs font-semibold text-amber-200">
+                    คุณยังไม่ได้เปิดเครื่องคอมพิวเตอร์ในร้าน กรุณา Check-in เข้าเครื่องก่อนสั่งอาหาร
+                </p>
+            </div>
+            <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-1.5 px-3.5" wire:navigate>
+                เลือกที่นั่ง &rarr;
+            </a>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Products & Menu Section (Col span 2) -->
         <div class="lg:col-span-2 space-y-5">
@@ -119,20 +144,37 @@
                     </span>
                 </div>
 
-                <!-- Seat Destination -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-zinc-300">
-                        ระบุที่นั่งคอมพิวเตอร์ที่ต้องการให้ไปเสิร์ฟ:
-                    </label>
-                    <select wire:model.live="seat_id" class="w-full text-xs rounded-xl border-[#232938] bg-[#141824] p-2.5 text-zinc-200 focus:border-red-500 focus:ring-red-500 font-medium">
-                        <option value="">-- เลือกหมายเลขเครื่อง --</option>
-                        @foreach ($allSeats as $s)
-                            <option value="{{ $s->id }}">
-                                เครื่อง {{ $s->seat_number }} ({{ $s->zone->name }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <!-- Seat Destination (Auto-bound to Computer) -->
+                @if ($activeSeat)
+                    <div class="p-3.5 bg-[#141824] border border-red-500/40 rounded-2xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center font-bold text-lg shrink-0">
+                                🖥️
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-zinc-400 block font-medium">จัดส่งตรงถึงเครื่องของคุณ</span>
+                                <span class="font-black text-base text-white font-sans">
+                                    เครื่อง {{ $activeSeat->seat_number }}
+                                </span>
+                                <span class="text-[11px] text-red-400 font-semibold block">
+                                    {{ $activeSeat->zone->name }}
+                                </span>
+                            </div>
+                        </div>
+                        <span class="salai-badge-red text-[10px]">
+                            ผูกเครื่องแล้ว
+                        </span>
+                    </div>
+                @else
+                    <div class="p-4 bg-amber-950/40 border border-amber-500/40 rounded-2xl text-center space-y-2">
+                        <div class="text-2xl">⚠️</div>
+                        <p class="text-xs font-bold text-amber-300">คุณยังไม่ได้ Check-in เปิดเครื่อง</p>
+                        <p class="text-[11px] text-zinc-400">ระบบจะจัดส่งอาหารไปยังเครื่องที่คุณนั่ง กรุณาเปิดเครื่องก่อนสั่งอาหาร</p>
+                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-2 px-4 w-full" wire:navigate>
+                            🖥️ ไปที่ผังที่นั่งเพื่อ Check-in
+                        </a>
+                    </div>
+                @endif
 
                 <!-- Cart Items List -->
                 <div class="space-y-3 max-h-72 overflow-y-auto divide-y divide-[#1e2430]">
@@ -190,10 +232,14 @@
 
                     <button
                         wire:click="placeOrder"
-                        @disabled(empty($cart) || ! $seat_id)
+                        @disabled(empty($cart) || ! $activeSeat)
                         class="salai-btn-primary w-full py-3 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        🚀 ยืนยันการสั่งซื้ออาหาร
+                        @if (! $activeSeat)
+                            กรุณาเปิดเครื่องก่อนสั่งอาหาร
+                        @else
+                            🚀 ยืนยันการสั่งอาหาร (ส่งไปที่เครื่อง {{ $activeSeat->seat_number }})
+                        @endif
                     </button>
                 </div>
             </div>

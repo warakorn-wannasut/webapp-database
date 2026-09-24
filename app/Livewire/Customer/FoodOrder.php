@@ -28,15 +28,33 @@ class FoodOrder extends Component
 
     public function mount()
     {
+        $this->resolveActiveSeat();
+    }
+
+    public function resolveActiveSeat(): ?Seat
+    {
         $user = Auth::user();
-        if (! $this->seat_id) {
-            $activeSession = SeatSession::where('user_id', $user->id)
-                ->where('status', 'active')
-                ->first();
-            if ($activeSession) {
-                $this->seat_id = $activeSession->seat_id;
-            }
+        if (! $user) {
+            return null;
         }
+
+        // Always prioritize the user's current active PC session
+        $activeSession = SeatSession::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->with('seat.zone')
+            ->first();
+
+        if ($activeSession && $activeSession->seat) {
+            $this->seat_id = $activeSession->seat_id;
+            return $activeSession->seat;
+        }
+
+        // Fallback if seat_id provided in URL
+        if ($this->seat_id) {
+            return Seat::with('zone')->find($this->seat_id);
+        }
+
+        return null;
     }
 
     public function selectCategory(?int $catId)
@@ -92,11 +110,13 @@ class FoodOrder extends Component
             return;
         }
 
-        if (! $this->seat_id) {
-            session()->flash('error', 'กรุณาระบุที่นั่งคอมพิวเตอร์ที่ต้องการให้ไปเสิร์ฟ');
+        $activeSeat = $this->resolveActiveSeat();
+        if (! $activeSeat) {
+            session()->flash('error', 'คุณยังไม่ได้เปิดใช้งานเครื่องคอมพิวเตอร์ในร้าน กรุณา Check-in เข้าเครื่องก่อนสั่งอาหาร');
             return;
         }
 
+        $this->seat_id = $activeSeat->id;
         $user = Auth::user();
 
         // Prepare items array
@@ -116,7 +136,7 @@ class FoodOrder extends Component
             if ($this->paymentMethod === 'promptpay') {
                 $this->showQrModal = true;
             } else {
-                session()->flash('success', "สั่งอาหารสำเร็จ! บิลหมายเลข #{$order->id} พนักงานกำลังเตรียมอาหารไปเสิร์ฟที่โต๊ะ");
+                session()->flash('success', "สั่งอาหารสำเร็จ! บิลหมายเลข #{$order->id} พนักงานกำลังเตรียมอาหารไปเสิร์ฟที่เครื่อง {$activeSeat->seat_number}");
             }
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
@@ -140,6 +160,7 @@ class FoodOrder extends Component
         $products = $productsQuery->orderBy('name')->get();
 
         $allSeats = Seat::orderBy('seat_number')->get();
+        $activeSeat = $this->resolveActiveSeat();
 
         // Calculate Cart Items
         $cartItems = [];
@@ -162,6 +183,7 @@ class FoodOrder extends Component
             'categories' => $categories,
             'products' => $products,
             'allSeats' => $allSeats,
+            'activeSeat' => $activeSeat,
             'cartItems' => $cartItems,
             'totalAmount' => $totalAmount,
             'user' => Auth::user(),
