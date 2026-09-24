@@ -3,12 +3,37 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen salai-bg text-slate-100 selection:bg-red-600 selection:text-white">
+        <flux:sidebar sticky collapsible="mobile" class="border-e border-[#1e2430] bg-[#0c0f16]/95 backdrop-blur-md">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <div class="flex items-center gap-2.5 px-2 py-1">
+                    <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-sm shadow-[0_0_12px_rgba(220,38,38,0.7)]">
+                        SG
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-sm text-white tracking-wide">
+                            SALAI <span class="text-red-500">GAMING</span>
+                        </span>
+                    </div>
+                </div>
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
+
+            <!-- Wallet Widget in Sidebar -->
+            <div class="mx-3 my-2 p-3 rounded-2xl bg-gradient-to-br from-red-950/30 via-[#131622] to-[#0d1017] border border-red-500/25 shadow-lg shadow-red-950/20">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-zinc-400 font-medium">ยอดเงินในกระเป๋า</span>
+                    <span class="salai-badge-gold text-[10px]">WALLET</span>
+                </div>
+                <div class="mt-1 flex items-baseline justify-between">
+                    <span class="text-xl font-black text-white">
+                        ฿{{ number_format(auth()->user()->balance ?? 0, 2) }}
+                    </span>
+                    <a href="{{ route('customer.topup') }}" class="text-xs font-bold text-red-400 hover:text-red-300 hover:underline" wire:navigate>
+                        + เติมเงิน
+                    </a>
+                </div>
+            </div>
 
             <flux:sidebar.nav>
                 <flux:sidebar.group heading="บริการลูกค้า (Customer)" class="grid">
