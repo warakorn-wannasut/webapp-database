@@ -46,7 +46,7 @@ class GamingCafeSeeder extends Seeder
                 'phone' => '0834567890',
                 'role' => 'customer',
                 'balance' => 300.00,
-                'password' => Hash::make('password'),
+                'password' => Hash::make('1'),
             ],
             [
                 'name' => 'ลูกค้าใหม่ 2 (Somsri)',

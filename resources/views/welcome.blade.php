@@ -12,7 +12,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between gap-4">
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center font-black text-white text-lg shadow-[0_0_18px_rgba(220,38,38,0.6)] group-hover:scale-105 transition-transform">
+                <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-bold text-white text-lg">
                     SG
                 </div>
                 <div>
@@ -68,11 +68,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 space-y-10 w-full">
         <!-- Hero Promo Banner (Salai Termgames Big Banner) -->
-        <div class="relative overflow-hidden rounded-3xl border border-[#232938] bg-gradient-to-r from-[#17080a] via-[#131622] to-[#0a0c10] p-6 sm:p-10 shadow-2xl">
-            <!-- Background Decorative Glow -->
-            <div class="absolute -right-16 -top-16 w-80 h-80 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -left-16 -bottom-16 w-80 h-80 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
+        <div class="relative overflow-hidden rounded-2xl border border-[#232938] bg-[#121520] p-6 sm:p-10">
             <div class="relative z-10 max-w-2xl space-y-4">
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="salai-badge-red text-xs">
@@ -83,9 +79,9 @@
                     </span>
                 </div>
 
-                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
                     เติมเวลาเล่นเกม & สั่งของอร่อย <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-400 to-amber-400">
+                    <span class="text-red-500">
                         ส่งตรงถึงโต๊ะคอมทันที
                     </span>
                 </h1>
@@ -96,17 +92,17 @@
 
                 <div class="pt-2 flex flex-wrap items-center gap-3">
                     @auth
-                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-sm py-2.5 px-6">
+                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-sm py-2 px-5">
                             🖥️ เลือกผังที่นั่งเล่นเกม
                         </a>
-                        <a href="{{ route('customer.food-order') }}" class="salai-card text-xs font-semibold px-5 py-2.5 text-zinc-300 hover:text-white border-[#262d3d] hover:border-red-500/50">
+                        <a href="{{ route('customer.food-order') }}" class="salai-card text-xs font-semibold px-4 py-2 text-zinc-300 hover:text-white border-[#262d3d] hover:border-red-500/50">
                             🍜 เมนูอาหารเกาหลี
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="salai-btn-primary text-sm py-2.5 px-6">
+                        <a href="{{ route('login') }}" class="salai-btn-primary text-sm py-2 px-5">
                             🚀 เข้าสู่ระบบเพื่อเริ่มใช้งาน
                         </a>
-                        <a href="{{ route('register') }}" class="salai-card text-xs font-semibold px-5 py-2.5 text-zinc-300 hover:text-white border-[#262d3d] hover:border-red-500/50">
+                        <a href="{{ route('register') }}" class="salai-card text-xs font-semibold px-4 py-2 text-zinc-300 hover:text-white border-[#262d3d] hover:border-red-500/50">
                             สมัครสมาชิกใหม่
                         </a>
                     @endauth
@@ -116,7 +112,7 @@
 
         <!-- Quick Filter Category Pills (Salai Style) -->
         <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide text-sm">
-            <button class="salai-pill bg-red-600 text-white font-semibold shadow-lg shadow-red-600/30 whitespace-nowrap">
+            <button class="salai-pill bg-red-600 text-white font-medium whitespace-nowrap">
                 🔥 ยอดนิยมทั้งหมด
             </button>
             <a href="{{ route('customer.seat-map') }}" class="salai-pill bg-[#131622] hover:bg-[#1a1f30] text-zinc-300 hover:text-white border border-[#232938] whitespace-nowrap">
@@ -360,7 +356,7 @@
         </div>
 
         <!-- Section 3: ข้อมูลบัญชีสำหรับทดสอบระบบ (Demo Accounts Box) -->
-        <div class="salai-card-glow p-6 rounded-3xl space-y-4">
+        <div class="salai-card p-6 rounded-xl space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#232938] pb-3">
                 <div class="flex items-center gap-2">
                     <span class="salai-step-bar"></span>
@@ -459,7 +455,7 @@
 
             <div class="border-t border-[#1e2430] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
                 <p>&copy; 2026 Salai Gaming Café Management System. สไตล์ร้านเกมและคาเฟ่ครบวงจร</p>
-                <p>พัฒนาด้วย Laravel 13 &bull; Livewire 4 &bull; SQLite &bull; Tailwind CSS</p>
+                <p>พัฒนาด้วย Laravel 13 &bull; Pure MVC &bull; SQLite &bull; Tailwind CSS</p>
             </div>
         </div>
     </footer>

@@ -52,51 +52,43 @@
     }
 }
 
-/* Salai Termgames Design System Components */
+/* Salai Termgames Design System Components (Clean & Modern Minimal Dark) */
 .salai-bg {
-    background-color: #0a0c10;
-    background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(220, 38, 38, 0.15), transparent),
-        radial-gradient(circle at 100% 100%, rgba(239, 68, 68, 0.05), transparent);
+    background-color: #0b0d13;
 }
 
 .salai-card {
-    background: #12151e;
+    background: #11141e;
     border: 1px solid #1e2430;
-    border-radius: 1rem;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.875rem;
+    transition: border-color 0.2s ease;
 }
 
 .salai-card:hover {
-    border-color: rgba(220, 38, 38, 0.45);
-    box-shadow: 0 10px 30px -10px rgba(220, 38, 38, 0.2);
-    transform: translateY(-2px);
+    border-color: #2e3748;
 }
 
 .salai-card-glow {
-    background: linear-gradient(180deg, #151924 0%, #10131a 100%);
-    border: 1px solid rgba(220, 38, 38, 0.3);
-    box-shadow: 0 0 25px -5px rgba(220, 38, 38, 0.25);
+    background: #131722;
+    border: 1px solid #232938;
+    border-radius: 0.875rem;
 }
 
 .salai-btn-primary {
-    background: linear-gradient(135deg, #e11d48 0%, #dc2626 50%, #b91c1c 100%);
+    background-color: #dc2626;
     color: #ffffff;
     font-weight: 600;
-    border-radius: 0.75rem;
-    padding: 0.625rem 1.25rem;
+    border-radius: 0.625rem;
+    padding: 0.5rem 1.125rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 15px -3px rgba(220, 38, 38, 0.45);
-    transition: all 0.2s ease;
+    transition: background-color 0.15s ease;
 }
 
 .salai-btn-primary:hover {
-    background: linear-gradient(135deg, #f43f5e 0%, #ef4444 50%, #dc2626 100%);
-    box-shadow: 0 6px 20px -3px rgba(220, 38, 38, 0.6);
-    transform: translateY(-1px);
+    background-color: #b91c1c;
 }
 
 .salai-step-header {
@@ -106,45 +98,44 @@
 }
 
 .salai-step-bar {
-    width: 0.375rem;
-    height: 1.5rem;
+    width: 0.25rem;
+    height: 1.25rem;
     background-color: #dc2626;
-    border-radius: 9999px;
-    box-shadow: 0 0 12px rgba(220, 38, 38, 0.75);
+    border-radius: 2px;
 }
 
 .salai-badge-red {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.2rem 0.6rem;
+    padding: 0.15rem 0.5rem;
     font-size: 0.75rem;
-    font-weight: 700;
-    border-radius: 9999px;
-    background: rgba(220, 38, 38, 0.15);
-    color: #ef4444;
-    border: 1px solid rgba(220, 38, 38, 0.35);
+    font-weight: 600;
+    border-radius: 0.375rem;
+    background: rgba(220, 38, 38, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(220, 38, 38, 0.25);
 }
 
 .salai-badge-gold {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.2rem 0.6rem;
+    padding: 0.15rem 0.5rem;
     font-size: 0.75rem;
-    font-weight: 700;
-    border-radius: 9999px;
-    background: rgba(245, 158, 11, 0.15);
+    font-weight: 600;
+    border-radius: 0.375rem;
+    background: rgba(245, 158, 11, 0.12);
     color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.35);
+    border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .salai-pill {
-    padding: 0.5rem 1.1rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {
