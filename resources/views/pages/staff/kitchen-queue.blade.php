@@ -15,7 +15,7 @@
         @endif
 
         <!-- Header & Filter Tabs -->
-        <div class="salai-card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
@@ -50,7 +50,7 @@
         <!-- Orders Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse ($orders as $order)
-                <div class="salai-card p-5 flex flex-col justify-between space-y-4">
+                <div class="card p-5 flex flex-col justify-between space-y-4">
                     <div>
                         <!-- Order Top Banner -->
                         <div class="flex justify-between items-start border-b border-[#1e2430] pb-3">
@@ -160,7 +160,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full p-12 text-center salai-card text-zinc-500 text-xs">
+                <div class="col-span-full p-12 text-center card text-zinc-500 text-xs">
                     ไม่มีออเดอร์อาหารในสถานะนี้
                 </div>
             @endforelse

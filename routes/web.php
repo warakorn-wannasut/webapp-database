@@ -32,22 +32,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/buy-package', [WalletController::class, 'buyPackage'])->name('customer.buy-package');
 
     // -------------------------------------------------------------
-    // Staff & Admin Portal (สมาชิกคนที่ 5)
+    // Staff & Kitchen Portal (สมาชิกคนที่ 5)
     // -------------------------------------------------------------
-    // ระบบพนักงานหน้าร้านและครัว
     Route::get('/staff/seat-monitor', [StaffController::class, 'seatMonitor'])->name('staff.seat-monitor');
     Route::post('/staff/force-end', [StaffController::class, 'forceEnd'])->name('staff.force-end');
     Route::post('/staff/toggle-seat', [StaffController::class, 'toggleMaintenance'])->name('staff.toggle-seat');
-
     Route::get('/staff/kitchen-queue', [StaffController::class, 'kitchenQueue'])->name('staff.kitchen-queue');
     Route::post('/staff/orders/status', [StaffController::class, 'updateOrderStatus'])->name('staff.update-order-status');
     Route::post('/staff/orders/confirm-cash', [StaffController::class, 'confirmCashPayment'])->name('staff.confirm-cash');
 
-    // ระบบผู้ดูแลร้าน (Admin)
+    // -------------------------------------------------------------
+    // Admin Management Portal (สมาชิกคนที่ 5)
+    // -------------------------------------------------------------
     Route::get('/admin/stock-manager', [AdminController::class, 'stockManager'])->name('admin.stock-manager');
     Route::post('/admin/stock/adjust', [AdminController::class, 'adjustStock'])->name('admin.adjust-stock');
     Route::post('/admin/products', [AdminController::class, 'createProduct'])->name('admin.create-product');
-
     Route::get('/admin/sales-report', [AdminController::class, 'salesReport'])->name('admin.sales-report');
 });
 

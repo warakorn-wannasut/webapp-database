@@ -9,10 +9,10 @@
         @endif
 
         <!-- Header & Period Filter -->
-        <div class="salai-card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
+                <div class="step-header">
+                    <span class="step-bar"></span>
                     <h2 class="text-2xl font-black text-white font-sans">รายงานสรุปยอดขาย (Sales & Analytics)</h2>
                 </div>
                 <p class="text-xs text-zinc-400 pl-4 mt-1">สรุปรายได้แยกตามค่าชั่วโมงเล่นเกมและค่าอาหาร/เครื่องดื่ม (Aggregation)</p>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Gaming Revenue -->
-            <div class="salai-card p-6">
+            <div class="card p-6">
                 <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">รายได้ค่าชั่วโมงเล่นเกม</p>
                 <h3 class="text-2xl font-black text-white mt-2 font-mono">฿{{ number_format($totalGamingRevenue, 2) }}</h3>
                 <div class="mt-2 text-xs text-zinc-400 space-y-0.5">
@@ -66,14 +66,14 @@
             </div>
 
             <!-- Food Revenue -->
-            <div class="salai-card p-6">
+            <div class="card p-6">
                 <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">รายได้อาหารและเครื่องดื่ม</p>
                 <h3 class="text-2xl font-black text-white mt-2 font-mono">฿{{ number_format($foodRevenue, 2) }}</h3>
                 <p class="text-xs text-zinc-400 mt-2">จำนวนออเดอร์ที่ชำระแล้ว: {{ $paidOrdersCount }} บิล</p>
             </div>
 
             <!-- Topup Total -->
-            <div class="salai-card p-6">
+            <div class="card p-6">
                 <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">ยอดเงินที่เติมเข้า Wallet</p>
                 <h3 class="text-2xl font-black text-emerald-400 mt-2 font-mono">฿{{ number_format($totalTopup, 2) }}</h3>
                 <p class="text-xs text-zinc-400 mt-2">กระแสเงินสดรับเข้าระบบ</p>
@@ -83,9 +83,9 @@
         <!-- Data Tables: Top Products and Zones -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Top 5 Products -->
-            <div class="salai-card p-6 space-y-4">
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
+            <div class="card p-6 space-y-4">
+                <div class="step-header">
+                    <span class="step-bar"></span>
                     <h3 class="text-base font-bold text-white">5 อันดับเมนูขายดี (Top 5 Best Selling)</h3>
                 </div>
                 <div class="overflow-x-auto">
@@ -122,9 +122,9 @@
             </div>
 
             <!-- Revenue by Zone -->
-            <div class="salai-card p-6 space-y-4">
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
+            <div class="card p-6 space-y-4">
+                <div class="step-header">
+                    <span class="step-bar"></span>
                     <h3 class="text-base font-bold text-white">สถิติการใช้งานแยกตามโซน (Usage by Zone)</h3>
                 </div>
                 <div class="overflow-x-auto">

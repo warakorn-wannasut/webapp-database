@@ -140,80 +140,88 @@ class GamingCafeSeeder extends Seeder
         ]);
 
         // 5. Food Categories & Products
-        $catRamyeon = Category::create(['name' => 'รามยอน (Korean Ramyeon)']);
-        $catRice = Category::create(['name' => 'ข้าวและอาหารจานเดียว (Rice Bowls)']);
-        $catSnack = Category::create(['name' => 'ของทานเล่น (Snacks)']);
-        $catDrink = Category::create(['name' => 'เครื่องดื่ม (Beverages)']);
+        $catNoodle = Category::create(['name' => 'บะหมี่กึ่งสำเร็จรูป & มาม่า (Instant Noodles)']);
+        $catRice = Category::create(['name' => 'ข้าวและอาหารจานเดียว (Rice Dishes)']);
+        $catSnack = Category::create(['name' => 'ขนมขบเคี้ยว & ของทานเล่น (Snacks)']);
+        $catDrink = Category::create(['name' => 'นม & เครื่องดื่มเย็น (Drinks & Beverages)']);
 
         // Products
         Product::create([
-            'category_id' => $catRamyeon->id,
-            'name' => 'ชินรามยอนต้มใส่ไข่และชีส',
-            'description' => 'บะหมี่เกาหลีเผ็ดร้อน เสิร์ฟในหม้อทองเหลืองร้อนๆ ท็อปปิ้งไข่สดและเชดด้าชีส',
-            'price' => 79.00,
-            'stock_quantity' => 50,
+            'category_id' => $catNoodle->id,
+            'name' => 'มาม่าต้มยำหมูสับใส่ไข่',
+            'description' => 'มาม่าต้มยำน้ำข้น เสิร์ฟร้อนๆ พร้อมหมูสับลวกนุ่ม และไข่ลวกเยิ้มๆ',
+            'price' => 45.00,
+            'stock_quantity' => 60,
         ]);
 
         Product::create([
-            'category_id' => $catRamyeon->id,
-            'name' => 'จาปาเก็ตตี้ไข่ดาว',
-            'description' => 'บะหมี่ซอสดำเกาหลีรสเข้มข้น หอมน้ำมันงา เสิร์ฟพร้อมไข่ดาวเยิ้มๆ',
-            'price' => 85.00,
+            'category_id' => $catNoodle->id,
+            'name' => 'มาม่าผัดขี้เมาเบคอนกรอบ',
+            'description' => 'เส้นมาม่าผัดพริกกระเทียม ใบกะเพราและเบคอนกรอบ หอมเผ็ดจัดจ้าน',
+            'price' => 55.00,
             'stock_quantity' => 40,
         ]);
 
         Product::create([
             'category_id' => $catRice->id,
-            'name' => 'ข้าวหน้าหมูผัดกิมจิไข่ดาว',
-            'description' => 'สันคอหมูนุ่มผัดซอสกิมจิรสแซ่บ เสิร์ฟพร้อมข้าวสวยร้อนๆ และไข่ดาว',
-            'price' => 99.00,
-            'stock_quantity' => 30,
+            'name' => 'ข้าวกะเพราหมูสับไข่ดาวกรอบ',
+            'description' => 'เมนูยอดฮิตร้านเกม กะเพราแท้รสเด็ด โปะไข่ดาวกรอบไข่แดงเยิ้ม',
+            'price' => 59.00,
+            'stock_quantity' => 45,
         ]);
 
         Product::create([
             'category_id' => $catRice->id,
-            'name' => 'ข้าวหน้าไก่ทอดซอสเกาหลี',
-            'description' => 'ไก่ทอดกรอบคลุกซอสยังนยอมเกาหลี หวานเผ็ดลงตัว',
-            'price' => 89.00,
+            'name' => 'ข้าวหมูกระเทียมพริกไทยไข่ดาว',
+            'description' => 'สันคอหมูผัดซอสกระเทียมพริกไทย หอมเจียวกรอบ โปะไข่ดาว',
+            'price' => 59.00,
+            'stock_quantity' => 40,
+        ]);
+
+        Product::create([
+            'category_id' => $catSnack->id,
+            'name' => 'มันฝรั่งทอด เลย์ (รสโนริสาหร่าย)',
+            'description' => 'เลย์ซองใหญ่ กรอบอร่อย เคี้ยวเพลินระหว่างเล่นเกม',
+            'price' => 30.00,
+            'stock_quantity' => 50,
+        ]);
+
+        Product::create([
+            'category_id' => $catSnack->id,
+            'name' => 'ไส้กรอกแดงทอดในตำนาน',
+            'description' => 'ไส้กรอกแดงบั้งทอดกรอบพอง เสิร์ฟคู่น้ำจิ้มมะขามรสเด็ด',
+            'price' => 35.00,
+            'stock_quantity' => 50,
+        ]);
+
+        Product::create([
+            'category_id' => $catSnack->id,
+            'name' => 'นักเก็ตไก่ทอดกรอบ (6 ชิ้น)',
+            'description' => 'นักเก็ตไก่ทอดสีเหลืองทอง กรอบนอกนุ่มใน เสิร์ฟพร้อมซอสมะเขือเทศ',
+            'price' => 49.00,
             'stock_quantity' => 35,
         ]);
 
         Product::create([
-            'category_id' => $catSnack->id,
-            'name' => 'ต๊อกบกกีชีสยืด',
-            'description' => 'แป้งต๊อกเหนียวนุ่มในซอสโคชูจังเข้มข้น โรยชีสยืดแบบจัดเต็ม',
-            'price' => 89.00,
-            'stock_quantity' => 25,
-        ]);
-
-        Product::create([
-            'category_id' => $catSnack->id,
-            'name' => 'เชคฟรายส์คลุกผงหัวหอม',
-            'description' => 'เฟรนช์ฟรายส์ทอดกรอบ คลุกผงซาวครีมหัวหอมเข้มข้น',
-            'price' => 49.00,
-            'stock_quantity' => 60,
+            'category_id' => $catDrink->id,
+            'name' => 'ชาไทยเย็นเข้มข้น (แก้ว 22 oz)',
+            'description' => 'ชาไทยชงสด หวานมันเข้มข้น ดับกระหายคลายง่วง',
+            'price' => 35.00,
+            'stock_quantity' => 80,
         ]);
 
         Product::create([
             'category_id' => $catDrink->id,
-            'name' => 'อเมริกาโน่เย็น (Iced Americano)',
-            'description' => 'กาแฟเอสเพรสโซ่ช็อตเข้มข้น เมนูยอดฮิตประจำร้านเน็ตเกาหลี',
-            'price' => 45.00,
-            'stock_quantity' => 100,
+            'name' => 'นมสดเย็นคาราเมล (แก้ว 22 oz)',
+            'description' => 'นมสดแท้ผสมซอสคาราเมลหอมหวาน เย็นชื่นใจ',
+            'price' => 35.00,
+            'stock_quantity' => 80,
         ]);
 
         Product::create([
             'category_id' => $catDrink->id,
-            'name' => 'ชาพีชโซดาเย็น',
-            'description' => 'ชาพีชหอมหวานผสมความซ่าสดชื่น ดับกระหายคลายง่วง',
-            'price' => 45.00,
-            'stock_quantity' => 100,
-        ]);
-
-        Product::create([
-            'category_id' => $catDrink->id,
-            'name' => 'โค้กกระป๋อง (325 มล.)',
-            'description' => 'โค้กออริจินัลเย็นเจี๊ยบ',
+            'name' => 'โค้กกระป๋องพร้อมน้ำแข็ง (325 มล.)',
+            'description' => 'โค้กเย็นเจี๊ยบ เสิร์ฟพร้อมแก้วน้ำแข็งหลอดแน่นๆ',
             'price' => 25.00,
             'stock_quantity' => 120,
         ]);

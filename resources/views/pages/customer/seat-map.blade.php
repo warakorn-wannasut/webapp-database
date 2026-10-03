@@ -15,10 +15,10 @@
         @endif
 
         <!-- Header & Status Legend -->
-        <div class="salai-card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="space-y-1">
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
+                <div class="step-header">
+                    <span class="step-bar"></span>
                     <h2 class="text-2xl font-black text-white tracking-wide font-sans">
                         ผังที่นั่งคอมพิวเตอร์ (Seat Map)
                     </h2>
@@ -50,7 +50,7 @@
                         ขณะนี้คุณกำลังเปิดใช้งานเครื่อง <span class="underline font-bold text-amber-300">{{ $activeSession->seat->seat_number }}</span> อยู่
                     </p>
                 </div>
-                <a href="{{ route('dashboard') }}" class="salai-btn-primary text-xs py-1.5 px-3.5">
+                <a href="{{ route('dashboard') }}" class="btn-primary text-xs py-1.5 px-3.5">
                     ดูแดชบอร์ดเครื่อง &rarr;
                 </a>
             </div>
@@ -58,16 +58,16 @@
 
         <!-- Zone Map Sections -->
         @foreach ($zones as $zone)
-            <div class="salai-card p-6 space-y-4">
+            <div class="card p-6 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-[#1e2430] pb-3 gap-2">
                     <div class="flex items-center gap-2.5">
-                        <span class="salai-step-bar"></span>
+                        <span class="step-bar"></span>
                         <div>
                             <h3 class="text-lg font-bold text-white font-sans">{{ $zone->name }}</h3>
                             <p class="text-xs text-zinc-400">{{ $zone->description }}</p>
                         </div>
                     </div>
-                    <div class="salai-badge-red text-xs self-start sm:self-auto">
+                    <div class="badge-red text-xs self-start sm:self-auto">
                         ฿{{ number_format($zone->hourly_rate, 2) }} / ชม.
                     </div>
                 </div>
@@ -131,10 +131,10 @@
 
         <!-- Check-in Confirmation Modal -->
         <div id="checkInModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-            <div class="salai-card-glow max-w-lg w-full p-6 space-y-5 shadow-2xl rounded-3xl">
+            <div class="card-glow max-w-lg w-full p-6 space-y-5 shadow-2xl rounded-3xl">
                 <div class="flex items-center justify-between border-b border-[#232938] pb-3">
-                    <div class="salai-step-header">
-                        <span class="salai-step-bar"></span>
+                    <div class="step-header">
+                        <span class="step-bar"></span>
                         <h3 class="text-xl font-black text-white font-sans">ยืนยันการเปิดเครื่อง (Check-in)</h3>
                     </div>
                     <button type="button" onclick="closeCheckInModal()" class="text-zinc-400 hover:text-white text-2xl font-bold">&times;</button>
@@ -202,10 +202,10 @@
                     </div>
 
                     <div class="flex justify-end gap-3 pt-3">
-                        <button type="button" onclick="closeCheckInModal()" class="salai-card text-xs font-semibold px-4 py-2 text-zinc-400 hover:text-white border-[#262d3d]">
+                        <button type="button" onclick="closeCheckInModal()" class="card text-xs font-semibold px-4 py-2 text-zinc-400 hover:text-white border-[#262d3d]">
                             ยกเลิก
                         </button>
-                        <button type="submit" class="salai-btn-primary text-xs py-2 px-6">
+                        <button type="submit" class="btn-primary text-xs py-2 px-6">
                             🚀 ยืนยันเปิดเครื่อง
                         </button>
                     </div>

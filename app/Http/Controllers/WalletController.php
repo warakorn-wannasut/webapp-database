@@ -36,13 +36,9 @@ class WalletController extends Controller
             ->take(10)
             ->get();
 
-        return view('pages.customer.topup', [
-            'user' => $user,
-            'packages' => $packages,
-            'userPackages' => $userPackages,
-            'myPackages' => $userPackages,
-            'transactions' => $transactions,
-        ]);
+        $myPackages = $userPackages;
+
+        return view('pages.customer.topup', compact('user', 'packages', 'userPackages', 'myPackages', 'transactions'));
     }
 
     /**

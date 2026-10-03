@@ -16,10 +16,10 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Section 1: Wallet Top-up -->
-            <div class="salai-card-glow p-6 rounded-3xl space-y-5">
+            <div class="card-glow p-6 rounded-3xl space-y-5">
                 <div class="border-b border-[#232938] pb-3 flex items-center justify-between">
-                    <div class="salai-step-header">
-                        <span class="salai-step-bar"></span>
+                    <div class="step-header">
+                        <span class="step-bar"></span>
                         <div>
                             <h2 class="text-xl font-black text-white font-sans">เติมเงินเข้า Wallet (Top-up)</h2>
                             <p class="text-xs text-zinc-400">ระบบเติมเงินอัตโนมัติ เครดิตเข้าทันที</p>
@@ -110,7 +110,7 @@
 
                     <button
                         type="submit"
-                        class="salai-btn-primary w-full py-3 text-xs font-black"
+                        class="btn-primary w-full py-3 text-xs font-black"
                     >
                         ⚡ ยืนยันการเติมเงิน
                     </button>
@@ -118,10 +118,10 @@
             </div>
 
             <!-- Section 2: Buy Time Packages -->
-            <div class="salai-card p-6 space-y-5">
+            <div class="card p-6 space-y-5">
                 <div class="border-b border-[#1e2430] pb-3">
-                    <div class="salai-step-header">
-                        <span class="salai-step-bar"></span>
+                    <div class="step-header">
+                        <span class="step-bar"></span>
                         <div>
                             <h2 class="text-xl font-black text-white font-sans">ซื้อแพ็กเกจชั่วโมง (Time Packages)</h2>
                             <p class="text-xs text-zinc-400">ซื้อเวลาเหมาชั่วโมง คุ้มกว่าเล่นแบบคิดตามจริง (หักจาก Wallet)</p>
@@ -135,7 +135,7 @@
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
                                     <h4 class="font-black text-sm text-white group-hover:text-red-400 transition-colors">{{ $pkg->name }}</h4>
-                                    <span class="salai-badge-red text-[10px]">
+                                    <span class="badge-red text-[10px]">
                                         {{ $pkg->duration_hours }} ชม.
                                     </span>
                                 </div>
@@ -160,7 +160,7 @@
                                     <button
                                         type="submit"
                                         @disabled($user->balance < $pkg->price)
-                                        class="salai-btn-primary text-xs py-1.5 px-3.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        class="btn-primary text-xs py-1.5 px-3.5 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         ซื้อเลย
                                     </button>
@@ -193,9 +193,9 @@
 
         <!-- Section 3: Wallet Transactions History -->
         @if ($transactions->isNotEmpty())
-            <div class="salai-card p-6 space-y-4">
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
+            <div class="card p-6 space-y-4">
+                <div class="step-header">
+                    <span class="step-bar"></span>
                     <h3 class="text-base font-black text-white tracking-wide font-sans">
                         ประวัติการทำรายการล่าสุด (10 รายการ)
                     </h3>
@@ -214,7 +214,7 @@
                                 <tr class="hover:bg-[#141824]/60 transition">
                                     <td class="py-2.5 px-3">
                                         @if ($tx->type === 'topup')
-                                            <span class="salai-badge-red text-[10px]">เติมเงิน ({{ $tx->ref_type }})</span>
+                                            <span class="badge-red text-[10px]">เติมเงิน ({{ $tx->ref_type }})</span>
                                         @elseif ($tx->type === 'deduct')
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-800 text-zinc-300 border border-zinc-700">หักเงิน ({{ $tx->ref_type }})</span>
                                         @else

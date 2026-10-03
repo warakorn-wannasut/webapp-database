@@ -9,7 +9,7 @@
 - **Framework:** Laravel 13.x (PHP 8.4)
 - **Database:** SQLite (`database/database.sqlite`)
 - **Frontend:** Pure Blade Templates, Flux UI, Tailwind CSS, Standard HTML Forms
-- **Design System:** Salai Gaming Cafe Theme (Dark Slate, Accent Red `#dc2626`, Currency Amber `#f59e0b`)
+- **Design System:** Letsplay Gaming Cafe Theme (Dark Slate, Accent Red `#dc2626`, Currency Amber `#f59e0b`)
 - **Architecture Pattern:** Pure Laravel MVC (Model-View-Controller)
   - **Routes (`routes/web.php`):** จัดการเส้นทาง HTTP GET/POST ชี้ตรงไปยัง Controller
   - **Controllers (`app/Http/Controllers/`):** รวม Business Logic ทุกอย่างไว้ใน Controller ไฟล์เดียวตามแต่ละโมดูล (Fat Controller สไตล์นิสิตปี 2)
@@ -157,3 +157,4 @@
    - รวมยอดรายได้ค่าชั่วโมงเล่นเกม, แพ็กเกจ, อาหาร/เครื่องดื่ม และยอดเติมเงิน
    - แสดง 5 อันดับเมนูขายดี
    - แสดงสถิติการใช้งานแยกตามโซนที่นั่ง
+

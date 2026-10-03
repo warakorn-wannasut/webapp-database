@@ -15,7 +15,7 @@
         @endif
 
         <!-- Header & Live Status Stats -->
-        <div class="salai-card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -43,10 +43,10 @@
 
         <!-- Zones & Seats -->
         @foreach ($zones as $zone)
-            <div class="salai-card p-6 space-y-4">
+            <div class="card p-6 space-y-4">
                 <div class="flex justify-between items-center border-b border-[#1e2430] pb-2">
                     <div class="flex items-center gap-2">
-                        <span class="salai-step-bar"></span>
+                        <span class="step-bar"></span>
                         <h3 class="font-bold text-base text-white">{{ $zone->name }}</h3>
                     </div>
                     <span class="text-xs font-bold text-emerald-400 font-mono">

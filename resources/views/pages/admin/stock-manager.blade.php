@@ -14,10 +14,10 @@
             </div>
         @endif
 
-        <div class="salai-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
+                <div class="step-header">
+                    <span class="step-bar"></span>
                     <h2 class="text-2xl font-black text-white font-sans">จัดการสต็อกสินค้าและเมนู (Stock Management)</h2>
                 </div>
                 <p class="text-xs text-zinc-400 pl-4 mt-1">เพิ่ม ปรับปรุงจำนวนสต็อก และแก้ไขราคาอาหาร/เครื่องดื่มในร้าน</p>
@@ -26,14 +26,14 @@
             <button
                 type="button"
                 onclick="openCreateProductModal()"
-                class="salai-btn-primary text-xs py-2 px-4 shadow"
+                class="btn-primary text-xs py-2 px-4 shadow"
             >
                 + เพิ่มสินค้าใหม่
             </button>
         </div>
 
         <!-- Products Table -->
-        <div class="salai-card p-6">
+        <div class="card p-6">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-zinc-300">
                     <thead class="bg-[#141824] text-xs uppercase text-zinc-400 border-b border-[#1e2430]">
@@ -49,7 +49,7 @@
                         @foreach ($products as $prod)
                             <tr class="hover:bg-[#141824]/60 transition">
                                 <td class="py-3 px-4">
-                                    <span class="salai-badge-red text-[10px]">
+                                    <span class="badge-red text-[10px]">
                                         {{ $prod->category ? $prod->category->name : '-' }}
                                     </span>
                                 </td>
@@ -94,7 +94,7 @@
 
         <!-- Create Product Modal -->
         <div id="createProductModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-            <div class="salai-card-glow max-w-md w-full p-6 space-y-4 shadow-2xl rounded-2xl">
+            <div class="card-glow max-w-md w-full p-6 space-y-4 shadow-2xl rounded-2xl">
                 <div class="flex items-center justify-between border-b border-[#232938] pb-3">
                     <h3 class="text-lg font-bold text-white font-sans">เพิ่มสินค้าใหม่</h3>
                     <button type="button" onclick="closeCreateProductModal()" class="text-zinc-400 hover:text-white text-xl font-bold">&times;</button>
@@ -114,7 +114,7 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1">ชื่อสินค้า:</label>
-                        <input type="text" name="name" required class="w-full text-xs rounded-xl border-[#232938] bg-[#0e1017] p-2.5 text-white focus:border-red-500 focus:ring-red-500" placeholder="เช่น ชินราเมียนหมูสับ..." />
+                        <input type="text" name="name" required class="w-full text-xs rounded-xl border-[#232938] bg-[#0e1017] p-2.5 text-white focus:border-red-500 focus:ring-red-500" placeholder="เช่น ข้าวกะเพราหมูสับไข่ดาว..." />
                     </div>
 
                     <div>
@@ -134,8 +134,8 @@
                     </div>
 
                     <div class="flex justify-end gap-2 pt-3 border-t border-[#1e2430]">
-                        <button type="button" onclick="closeCreateProductModal()" class="salai-card px-4 py-2 text-xs text-zinc-400 hover:text-white border-[#262d3d]">ยกเลิก</button>
-                        <button type="submit" class="salai-btn-primary px-5 py-2 text-xs font-semibold shadow">บันทึกสินค้า</button>
+                        <button type="button" onclick="closeCreateProductModal()" class="card px-4 py-2 text-xs text-zinc-400 hover:text-white border-[#262d3d]">ยกเลิก</button>
+                        <button type="submit" class="btn-primary px-5 py-2 text-xs font-semibold shadow">บันทึกสินค้า</button>
                     </div>
                 </form>
             </div>

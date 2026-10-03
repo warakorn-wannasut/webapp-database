@@ -52,29 +52,29 @@
     }
 }
 
-/* Salai Termgames Design System Components (Clean & Modern Minimal Dark) */
-.salai-bg {
+/* Core UI Components (Clean & Modern Minimal Dark) */
+.app-bg {
     background-color: #0b0d13;
 }
 
-.salai-card {
+.card {
     background: #11141e;
     border: 1px solid #1e2430;
     border-radius: 0.875rem;
     transition: border-color 0.2s ease;
 }
 
-.salai-card:hover {
+.card:hover {
     border-color: #2e3748;
 }
 
-.salai-card-glow {
+.card-glow {
     background: #131722;
     border: 1px solid #232938;
     border-radius: 0.875rem;
 }
 
-.salai-btn-primary {
+.btn-primary {
     background-color: #dc2626;
     color: #ffffff;
     font-weight: 600;
@@ -87,24 +87,24 @@
     transition: background-color 0.15s ease;
 }
 
-.salai-btn-primary:hover {
+.btn-primary:hover {
     background-color: #b91c1c;
 }
 
-.salai-step-header {
+.step-header {
     display: flex;
     align-items: center;
     gap: 0.625rem;
 }
 
-.salai-step-bar {
+.step-bar {
     width: 0.25rem;
     height: 1.25rem;
     background-color: #dc2626;
     border-radius: 2px;
 }
 
-.salai-badge-red {
+.badge-red {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -117,7 +117,7 @@
     border: 1px solid rgba(220, 38, 38, 0.25);
 }
 
-.salai-badge-gold {
+.badge-gold {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -130,7 +130,7 @@
     border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
-.salai-pill {
+.pill {
     padding: 0.4rem 0.9rem;
     border-radius: 0.5rem;
     font-size: 0.8125rem;
@@ -151,4 +151,33 @@ textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-red-500 ring-offset-2 ring-offset-[#0a0c10];
 }
+
+/* PC Bang Marquee & Client HUD Utilities */
+@keyframes marquee-scroll {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    display: inline-flex;
+    white-space: nowrap;
+    animation: marquee-scroll 45s linear infinite;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+.pulse-glow-red {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+}
+
+.pulse-glow-amber {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+}
+
+.pulse-glow-emerald {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
+}
+
 

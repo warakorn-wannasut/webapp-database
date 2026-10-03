@@ -206,7 +206,8 @@ class GamingCafeTest extends TestCase
         $this->assertEquals('pending_payment', $order->payment_status);
 
         // พนักงานกดยืนยันรับเงินสด
-        $confirmRes = $this->post(route('staff.confirm-cash'), [
+        $staff = User::factory()->create(['role' => 'staff']);
+        $confirmRes = $this->actingAs($staff)->post(route('staff.confirm-cash'), [
             'order_id' => $order->id,
         ]);
         $confirmRes->assertSessionHas('success');
@@ -320,5 +321,16 @@ class GamingCafeTest extends TestCase
         $this->assertEquals(50.00, (float) $this->user->balance);
 
         Carbon::setTestNow();
+    }
+
+    public function test_customer_cannot_access_staff_or_admin_portal(): void
+    {
+        $this->actingAs($this->user);
+
+        $responseStaff = $this->get(route('staff.seat-monitor'));
+        $responseStaff->assertStatus(403);
+
+        $responseAdmin = $this->get(route('admin.stock-manager'));
+        $responseAdmin->assertStatus(403);
     }
 }

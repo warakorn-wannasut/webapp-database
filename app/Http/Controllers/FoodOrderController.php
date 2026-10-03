@@ -50,15 +50,17 @@ class FoodOrderController extends Controller
             $availableBalance = max(0.00, $availableBalance - $estimatedCost);
         }
 
-        return view('pages.customer.food-order', [
-            'user' => $user,
-            'categories' => $categories,
-            'products' => $products,
-            'activeSession' => $activeSession,
-            'activeSeat' => $activeSession ? $activeSession->seat : null,
-            'selectedCategoryId' => $selectedCategoryId,
-            'availableBalance' => $availableBalance,
-        ]);
+        $activeSeat = $activeSession ? $activeSession->seat : null;
+
+        return view('pages.customer.food-order', compact(
+            'user',
+            'categories',
+            'products',
+            'activeSession',
+            'activeSeat',
+            'selectedCategoryId',
+            'availableBalance'
+        ));
     }
 
     /**

@@ -41,11 +41,7 @@ class SeatController extends Controller
             })
             ->get();
 
-        return view('pages.customer.seat-map', [
-            'zones' => $zones,
-            'activeSession' => $activeSession,
-            'availablePackages' => $availablePackages,
-        ]);
+        return view('pages.customer.seat-map', compact('zones', 'activeSession', 'availablePackages'));
     }
 
     /**
@@ -120,7 +116,16 @@ class SeatController extends Controller
         // 4. ดึงราคาชั่วโมงของโซนที่นั่ง
         $hourlyRate = $seat->zone->hourly_rate;
 
-        // 5. บันทึกข้อมูลการเปิดเครื่องลงตาราง seat_sessions
+        // 5. ป้องกัน Race Condition คนกดที่เดียวกันแบบแทบจะพร้อมกัน
+        $updated = Seat::where('id', $seat->id)
+            ->where('status', 'available')
+            ->update(['status' => 'occupied']);
+
+        if (! $updated) {
+            return redirect()->back()->with('error', 'ที่นั่งนี้ถูกผู้อื่นเช็คอินไปก่อนหน้าแล้ว กรุณาเลือกที่นั่งใหม่');
+        }
+
+        // 6. บันทึกข้อมูลการเปิดเครื่องลงตาราง seat_sessions
         SeatSession::create([
             'user_id' => $user->id,
             'seat_id' => $seat->id,
@@ -130,10 +135,6 @@ class SeatController extends Controller
             'status' => 'active',
             'total_cost' => 0.00,
         ]);
-
-        // 6. เปลี่ยนสถานะเครื่องเป็น occupied (กำลังใช้งาน)
-        $seat->status = 'occupied';
-        $seat->save();
 
         return redirect()->route('dashboard')->with('success', 'เปิดเครื่องและเช็คอินสำเร็จ!');
     }

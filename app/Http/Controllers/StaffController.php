@@ -10,17 +10,28 @@ use App\Models\User;
 use App\Models\UserPackage;
 use App\Models\WalletTransaction;
 use App\Models\Zone;
+use App\Services\EndSeatSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class StaffController extends Controller
 {
+    private function authorizeStaff(): void
+    {
+        $role = auth()->user()?->role;
+        if ($role !== 'staff' && $role !== 'admin') {
+            abort(403, 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (เฉพาะพนักงานและผู้ดูแลระบบ)');
+        }
+    }
+
     /**
      * แสดงหน้าจอมอนิเตอร์สถานะเครื่องคอมพิวเตอร์หน้าร้าน
      * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
      */
     public function seatMonitor()
     {
+        $this->authorizeStaff();
+
         // 1. ดึงข้อมูลโซนและเครื่องทั้งหมดพร้อมข้อมูลเซสชันที่กำลังเล่น
         $zones = Zone::with(['seats.zone', 'seats.sessions' => function ($q) {
             $q->where('status', 'active')->with(['user', 'userPackage.package']);
@@ -36,108 +47,35 @@ class StaffController extends Controller
         $availableSeats = Seat::where('status', 'available')->count();
         $maintenanceSeats = Seat::where('status', 'maintenance')->count();
 
-        return view('pages.staff.seat-monitor', [
-            'zones' => $zones,
-            'seats' => $seats,
-            'totalSeats' => $totalSeats,
-            'occupiedSeats' => $occupiedSeats,
-            'availableSeats' => $availableSeats,
-            'maintenanceSeats' => $maintenanceSeats,
-        ]);
+        return view('pages.staff.seat-monitor', compact(
+            'zones',
+            'seats',
+            'totalSeats',
+            'occupiedSeats',
+            'availableSeats',
+            'maintenanceSeats'
+        ));
     }
 
     /**
      * ฟังก์ชันบังคับปิดเครื่องและคิดเงิน (โดยพนักงาน)
      * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
      */
-    public function forceEnd(Request $request)
+    public function forceEnd(Request $request, EndSeatSession $endSeatSession)
     {
+        $this->authorizeStaff();
+
         $request->validate([
             'session_id' => 'required|exists:seat_sessions,id',
         ]);
 
-        $sessionId = (int) $request->input('session_id');
-
-        // 1. ค้นหาข้อมูลเซสชัน
-        $session = SeatSession::find($sessionId);
-        if ($session == null) {
+        $session = SeatSession::find((int) $request->input('session_id'));
+        if ($session === null) {
             return redirect()->back()->with('error', 'ไม่พบข้อมูลเซสชัน');
         }
 
         $seat = Seat::find($session->seat_id);
-        $user = User::find($session->user_id);
-
-        // 2. คำนวณเวลาที่เล่นไป
-        $startTime = Carbon::parse($session->start_time);
-        $endTime = Carbon::now();
-        $usedSeconds = $startTime->diffInSeconds($endTime);
-
-        $usedMinutes = (int) ceil($usedSeconds / 60);
-        if ($usedMinutes < 1) {
-            $usedMinutes = 1;
-        }
-
-        $totalCost = 0.00;
-
-        // 3. คิดค่าบริการตามเงื่อนไข
-        if ($session->user_package_id != null) {
-            $userPackage = UserPackage::find($session->user_package_id);
-            if ($userPackage != null) {
-                if ($userPackage->remaining_minutes >= $usedMinutes) {
-                    $userPackage->remaining_minutes = $userPackage->remaining_minutes - $usedMinutes;
-                    $userPackage->save();
-                } else {
-                    $excessMinutes = $usedMinutes - $userPackage->remaining_minutes;
-                    $userPackage->remaining_minutes = 0;
-                    $userPackage->save();
-
-                    $excessHours = $excessMinutes / 60;
-                    $hourlyRate = (float) $session->rate_snapshot;
-                    $totalCost = round($excessHours * $hourlyRate, 2);
-
-                    if ($totalCost > 0 && $user != null) {
-                        $user->balance = (float) $user->balance - $totalCost;
-                        $user->save();
-
-                        WalletTransaction::create([
-                            'user_id' => $user->id,
-                            'type' => 'deduct',
-                            'amount' => $totalCost,
-                            'ref_type' => 'session_overtime',
-                            'ref_id' => $session->id,
-                        ]);
-                    }
-                }
-            }
-        } else {
-            $hours = $usedMinutes / 60;
-            $hourlyRate = (float) $session->rate_snapshot;
-            $totalCost = round($hours * $hourlyRate, 2);
-
-            if ($totalCost > 0 && $user != null) {
-                $user->balance = (float) $user->balance - $totalCost;
-                $user->save();
-
-                WalletTransaction::create([
-                    'user_id' => $user->id,
-                    'type' => 'deduct',
-                    'amount' => $totalCost,
-                    'ref_type' => 'session',
-                    'ref_id' => $session->id,
-                ]);
-            }
-        }
-
-        // 4. บันทึกปิดเซสชันและคืนสถานะที่นั่ง
-        $session->end_time = $endTime;
-        $session->total_cost = $totalCost;
-        $session->status = 'completed';
-        $session->save();
-
-        if ($seat != null) {
-            $seat->status = 'available';
-            $seat->save();
-        }
+        $endSeatSession->handle($session);
 
         return redirect()->back()->with('success', 'ปิดเครื่อง ' . ($seat ? $seat->seat_number : '') . ' และคิดเงินสำเร็จเรียบร้อยแล้ว');
     }
@@ -148,6 +86,8 @@ class StaffController extends Controller
      */
     public function toggleMaintenance(Request $request)
     {
+        $this->authorizeStaff();
+
         $request->validate([
             'seat_id' => 'required|exists:seats,id',
         ]);
@@ -178,6 +118,8 @@ class StaffController extends Controller
      */
     public function kitchenQueue(Request $request)
     {
+        $this->authorizeStaff();
+
         $filterStatus = $request->input('status', 'active');
 
         $query = Order::with(['items.product', 'seat', 'user']);
@@ -192,14 +134,15 @@ class StaffController extends Controller
 
         $pendingCount = Order::where('order_status', 'pending')->count();
         $preparingCount = Order::where('order_status', 'preparing')->count();
+        $activeOrders = $orders;
 
-        return view('pages.staff.kitchen-queue', [
-            'orders' => $orders,
-            'activeOrders' => $orders,
-            'filterStatus' => $filterStatus,
-            'pendingCount' => $pendingCount,
-            'preparingCount' => $preparingCount,
-        ]);
+        return view('pages.staff.kitchen-queue', compact(
+            'orders',
+            'activeOrders',
+            'filterStatus',
+            'pendingCount',
+            'preparingCount'
+        ));
     }
 
     /**
@@ -208,6 +151,8 @@ class StaffController extends Controller
      */
     public function updateOrderStatus(Request $request)
     {
+        $this->authorizeStaff();
+
         $request->validate([
             'order_id' => 'required|exists:orders,id',
             'status' => 'required|in:pending,preparing,served,cancelled',
@@ -244,6 +189,8 @@ class StaffController extends Controller
      */
     public function confirmCashPayment(Request $request)
     {
+        $this->authorizeStaff();
+
         $request->validate([
             'order_id' => 'required|exists:orders,id',
         ]);

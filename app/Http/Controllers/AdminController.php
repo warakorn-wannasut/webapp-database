@@ -15,19 +15,25 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    private function authorizeAdmin(): void
+    {
+        if (auth()->user()?->role !== 'admin') {
+            abort(403, 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (เฉพาะผู้ดูแลระบบ Admin เท่านั้น)');
+        }
+    }
+
     /**
      * แสดงหน้าจัดการสต็อกและสินค้า
      * สมาชิกคนที่ 5: ระบบผู้ดูแลร้าน (Admin)
      */
     public function stockManager()
     {
+        $this->authorizeAdmin();
+
         $categories = Category::all();
         $products = Product::with('category')->orderBy('category_id')->get();
 
-        return view('pages.admin.stock-manager', [
-            'categories' => $categories,
-            'products' => $products,
-        ]);
+        return view('pages.admin.stock-manager', compact('categories', 'products'));
     }
 
     /**
@@ -36,6 +42,8 @@ class AdminController extends Controller
      */
     public function adjustStock(Request $request)
     {
+        $this->authorizeAdmin();
+
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'delta' => 'required|integer',
@@ -69,6 +77,8 @@ class AdminController extends Controller
      */
     public function createProduct(Request $request)
     {
+        $this->authorizeAdmin();
+
         $request->validate([
             'name' => 'required|string|max:150',
             'category_id' => 'required|exists:categories,id',
@@ -95,6 +105,8 @@ class AdminController extends Controller
      */
     public function salesReport(Request $request)
     {
+        $this->authorizeAdmin();
+
         $period = $request->input('period', 'all');
 
         $startDate = null;
@@ -176,19 +188,19 @@ class AdminController extends Controller
             ];
         }
 
-        return view('pages.admin.sales-report', [
-            'period' => $period,
-            'hourlyRevenue' => $hourlyRevenue,
-            'packageRevenue' => $packageRevenue,
-            'foodRevenue' => $foodRevenue,
-            'totalGamingRevenue' => $totalGamingRevenue,
-            'grandTotalRevenue' => $grandTotalRevenue,
-            'totalTopup' => $totalTopup,
-            'completedSessionsCount' => $completedSessionsCount,
-            'packageSalesCount' => $packageSalesCount,
-            'paidOrdersCount' => $paidOrdersCount,
-            'topProducts' => $topProducts,
-            'zoneStats' => $zoneStats,
-        ]);
+        return view('pages.admin.sales-report', compact(
+            'period',
+            'hourlyRevenue',
+            'packageRevenue',
+            'foodRevenue',
+            'totalGamingRevenue',
+            'grandTotalRevenue',
+            'totalTopup',
+            'completedSessionsCount',
+            'packageSalesCount',
+            'paidOrdersCount',
+            'topProducts',
+            'zoneStats'
+        ));
     }
 }

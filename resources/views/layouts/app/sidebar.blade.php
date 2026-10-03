@@ -3,16 +3,16 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen salai-bg text-slate-100 selection:bg-red-600 selection:text-white">
+    <body class="min-h-screen app-bg text-slate-100 selection:bg-red-600 selection:text-white">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-[#1e2430] bg-[#0c0f16]/95 backdrop-blur-md">
             <flux:sidebar.header>
                 <div class="flex items-center gap-2.5 px-2 py-1">
                     <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-bold text-white text-sm">
-                        SG
+                        LP
                     </div>
                     <div>
                         <span class="font-extrabold text-sm text-white tracking-wide">
-                            SALAI <span class="text-red-500">GAMING</span>
+                            LETSPLAY <span class="text-red-500">GAMING</span>
                         </span>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
             <div class="mx-3 my-2 p-3 rounded-xl bg-[#131622] border border-[#1e2430]">
                 <div class="flex items-center justify-between text-xs">
                     <span class="text-zinc-400 font-medium">ยอดเงินในกระเป๋า</span>
-                    <span class="salai-badge-gold text-[10px]">WALLET</span>
+                    <span class="badge-gold text-[10px]">WALLET</span>
                 </div>
                 <div class="mt-1 flex items-baseline justify-between">
                     <span class="text-xl font-bold text-white font-mono">
@@ -51,33 +51,27 @@
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
-                <flux:sidebar.group heading="ระบบจัดการร้าน (Staff & Admin)" class="grid mt-4">
-                    <flux:sidebar.item icon="chart-bar" :href="route('staff.seat-monitor')" :current="request()->routeIs('staff.seat-monitor')">
-                        มอนิเตอร์ที่นั่งหน้าร้าน
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="clock" :href="route('staff.kitchen-queue')" :current="request()->routeIs('staff.kitchen-queue')">
-                        คิวออเดอร์ห้องครัว
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="archive-box" :href="route('admin.stock-manager')" :current="request()->routeIs('admin.stock-manager')">
-                        จัดการสต็อกสินค้า
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-text" :href="route('admin.sales-report')" :current="request()->routeIs('admin.sales-report')">
-                        รายงานสรุปยอดขาย
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+                @if (auth()->user()->isStaff())
+                    <flux:sidebar.group heading="ระบบจัดการร้าน (Staff & Admin)" class="grid mt-4">
+                        <flux:sidebar.item icon="chart-bar" :href="route('staff.seat-monitor')" :current="request()->routeIs('staff.seat-monitor')">
+                            มอนิเตอร์ที่นั่งหน้าร้าน
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="clock" :href="route('staff.kitchen-queue')" :current="request()->routeIs('staff.kitchen-queue')">
+                            คิวออเดอร์ห้องครัว
+                        </flux:sidebar.item>
+                        @if (auth()->user()->isAdmin())
+                            <flux:sidebar.item icon="archive-box" :href="route('admin.stock-manager')" :current="request()->routeIs('admin.stock-manager')">
+                                จัดการสต็อกสินค้า
+                            </flux:sidebar.item>
+                            <flux:sidebar.item icon="document-text" :href="route('admin.sales-report')" :current="request()->routeIs('admin.sales-report')">
+                                รายงานสรุปยอดขาย
+                            </flux:sidebar.item>
+                        @endif
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>

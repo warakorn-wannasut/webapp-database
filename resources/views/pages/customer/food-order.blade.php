@@ -23,7 +23,7 @@
                         กำลังเล่นอยู่ที่เครื่อง <span class="font-bold text-white underline">{{ $activeSeat->seat_number }}</span> ({{ $activeSeat->zone->name }}) &bull; อาหารจะถูกเสิร์ฟมาที่โต๊ะนี้โดยอัตโนมัติ
                     </p>
                 </div>
-                <span class="salai-badge-red text-[10px] hidden sm:inline-flex">AUTO DELIVER</span>
+                <span class="badge-red text-[10px] hidden sm:inline-flex">AUTO DELIVER</span>
             </div>
         @else
             <div class="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30 flex items-center justify-between">
@@ -33,7 +33,7 @@
                         คุณยังไม่ได้เปิดเครื่องคอมพิวเตอร์ในร้าน กรุณา Check-in เข้าเครื่องก่อนสั่งอาหาร
                     </p>
                 </div>
-                <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-1.5 px-3.5">
+                <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-1.5 px-3.5">
                     เลือกที่นั่ง &rarr;
                 </a>
             </div>
@@ -42,27 +42,27 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Products & Menu Section -->
             <div class="lg:col-span-2 space-y-5">
-                <div class="salai-card p-6 space-y-4">
-                    <div class="salai-step-header">
-                        <span class="salai-step-bar"></span>
+                <div class="card p-6 space-y-4">
+                    <div class="step-header">
+                        <span class="step-bar"></span>
                         <h2 class="text-xl font-bold text-white tracking-wide font-sans">
                             สั่งอาหารและเครื่องดื่ม (PC Bang Kitchen)
                         </h2>
                     </div>
-                    <p class="text-xs text-zinc-400 pl-4">เลือกเมนูอาหารสไตล์เกาหลีและเครื่องดื่มเย็นฉ่ำ ส่งตรงถึงโต๊ะคอมพิวเตอร์ของคุณ</p>
+                    <p class="text-xs text-zinc-400 pl-4">เลือกเมนูอาหารตามสั่ง ของว่าง และเครื่องดื่มเย็นฉ่ำ ส่งตรงถึงโต๊ะคอมพิวเตอร์ของคุณ</p>
 
                     <!-- Category Filters -->
                     <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-[#1e2430]">
                         <a
                             href="{{ route('customer.food-order') }}"
-                            class="salai-pill text-xs font-medium transition {{ is_null($selectedCategoryId) ? 'bg-red-600 text-white' : 'bg-[#141824] text-zinc-300 hover:text-white border border-[#232938]' }}"
+                            class="pill text-xs font-medium transition {{ is_null($selectedCategoryId) ? 'bg-red-600 text-white' : 'bg-[#141824] text-zinc-300 hover:text-white border border-[#232938]' }}"
                         >
                             🔥 เมนูทั้งหมด
                         </a>
                         @foreach ($categories as $cat)
                             <a
                                 href="{{ route('customer.food-order', ['category_id' => $cat->id]) }}"
-                                class="salai-pill text-xs font-medium transition {{ $selectedCategoryId == $cat->id ? 'bg-red-600 text-white' : 'bg-[#141824] text-zinc-300 hover:text-white border border-[#232938]' }}"
+                                class="pill text-xs font-medium transition {{ $selectedCategoryId == $cat->id ? 'bg-red-600 text-white' : 'bg-[#141824] text-zinc-300 hover:text-white border border-[#232938]' }}"
                             >
                                 {{ $cat->name }} ({{ $cat->products_count }})
                             </a>
@@ -73,10 +73,10 @@
                 <!-- Products Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     @forelse ($products as $prod)
-                        <div class="salai-card p-5 flex flex-col justify-between group">
+                        <div class="card p-5 flex flex-col justify-between group">
                             <div class="space-y-3">
                                 <div class="flex justify-between items-start">
-                                    <span class="salai-badge-red text-[10px]">
+                                    <span class="badge-red text-[10px]">
                                         {{ $prod->category->name }}
                                     </span>
                                     <span class="text-xs font-bold font-mono {{ $prod->stock_quantity > 0 ? 'text-emerald-400' : 'text-red-400' }}">
@@ -113,19 +113,19 @@
                                     <button
                                         type="button"
                                         onclick="addToCart({{ $prod->id }}, '{{ addslashes($prod->name) }}', {{ $prod->price }}, {{ $prod->stock_quantity }})"
-                                        class="salai-btn-primary text-xs py-1.5 px-3.5"
+                                        class="btn-primary text-xs py-1.5 px-3.5"
                                     >
                                         + ใส่ตะกร้า
                                     </button>
                                 @else
-                                    <button disabled class="salai-card text-xs font-semibold px-3 py-1.5 text-zinc-500 border-[#232938] cursor-not-allowed">
+                                    <button disabled class="card text-xs font-semibold px-3 py-1.5 text-zinc-500 border-[#232938] cursor-not-allowed">
                                         หมด
                                     </button>
                                 @endif
                             </div>
                         </div>
                     @empty
-                        <div class="sm:col-span-2 p-10 text-center salai-card text-zinc-400 text-xs">
+                        <div class="sm:col-span-2 p-10 text-center card text-zinc-400 text-xs">
                             ไม่พบรายการอาหารในหมวดหมู่นี้
                         </div>
                     @endforelse
@@ -134,13 +134,13 @@
 
             <!-- Cart & Checkout Sidebar -->
             <div class="space-y-6">
-                <div class="salai-card-glow p-6 rounded-3xl sticky top-6 space-y-5">
+                <div class="card-glow p-6 rounded-3xl sticky top-6 space-y-5">
                     <div class="flex items-center justify-between border-b border-[#232938] pb-3">
-                        <div class="salai-step-header">
-                            <span class="salai-step-bar"></span>
+                        <div class="step-header">
+                            <span class="step-bar"></span>
                             <h3 class="text-lg font-black text-white font-sans">ตะกร้าของคุณ (Cart)</h3>
                         </div>
-                        <span id="cartCountBadge" class="salai-badge-red text-xs font-bold">
+                        <span id="cartCountBadge" class="badge-red text-xs font-bold">
                             0 รายการ
                         </span>
                     </div>
@@ -162,7 +162,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <span class="salai-badge-red text-[10px]">
+                            <span class="badge-red text-[10px]">
                                 ผูกเครื่องแล้ว
                             </span>
                         </div>
@@ -171,7 +171,7 @@
                             <div class="text-2xl">⚠️</div>
                             <p class="text-xs font-bold text-amber-300">คุณยังไม่ได้ Check-in เปิดเครื่อง</p>
                             <p class="text-[11px] text-zinc-400">ระบบจะจัดส่งอาหารไปยังเครื่องที่คุณนั่ง กรุณาเปิดเครื่องก่อนสั่งอาหาร</p>
-                            <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-2 px-4 w-full block text-center">
+                            <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-2 px-4 w-full block text-center">
                                 🖥️ ไปที่ผังที่นั่งเพื่อ Check-in
                             </a>
                         </div>
@@ -226,7 +226,7 @@
                                 type="submit"
                                 id="btnSubmitOrder"
                                 @disabled(! $activeSeat)
-                                class="salai-btn-primary w-full py-2.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="btn-primary w-full py-2.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 @if (! $activeSeat)
                                     กรุณาเปิดเครื่องก่อนสั่งอาหาร
