@@ -1,41 +1,41 @@
 <x-layouts::app :title="__('Seat Monitor')">
-    <div class="space-y-6">
+    <div class="d-flex flex-column gap-4">
         <!-- Notifications -->
         @if (session()->has('success'))
-            <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-sm flex items-center gap-2">
-                <span class="text-base">✅</span>
-                <span>{{ session('success') }}</span>
+            <div class="alert alert-success d-flex align-items-center gap-2 border-success-subtle bg-success-subtle text-success py-3 px-4 rounded-3 m-0">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <div>{{ session('success') }}</div>
             </div>
         @endif
         @if (session()->has('error'))
-            <div class="p-4 rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-sm flex items-center gap-2">
-                <span class="text-base">⚠️</span>
-                <span>{{ session('error') }}</span>
+            <div class="alert alert-danger d-flex align-items-center gap-2 border-danger-subtle bg-danger-subtle text-danger py-3 px-4 rounded-3 m-0">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <div>{{ session('error') }}</div>
             </div>
         @endif
 
         <!-- Header & Live Status Stats -->
-        <div class="card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="card bg-dark border-secondary-subtle rounded-4 p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 shadow-sm">
             <div>
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <h2 class="text-2xl font-black text-white font-sans">แดชบอร์ดมอนิเตอร์ที่นั่ง (Live Seat Monitor)</h2>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="spinner-grow spinner-grow-sm text-success" style="width: 10px; height: 10px;"></span>
+                    <h2 class="h4 fw-bold text-white m-0">แดชบอร์ดมอนิเตอร์ที่นั่ง (Live Seat Monitor)</h2>
                 </div>
-                <p class="text-xs text-zinc-400 mt-1">มอนิเตอร์สถานะเครื่องคอมพิวเตอร์และเซสชันลูกค้าแบบเรียลไทม์</p>
+                <small class="text-secondary ps-3">มอนิเตอร์สถานะเครื่องคอมพิวเตอร์และเซสชันลูกค้าแบบเรียลไทม์</small>
             </div>
 
             <!-- Quick Counters -->
-            <div class="flex flex-wrap gap-2 text-xs font-semibold">
-                <span class="px-3 py-1.5 rounded-xl bg-[#141824] border border-[#232938] text-zinc-300">
+            <div class="d-flex flex-wrap gap-2 small fw-semibold">
+                <span class="badge bg-dark-subtle border border-secondary-subtle text-light py-2 px-3">
                     ทั้งหมด: {{ $totalSeats }} เครื่อง
                 </span>
-                <span class="px-3 py-1.5 rounded-xl bg-red-950/60 border border-red-500/40 text-red-300">
+                <span class="badge bg-danger-subtle border border-danger-subtle text-danger py-2 px-3">
                     เล่นอยู่: {{ $occupiedSeats }} เครื่อง
                 </span>
-                <span class="px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
+                <span class="badge bg-success-subtle border border-success-subtle text-success py-2 px-3">
                     ว่าง: {{ $availableSeats }} เครื่อง
                 </span>
-                <span class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-400 border border-zinc-700">
+                <span class="badge bg-secondary-subtle border border-secondary text-secondary py-2 px-3">
                     ซ่อมบำรุง: {{ $maintenanceSeats }} เครื่อง
                 </span>
             </div>
@@ -43,18 +43,18 @@
 
         <!-- Zones & Seats -->
         @foreach ($zones as $zone)
-            <div class="card p-6 space-y-4">
-                <div class="flex justify-between items-center border-b border-[#1e2430] pb-2">
-                    <div class="flex items-center gap-2">
-                        <span class="step-bar"></span>
-                        <h3 class="font-bold text-base text-white">{{ $zone->name }}</h3>
+            <div class="card bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle pb-3 mb-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="bg-danger rounded" style="width: 4px; height: 20px;"></span>
+                        <h3 class="h6 fw-bold text-white m-0">{{ $zone->name }}</h3>
                     </div>
-                    <span class="text-xs font-bold text-emerald-400 font-mono">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle font-monospace">
                         ฿{{ number_format($zone->hourly_rate, 2) }} / ชม.
                     </span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
                     @foreach ($zone->seats as $seat)
                         @php
                             $session = $seat->seatSessions->first();
@@ -66,84 +66,78 @@
                             }
                         @endphp
 
-                        <div class="p-4 rounded-xl border flex flex-col justify-between transition
-                            @if($seat->status === 'occupied') bg-red-950/20 border-red-500/40
-                            @elseif($seat->status === 'available') bg-[#141824] border-[#232938]
-                            @else bg-[#0e1017] border-zinc-800 opacity-60
-                            @endif
-                        ">
-                            <div>
-                                <div class="flex justify-between items-start">
-                                    <span class="text-lg font-black text-white font-sans">
-                                        {{ $seat->seat_number }}
-                                    </span>
-                                    <span class="text-[11px] px-2 py-0.5 rounded font-bold
-                                        @if($seat->status === 'occupied') bg-red-600/20 text-red-400 border border-red-500/30
-                                        @elseif($seat->status === 'available') bg-emerald-600/20 text-emerald-400 border border-emerald-500/30
-                                        @else bg-zinc-800 text-zinc-400
-                                        @endif
-                                    ">
-                                        {{ strtoupper($seat->status) }}
-                                    </span>
+                        <div class="col">
+                            <div class="card h-100 p-3 rounded-4 transition d-flex flex-column justify-content-between
+                                @if($seat->status === 'occupied') bg-dark-subtle border-danger-subtle shadow-sm
+                                @elseif($seat->status === 'available') bg-dark border-secondary-subtle
+                                @else bg-dark border-secondary-subtle opacity-50
+                                @endif
+                            ">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="fs-5 fw-black text-white font-monospace">
+                                            {{ $seat->seat_number }}
+                                        </div>
+                                        <span class="badge
+                                            @if($seat->status === 'occupied') bg-danger-subtle text-danger border border-danger-subtle
+                                            @elseif($seat->status === 'available') bg-success-subtle text-success border border-success-subtle
+                                            @else bg-secondary-subtle text-secondary
+                                            @endif
+                                        " style="font-size: 10px;">
+                                            {{ strtoupper($seat->status) }}
+                                        </span>
+                                    </div>
+
+                                    @if ($session)
+                                        <div class="pt-2 border-top border-secondary-subtle small d-flex flex-column gap-1">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-secondary">ผู้เล่น:</span>
+                                                <strong class="text-white text-truncate" style="max-width: 110px;">{{ $session->user->name }}</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-secondary">เวลาเล่น:</span>
+                                                <strong class="text-light font-monospace">{{ $elapsedMins }} นาที</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-secondary">โหมด:</span>
+                                                @if($session->userPackage)
+                                                    <strong class="text-danger text-truncate" style="max-width: 110px;">{{ $session->userPackage->package->name }}</strong>
+                                                @else
+                                                    <strong class="text-warning">Pay-as-you-go</strong>
+                                                @endif
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-secondary">Wallet:</span>
+                                                <strong class="text-warning font-monospace">฿{{ number_format($session->user->balance, 2) }}</strong>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="py-3 text-center text-secondary small">
+                                            เครื่องว่าง พร้อมใช้งาน
+                                        </div>
+                                    @endif
                                 </div>
 
-                                @if ($session)
-                                    <div class="mt-3 pt-2 border-t border-[#1e2430] space-y-1 text-xs">
-                                        <p class="text-zinc-200 font-bold flex justify-between">
-                                            <span class="text-zinc-400">ผู้เล่น:</span>
-                                            <span class="text-white">{{ $session->user->name }}</span>
-                                        </p>
-                                        <p class="text-zinc-400 flex justify-between">
-                                            <span>เวลาเล่น:</span>
-                                            <span class="font-semibold text-white font-mono">{{ $elapsedMins }} นาที</span>
-                                        </p>
-                                        <p class="text-zinc-400 flex justify-between">
-                                            <span>โหมด:</span>
-                                            @if($session->userPackage)
-                                                <span class="text-red-400 font-semibold truncate max-w-[120px]" title="{{ $session->userPackage->package->name }}">
-                                                    {{ $session->userPackage->package->name }}
-                                                </span>
-                                            @else
-                                                <span class="text-amber-400 font-semibold">Pay-as-you-go</span>
-                                            @endif
-                                        </p>
-                                        <p class="text-zinc-400 flex justify-between">
-                                            <span>Wallet คงเหลือ:</span>
-                                            <span class="font-bold text-amber-400 font-mono">฿{{ number_format($session->user->balance, 2) }}</span>
-                                        </p>
-                                    </div>
-                                @else
-                                    <div class="mt-4 py-2 text-center text-xs text-zinc-500">
-                                        เครื่องว่าง พร้อมใช้งาน
-                                    </div>
-                                @endif
-                            </div>
-
-                            <!-- Staff Action Buttons -->
-                            <div class="mt-4 pt-3 border-t border-[#1e2430]">
-                                @if ($session)
-                                    <form method="POST" action="{{ route('staff.force-end') }}" onsubmit="return confirm('คุณต้องการสั่งปิดเครื่อง {{ $seat->seat_number }} และคิดเงินทันทีหรือไม่?');">
-                                        @csrf
-                                        <input type="hidden" name="session_id" value="{{ $session->id }}">
-                                        <button
-                                            type="submit"
-                                            class="w-full py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition"
-                                        >
-                                            Force End (สั่งปิดเครื่อง)
-                                        </button>
-                                    </form>
-                                @else
-                                    <form method="POST" action="{{ route('staff.toggle-seat') }}">
-                                        @csrf
-                                        <input type="hidden" name="seat_id" value="{{ $seat->id }}">
-                                        <button
-                                            type="submit"
-                                            class="w-full py-1.5 text-xs font-semibold text-zinc-300 bg-[#141824] border border-[#232938] hover:border-zinc-500 rounded-lg transition"
-                                        >
-                                            {{ $seat->status === 'maintenance' ? 'เปิดใช้งานเครื่อง' : 'แจ้งซ่อมบำรุง' }}
-                                        </button>
-                                    </form>
-                                @endif
+                                <!-- Staff Action Buttons -->
+                                <div class="pt-3 border-top border-secondary-subtle mt-3">
+                                    @if ($session)
+                                        <form method="POST" action="{{ route('staff.force-end') }}" onsubmit="return confirm('คุณต้องการสั่งปิดเครื่อง {{ $seat->seat_number }} และคิดเงินทันทีหรือไม่?');">
+                                            @csrf
+                                            <input type="hidden" name="session_id" value="{{ $session->id }}">
+                                            <button type="submit" class="btn btn-danger btn-sm w-100 fw-bold rounded-pill">
+                                                Force End (ปิดเครื่อง)
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form method="POST" action="{{ route('staff.toggle-seat') }}">
+                                            @csrf
+                                            <input type="hidden" name="seat_id" value="{{ $seat->id }}">
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm w-100 text-light rounded-pill">
+                                                {{ $seat->status === 'maintenance' ? 'เปิดใช้งานเครื่อง' : 'แจ้งซ่อมบำรุง' }}
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach

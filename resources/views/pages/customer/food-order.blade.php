@@ -1,68 +1,70 @@
 <x-layouts::app :title="__('Order Food & Beverages')">
-    <div class="space-y-6">
+    <div class="d-flex flex-column gap-4">
         <!-- Notifications -->
         @if (session()->has('success'))
-            <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-sm flex items-center gap-2">
-                <span class="text-base">✅</span>
-                <span>{{ session('success') }}</span>
+            <div class="alert alert-success d-flex align-items-center gap-2 border-success-subtle bg-success-subtle text-success py-3 px-4 rounded-3 m-0">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <div>{{ session('success') }}</div>
             </div>
         @endif
         @if (session()->has('error'))
-            <div class="p-4 rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-sm flex items-center gap-2">
-                <span class="text-base">⚠️</span>
-                <span>{{ session('error') }}</span>
+            <div class="alert alert-danger d-flex align-items-center gap-2 border-danger-subtle bg-danger-subtle text-danger py-3 px-4 rounded-3 m-0">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <div>{{ session('error') }}</div>
             </div>
         @endif
 
         <!-- Active Seat Banner -->
         @if ($activeSeat)
-            <div class="p-3.5 rounded-xl bg-[#141824] border border-[#232938] flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    <p class="text-xs font-medium text-zinc-200">
-                        กำลังเล่นอยู่ที่เครื่อง <span class="font-bold text-white underline">{{ $activeSeat->seat_number }}</span> ({{ $activeSeat->zone->name }}) &bull; อาหารจะถูกเสิร์ฟมาที่โต๊ะนี้โดยอัตโนมัติ
-                    </p>
+            <div class="alert alert-dark border-secondary-subtle bg-dark d-flex justify-content-between align-items-center p-3 rounded-4 shadow-sm m-0">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="spinner-grow spinner-grow-sm text-success" style="width: 8px; height: 8px;"></span>
+                    <small class="text-light">
+                        กำลังเล่นอยู่ที่เครื่อง <strong class="text-white text-decoration-underline">{{ $activeSeat->seat_number }}</strong> ({{ $activeSeat->zone->name }}) &bull; อาหารจะถูกเสิร์ฟมาที่โต๊ะนี้โดยอัตโนมัติ
+                    </small>
                 </div>
-                <span class="badge-red text-[10px] hidden sm:inline-flex">AUTO DELIVER</span>
+                <span class="badge bg-danger-subtle text-danger d-none d-sm-inline-block">AUTO DELIVER</span>
             </div>
         @else
-            <div class="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <span class="text-base">⚠️</span>
-                    <p class="text-xs font-semibold text-amber-200">
+            <div class="alert alert-warning border-warning-subtle bg-warning-subtle text-warning d-flex justify-content-between align-items-center p-3 rounded-4 shadow-sm m-0">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <small class="fw-semibold">
                         คุณยังไม่ได้เปิดเครื่องคอมพิวเตอร์ในร้าน กรุณา Check-in เข้าเครื่องก่อนสั่งอาหาร
-                    </p>
+                    </small>
                 </div>
-                <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-1.5 px-3.5">
+                <a href="{{ route('customer.seat-map') }}" class="btn btn-warning btn-sm fw-bold px-3 rounded-pill">
                     เลือกที่นั่ง &rarr;
                 </a>
             </div>
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="row g-4">
             <!-- Products & Menu Section -->
-            <div class="lg:col-span-2 space-y-5">
-                <div class="card p-6 space-y-4">
-                    <div class="step-header">
-                        <span class="step-bar"></span>
-                        <h2 class="text-xl font-bold text-white tracking-wide font-sans">
+            <div class="col-12 col-lg-8 d-flex flex-column gap-4">
+                <div class="card bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="bg-danger rounded" style="width: 4px; height: 22px;"></span>
+                        <h2 class="h5 fw-bold text-white m-0">
                             สั่งอาหารและเครื่องดื่ม (PC Bang Kitchen)
                         </h2>
                     </div>
-                    <p class="text-xs text-zinc-400 pl-4">เลือกเมนูอาหารตามสั่ง ของว่าง และเครื่องดื่มเย็นฉ่ำ ส่งตรงถึงโต๊ะคอมพิวเตอร์ของคุณ</p>
+                    <small class="text-secondary ps-3 d-block mb-3">
+                        เลือกเมนูอาหารตามสั่ง ของว่าง และเครื่องดื่มเย็นฉ่ำ ส่งตรงถึงโต๊ะคอมพิวเตอร์ของคุณ
+                    </small>
 
                     <!-- Category Filters -->
-                    <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-[#1e2430]">
+                    <div class="d-flex flex-wrap gap-2 pt-3 border-top border-secondary-subtle">
                         <a
                             href="{{ route('customer.food-order') }}"
-                            class="pill text-xs font-medium transition {{ is_null($selectedCategoryId) ? 'bg-red-600 text-white' : 'bg-[#141824] text-zinc-300 hover:text-white border border-[#232938]' }}"
+                            class="btn btn-sm rounded-pill px-3 fw-semibold {{ is_null($selectedCategoryId) ? 'btn-danger' : 'btn-outline-secondary text-light' }}"
                         >
                             🔥 เมนูทั้งหมด
                         </a>
                         @foreach ($categories as $cat)
                             <a
                                 href="{{ route('customer.food-order', ['category_id' => $cat->id]) }}"
-                                class="pill text-xs font-medium transition {{ $selectedCategoryId == $cat->id ? 'bg-red-600 text-white' : 'bg-[#141824] text-zinc-300 hover:text-white border border-[#232938]' }}"
+                                class="btn btn-sm rounded-pill px-3 fw-semibold {{ $selectedCategoryId == $cat->id ? 'btn-danger' : 'btn-outline-secondary text-light' }}"
                             >
                                 {{ $cat->name }} ({{ $cat->products_count }})
                             </a>
@@ -71,167 +73,162 @@
                 </div>
 
                 <!-- Products Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="row row-cols-1 row-cols-sm-2 g-3">
                     @forelse ($products as $prod)
-                        <div class="card p-5 flex flex-col justify-between group">
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-start">
-                                    <span class="badge-red text-[10px]">
-                                        {{ $prod->category->name }}
-                                    </span>
-                                    <span class="text-xs font-bold font-mono {{ $prod->stock_quantity > 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                        {{ $prod->stock_quantity > 0 ? 'คงเหลือ ' . $prod->stock_quantity . ' ชิ้น' : 'สินค้าหมด' }}
-                                    </span>
+                        <div class="col">
+                            <div class="card h-100 bg-dark border-secondary-subtle rounded-4 p-3 shadow-sm d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-danger-subtle text-danger" style="font-size: 10px;">{{ $prod->category->name }}</span>
+                                        <small class="fw-bold font-monospace {{ $prod->stock_quantity > 0 ? 'text-success' : 'text-danger' }}" style="font-size: 11px;">
+                                            {{ $prod->stock_quantity > 0 ? 'คงเหลือ ' . $prod->stock_quantity . ' ชิ้น' : 'สินค้าหมด' }}
+                                        </small>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-3 bg-dark-subtle border border-secondary-subtle d-flex align-items-center justify-content-center fs-3 flex-shrink-0" style="width: 52px; height: 52px;">
+                                            @if(str_contains(strtolower($prod->name), 'รามยอน') || str_contains(strtolower($prod->name), 'ramen')) 🍜
+                                            @elseif(str_contains(strtolower($prod->name), 'ไก่ทอด') || str_contains(strtolower($prod->name), 'chicken')) 🍗
+                                            @elseif(str_contains(strtolower($prod->name), 'ต๊อก') || str_contains(strtolower($prod->name), 'tteok')) 🍲
+                                            @elseif(str_contains(strtolower($prod->name), 'คิมบับ') || str_contains(strtolower($prod->name), 'kimbap')) 🍱
+                                            @elseif(str_contains(strtolower($prod->name), 'กาแฟ') || str_contains(strtolower($prod->name), 'coffee') || str_contains(strtolower($prod->name), 'americano')) ☕
+                                            @elseif(str_contains(strtolower($prod->name), 'โซดา') || str_contains(strtolower($prod->name), 'soda') || str_contains(strtolower($prod->name), 'cola')) 🥤
+                                            @else 🍽️
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <h4 class="h6 fw-bold text-white mb-1">{{ $prod->name }}</h4>
+                                            @if ($prod->description)
+                                                <small class="text-secondary d-block line-clamp-2" style="font-size: 11px;">{{ $prod->description }}</small>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-950 to-zinc-900 border border-[#232938] flex items-center justify-center text-2xl group-hover:scale-105 transition-transform shrink-0">
-                                        @if(str_contains(strtolower($prod->name), 'รามยอน') || str_contains(strtolower($prod->name), 'ramen')) 🍜
-                                        @elseif(str_contains(strtolower($prod->name), 'ไก่ทอด') || str_contains(strtolower($prod->name), 'chicken')) 🍗
-                                        @elseif(str_contains(strtolower($prod->name), 'ต๊อก') || str_contains(strtolower($prod->name), 'tteok')) 🍲
-                                        @elseif(str_contains(strtolower($prod->name), 'คิมบับ') || str_contains(strtolower($prod->name), 'kimbap')) 🍱
-                                        @elseif(str_contains(strtolower($prod->name), 'กาแฟ') || str_contains(strtolower($prod->name), 'coffee') || str_contains(strtolower($prod->name), 'americano')) ☕
-                                        @elseif(str_contains(strtolower($prod->name), 'โซดา') || str_contains(strtolower($prod->name), 'soda') || str_contains(strtolower($prod->name), 'cola')) 🥤
-                                        @else 🍽️
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-base text-white group-hover:text-red-400 transition-colors">{{ $prod->name }}</h4>
-                                        @if ($prod->description)
-                                            <p class="text-xs text-zinc-400 mt-0.5 line-clamp-2 leading-relaxed">{{ $prod->description }}</p>
-                                        @endif
-                                    </div>
+                                <div class="pt-3 border-top border-secondary-subtle mt-3 d-flex justify-content-between align-items-center">
+                                    <span class="fs-5 fw-bold text-white font-monospace">
+                                        ฿{{ number_format($prod->price, 2) }}
+                                    </span>
+
+                                    @if ($prod->stock_quantity > 0)
+                                        <button
+                                            type="button"
+                                            onclick="addToCart({{ $prod->id }}, '{{ addslashes($prod->name) }}', {{ $prod->price }}, {{ $prod->stock_quantity }})"
+                                            class="btn btn-danger btn-sm px-3 fw-bold rounded-pill"
+                                        >
+                                            + ใส่ตะกร้า
+                                        </button>
+                                    @else
+                                        <button disabled class="btn btn-outline-secondary btn-sm px-3 disabled">
+                                            หมด
+                                        </button>
+                                    @endif
                                 </div>
-                            </div>
-
-                            <div class="mt-4 pt-3 border-t border-[#1e2430] flex items-center justify-between">
-                                <span class="text-xl font-black text-white font-mono">
-                                    ฿{{ number_format($prod->price, 2) }}
-                                </span>
-
-                                @if ($prod->stock_quantity > 0)
-                                    <button
-                                        type="button"
-                                        onclick="addToCart({{ $prod->id }}, '{{ addslashes($prod->name) }}', {{ $prod->price }}, {{ $prod->stock_quantity }})"
-                                        class="btn-primary text-xs py-1.5 px-3.5"
-                                    >
-                                        + ใส่ตะกร้า
-                                    </button>
-                                @else
-                                    <button disabled class="card text-xs font-semibold px-3 py-1.5 text-zinc-500 border-[#232938] cursor-not-allowed">
-                                        หมด
-                                    </button>
-                                @endif
                             </div>
                         </div>
                     @empty
-                        <div class="sm:col-span-2 p-10 text-center card text-zinc-400 text-xs">
-                            ไม่พบรายการอาหารในหมวดหมู่นี้
+                        <div class="col-12">
+                            <div class="card bg-dark border-secondary-subtle rounded-4 p-5 text-center text-secondary small">
+                                ไม่พบรายการอาหารในหมวดหมู่นี้
+                            </div>
                         </div>
                     @endforelse
                 </div>
             </div>
 
             <!-- Cart & Checkout Sidebar -->
-            <div class="space-y-6">
-                <div class="card-glow p-6 rounded-3xl sticky top-6 space-y-5">
-                    <div class="flex items-center justify-between border-b border-[#232938] pb-3">
-                        <div class="step-header">
-                            <span class="step-bar"></span>
-                            <h3 class="text-lg font-black text-white font-sans">ตะกร้าของคุณ (Cart)</h3>
+            <div class="col-12 col-lg-4">
+                <div class="card bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm sticky-top" style="top: 80px;">
+                    <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle pb-3 mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="bg-danger rounded" style="width: 4px; height: 20px;"></span>
+                            <h3 class="h6 fw-bold text-white m-0">ตะกร้าของคุณ (Cart)</h3>
                         </div>
-                        <span id="cartCountBadge" class="badge-red text-xs font-bold">
+                        <span id="cartCountBadge" class="badge bg-danger-subtle text-danger font-monospace">
                             0 รายการ
                         </span>
                     </div>
 
                     <!-- Seat Destination -->
                     @if ($activeSeat)
-                        <div class="p-3.5 bg-[#141824] border border-red-500/40 rounded-2xl flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center font-bold text-lg shrink-0">
-                                    🖥️
-                                </div>
+                        <div class="p-3 bg-dark-subtle border border-danger-subtle rounded-3 d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-4">🖥️</span>
                                 <div>
-                                    <span class="text-[10px] text-zinc-400 block font-medium">จัดส่งตรงถึงเครื่องของคุณ</span>
-                                    <span class="font-black text-base text-white font-sans">
-                                        เครื่อง {{ $activeSeat->seat_number }}
-                                    </span>
-                                    <span class="text-[11px] text-red-400 font-semibold block">
-                                        {{ $activeSeat->zone->name }}
-                                    </span>
+                                    <small class="text-secondary d-block" style="font-size: 10px;">จัดส่งตรงถึงโต๊ะคอม</small>
+                                    <strong class="text-white small">เครื่อง {{ $activeSeat->seat_number }}</strong>
+                                    <small class="text-danger fw-semibold d-block" style="font-size: 10px;">{{ $activeSeat->zone->name }}</small>
                                 </div>
                             </div>
-                            <span class="badge-red text-[10px]">
-                                ผูกเครื่องแล้ว
-                            </span>
+                            <span class="badge bg-danger-subtle text-danger" style="font-size: 9px;">ผูกเครื่องแล้ว</span>
                         </div>
                     @else
-                        <div class="p-4 bg-amber-950/40 border border-amber-500/40 rounded-2xl text-center space-y-2">
-                            <div class="text-2xl">⚠️</div>
-                            <p class="text-xs font-bold text-amber-300">คุณยังไม่ได้ Check-in เปิดเครื่อง</p>
-                            <p class="text-[11px] text-zinc-400">ระบบจะจัดส่งอาหารไปยังเครื่องที่คุณนั่ง กรุณาเปิดเครื่องก่อนสั่งอาหาร</p>
-                            <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-2 px-4 w-full block text-center">
-                                🖥️ ไปที่ผังที่นั่งเพื่อ Check-in
+                        <div class="p-3 bg-warning-subtle border border-warning-subtle rounded-3 text-center mb-3 text-warning">
+                            <small class="d-block fw-bold">คุณยังไม่ได้ Check-in เปิดเครื่อง</small>
+                            <small class="text-secondary d-block mb-2" style="font-size: 11px;">ระบบจะจัดส่งอาหารไปยังเครื่องที่คุณนั่ง</small>
+                            <a href="{{ route('customer.seat-map') }}" class="btn btn-warning btn-sm w-100 fw-bold">
+                                🖥️ ไปเปิดเครื่องก่อน
                             </a>
                         </div>
                     @endif
 
                     <!-- Cart Items List Container -->
-                    <div id="cartItemsList" class="space-y-3 max-h-72 overflow-y-auto divide-y divide-[#1e2430]">
-                        <div class="py-8 text-center text-zinc-500 text-xs" id="emptyCartNotice">
+                    <div id="cartItemsList" class="overflow-y-auto mb-3" style="max-height: 240px;">
+                        <div class="py-4 text-center text-secondary small" id="emptyCartNotice">
                             🛒 ยังไม่มีอาหารในตะกร้า
                         </div>
                     </div>
 
                     <!-- Checkout Form -->
-                    <form method="POST" action="{{ route('customer.place-order') }}" id="checkoutForm" class="space-y-4">
+                    <form method="POST" action="{{ route('customer.place-order') }}" id="checkoutForm" class="d-flex flex-column gap-3">
                         @csrf
                         <input type="hidden" name="seat_id" value="{{ $activeSeat ? $activeSeat->id : '' }}">
                         <div id="formHiddenInputs"></div>
 
                         <!-- Payment Method Selection -->
-                        <div class="pt-3 border-t border-[#232938] space-y-2">
-                            <label class="block text-xs font-bold text-zinc-300">ช่องทางการชำระเงิน:</label>
+                        <div class="pt-3 border-top border-secondary-subtle">
+                            <label class="form-label text-secondary small fw-bold text-uppercase" style="font-size: 11px;">ช่องทางการชำระเงิน:</label>
 
-                            <label class="flex items-start gap-2.5 p-2.5 border rounded-xl cursor-pointer text-xs border-[#232938] bg-[#141824] hover:border-red-500/50">
-                                <input type="radio" name="payment_method" value="wallet" checked class="mt-0.5 text-red-600 focus:ring-red-500">
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-white">ตัดเงินใน Wallet</span>
-                                    <span class="text-[11px] text-zinc-400">
-                                        ยอดที่ใช้ได้: <span class="text-amber-400 font-bold">฿{{ number_format($availableBalance, 2) }}</span>
-                                    </span>
-                                </div>
-                            </label>
+                            <div class="d-flex flex-column gap-2">
+                                <label class="form-check p-2.5 rounded-3 border border-secondary-subtle bg-dark-subtle d-flex align-items-start gap-2 cursor-pointer transition">
+                                    <input type="radio" name="payment_method" value="wallet" checked class="form-check-input mt-1">
+                                    <div>
+                                        <strong class="text-white small d-block">ตัดเงินใน Wallet</strong>
+                                        <small class="text-secondary" style="font-size: 11px;">
+                                            ใช้ได้: <span class="text-warning fw-bold">฿{{ number_format($availableBalance, 2) }}</span>
+                                        </small>
+                                    </div>
+                                </label>
 
-                            <label class="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer text-xs border-[#232938] bg-[#141824] hover:border-red-500/50">
-                                <input type="radio" name="payment_method" value="promptpay" class="text-red-600 focus:ring-red-500">
-                                <span class="font-bold text-white">สแกน QR PromptPay (จำลอง)</span>
-                            </label>
+                                <label class="form-check p-2.5 rounded-3 border border-secondary-subtle bg-dark-subtle d-flex align-items-center gap-2 cursor-pointer transition">
+                                    <input type="radio" name="payment_method" value="promptpay" class="form-check-input mt-0">
+                                    <span class="text-white small fw-bold">สแกน QR PromptPay (จำลอง)</span>
+                                </label>
 
-                            <label class="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer text-xs border-[#232938] bg-[#141824] hover:border-red-500/50">
-                                <input type="radio" name="payment_method" value="cash" class="text-red-600 focus:ring-red-500">
-                                <span class="font-bold text-white">เงินสดเก็บปลายทางที่โต๊ะ (Cash)</span>
-                            </label>
+                                <label class="form-check p-2.5 rounded-3 border border-secondary-subtle bg-dark-subtle d-flex align-items-center gap-2 cursor-pointer transition">
+                                    <input type="radio" name="payment_method" value="cash" class="form-check-input mt-0">
+                                    <span class="text-white small fw-bold">เงินสดเก็บปลายทางที่โต๊ะ (Cash)</span>
+                                </label>
+                            </div>
                         </div>
 
                         <!-- Total & Checkout Button -->
-                        <div class="pt-4 border-t border-[#232938] space-y-3">
-                            <div class="flex justify-between items-center text-sm font-bold">
-                                <span class="text-zinc-300">ยอดรวมทั้งสิ้น:</span>
-                                <span class="text-2xl font-bold text-white font-mono" id="cartTotalText">฿0.00</span>
+                        <div class="pt-3 border-top border-secondary-subtle">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-secondary small">ยอดรวมทั้งสิ้น:</span>
+                                <span class="fs-4 fw-bold text-white font-monospace" id="cartTotalText">฿0.00</span>
                             </div>
 
                             <button
                                 type="submit"
                                 id="btnSubmitOrder"
                                 @disabled(! $activeSeat)
-                                class="btn-primary w-full py-2.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="btn btn-danger w-100 py-2.5 fw-bold rounded-pill shadow"
                             >
                                 @if (! $activeSeat)
                                     กรุณาเปิดเครื่องก่อนสั่งอาหาร
                                 @else
-                                    🚀 ยืนยันการสั่งอาหาร (ส่งไปที่เครื่อง {{ $activeSeat->seat_number }})
+                                    🚀 ยืนยันการสั่งอาหาร (ส่งโต๊ะ {{ $activeSeat->seat_number }})
                                 @endif
                             </button>
                         </div>
@@ -281,7 +278,6 @@
             const hiddenInputsEl = document.getElementById('formHiddenInputs');
             const countBadge = document.getElementById('cartCountBadge');
             const totalText = document.getElementById('cartTotalText');
-            const submitBtn = document.getElementById('btnSubmitOrder');
 
             listEl.innerHTML = '';
             hiddenInputsEl.innerHTML = '';
@@ -291,7 +287,7 @@
             let totalCount = 0;
 
             if (keys.length === 0) {
-                listEl.innerHTML = '<div class="py-8 text-center text-zinc-500 text-xs">🛒 ยังไม่มีอาหารในตะกร้า</div>';
+                listEl.innerHTML = '<div class="py-4 text-center text-secondary small">🛒 ยังไม่มีอาหารในตะกร้า</div>';
                 countBadge.innerText = '0 รายการ';
                 totalText.innerText = '฿0.00';
                 return;
@@ -303,31 +299,31 @@
                 total += subtotal;
                 totalCount += item.quantity;
 
-                // Hidden input for standard Form POST
+                // Hidden input for form POST
                 hiddenInputsEl.innerHTML += `<input type="hidden" name="items[${idx}][product_id]" value="${item.id}">`;
                 hiddenInputsEl.innerHTML += `<input type="hidden" name="items[${idx}][quantity]" value="${item.quantity}">`;
 
-                // Cart item row
+                // Cart item row in Bootstrap
                 listEl.innerHTML += `
-                    <div class="pt-3 first:pt-0 flex items-center justify-between gap-2 text-xs">
-                        <div class="flex-1">
-                            <p class="font-bold text-white">${item.name}</p>
-                            <p class="text-[11px] text-zinc-400 font-mono">฿${item.price.toFixed(2)} x ${item.quantity}</p>
+                    <div class="py-2 border-bottom border-secondary-subtle d-flex justify-content-between align-items-center gap-2 small">
+                        <div class="overflow-hidden flex-grow-1">
+                            <strong class="text-white d-block text-truncate" style="font-size: 12px;">${item.name}</strong>
+                            <small class="text-secondary font-monospace">฿${item.price.toFixed(2)} x ${item.quantity}</small>
                         </div>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="changeQty(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-[#141824] border border-[#232938] text-zinc-200 flex items-center justify-center font-bold text-xs hover:border-red-500">&minus;</button>
-                            <span class="w-6 text-center font-bold text-xs text-white">${item.quantity}</span>
-                            <button type="button" onclick="changeQty(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-[#141824] border border-[#232938] text-zinc-200 flex items-center justify-center font-bold text-xs hover:border-red-500">+</button>
-                            <button type="button" onclick="removeCartItem(${item.id})" class="text-xs text-red-400 hover:text-red-300 ml-1">&times;</button>
+                        <div class="d-flex align-items-center gap-1">
+                            <button type="button" onclick="changeQty(${item.id}, -1)" class="btn btn-outline-secondary btn-sm py-0 px-2 fw-bold">&minus;</button>
+                            <span class="text-white fw-bold px-1" style="font-size: 12px;">${item.quantity}</span>
+                            <button type="button" onclick="changeQty(${item.id}, 1)" class="btn btn-outline-secondary btn-sm py-0 px-2 fw-bold">+</button>
+                            <button type="button" onclick="removeCartItem(${item.id})" class="btn btn-link text-danger btn-sm p-0 ms-1 text-decoration-none">&times;</button>
                         </div>
-                        <span class="font-bold text-xs text-white min-w-12 text-right font-mono">
+                        <span class="fw-bold text-white font-monospace text-end" style="min-width: 55px; font-size: 12px;">
                             ฿${subtotal.toFixed(2)}
                         </span>
                     </div>
                 `;
             });
 
-            countBadge.innerText = totalCount + ' ชิ้น (' + keys.length + ' รายการ)';
+            countBadge.innerText = totalCount + ' ชิ้น';
             totalText.innerText = '฿' + total.toFixed(2);
         }
 

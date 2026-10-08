@@ -180,4 +180,80 @@ select:focus[data-flux-control] {
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
 }
 
+/* Bootstrap 5 Gaming Theme Overrides */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #0a0c10;
+    --bs-body-color: #f1f5f9;
+    --bs-card-bg: #11141e;
+    --bs-card-border-color: #1e2430;
+    --bs-border-color: #1e2430;
+    --bs-border-color-translucent: rgba(30, 36, 48, 0.6);
+    --bs-secondary-bg: #141824;
+    --bs-tertiary-bg: #0c0f16;
+    --bs-primary: #dc2626;
+    --bs-primary-rgb: 220, 38, 38;
+    --bs-danger: #dc2626;
+    --bs-danger-rgb: 220, 38, 38;
+}
+
+[data-bs-theme="dark"] body {
+    background-color: #0a0c10;
+    color: #f1f5f9;
+    font-family: 'Kanit', 'Sarabun', sans-serif;
+}
+
+.bs-card {
+    background: #11141e;
+    border: 1px solid #1e2430;
+    border-radius: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.bs-card:hover {
+    border-color: #2e3748;
+}
+
+.bs-btn-primary {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.bs-btn-primary:hover, .bs-btn-primary:focus {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    color: #ffffff;
+}
+
+.bs-nav-link {
+    color: #94a3b8;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.bs-nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(220, 38, 38, 0.12);
+}
+
+.bs-nav-link.active {
+    color: #ffffff;
+    background-color: #dc2626;
+}
+
+.bs-sidebar {
+    width: 260px;
+    background-color: #0c0f16;
+    border-right: 1px solid #1e2430;
+}
+
+
 
