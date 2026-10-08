@@ -22,10 +22,8 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * แสดงหน้าจัดการสต็อกและสินค้า
-     * สมาชิกคนที่ 5: ระบบผู้ดูแลร้าน (Admin)
-     */
+
+    // แสดงหน้าจัดการสต็อกและสินค้า
     public function stockManager()
     {
         $this->authorizeAdmin();
@@ -36,10 +34,7 @@ class AdminController extends Controller
         return view('pages.admin.stock-manager', compact('categories', 'products'));
     }
 
-    /**
-     * ฟังก์ชันปรับเพิ่มหรือลดจำนวนสต็อกสินค้า
-     * สมาชิกคนที่ 5: ระบบผู้ดูแลร้าน (Admin)
-     */
+    // ฟังก์ชันปรับเพิ่มหรือลดจำนวนสต็อกสินค้า
     public function adjustStock(Request $request)
     {
         $this->authorizeAdmin();
@@ -71,10 +66,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'อัปเดตสต็อก ' . $product->name . ' เป็น ' . $newStock . ' ชิ้น');
     }
 
-    /**
-     * ฟังก์ชันเพิ่มสินค้าใหม่เข้าระบบ
-     * สมาชิกคนที่ 5: ระบบผู้ดูแลร้าน (Admin)
-     */
+    // ฟังก์ชันเพิ่มสินค้าใหม่เข้าระบบ
     public function createProduct(Request $request)
     {
         $this->authorizeAdmin();
@@ -99,10 +91,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'เพิ่มสินค้า ' . $product->name . ' สำเร็จเรียบร้อยแล้ว');
     }
 
-    /**
-     * แสดงหน้ารายงานยอดขายและรายได้ (Financial & Sales Report)
-     * สมาชิกคนที่ 5: ระบบผู้ดูแลร้าน (Admin)
-     */
+    // แสดงหน้ารายงานยอดขายและรายได้ (Financial & Sales Report)
     public function salesReport(Request $request)
     {
         $this->authorizeAdmin();

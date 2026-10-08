@@ -181,7 +181,7 @@
 
                     <div class="pt-4 border-t border-[#1e2430] mt-4 flex items-center justify-between">
                         <div>
-                            <span class="text-2xl font-black text-white">฿20</span>
+                            <span class="text-2xl font-black text-white">฿40</span>
                             <span class="text-xs text-zinc-400">/ 1 ชม.</span>
                         </div>
                         <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-2 px-3.5">
@@ -209,7 +209,7 @@
 
                     <div class="pt-4 border-t border-[#1e2430] mt-4 flex items-center justify-between">
                         <div>
-                            <span class="text-2xl font-black text-white">฿35</span>
+                            <span class="text-2xl font-black text-white">฿60</span>
                             <span class="text-xs text-zinc-400">/ 1 ชม.</span>
                         </div>
                         <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-2 px-3.5">
@@ -237,7 +237,7 @@
 
                     <div class="pt-4 border-t border-[#1e2430] mt-4 flex items-center justify-between">
                         <div>
-                            <span class="text-2xl font-black text-white">฿50</span>
+                            <span class="text-2xl font-black text-white">฿100</span>
                             <span class="text-xs text-zinc-400">/ 1 ชม.</span>
                         </div>
                         <a href="{{ route('customer.seat-map') }}" class="btn-primary text-xs py-2 px-3.5">

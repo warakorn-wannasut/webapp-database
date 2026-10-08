@@ -57,7 +57,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach ($zone->seats as $seat)
                         @php
-                            $session = $seat->sessions->first();
+                            $session = $seat->seatSessions->first();
                             $elapsedMins = 0;
                             if ($session) {
                                 $startTime = \Illuminate\Support\Carbon::parse($session->start_time);

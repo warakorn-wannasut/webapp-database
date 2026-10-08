@@ -11,10 +11,10 @@ use Illuminate\Support\Carbon;
 
 class EndSeatSession
 {
-    /**
-     * คิดค่าบริการ ปิด session และคืนเครื่องให้พร้อมใช้งาน
-     * ใช้ร่วมกันทั้งการเช็คเอาท์ของลูกค้าและการปิดเครื่องโดยพนักงาน
-     */
+
+    // คิดค่าบริการ ปิด session และคืนเครื่องให้เป็นเครื่องว่าง
+    // ใช้ร่วมกันทั้งการเช็คเอาท์ของลูกค้าและการปิดเครื่องโดยพนักงาน
+
     public function handle(SeatSession $session): float
     {
         $user = User::find($session->user_id);

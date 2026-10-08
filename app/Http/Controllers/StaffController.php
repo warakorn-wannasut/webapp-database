@@ -6,13 +6,9 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Seat;
 use App\Models\SeatSession;
-use App\Models\User;
-use App\Models\UserPackage;
-use App\Models\WalletTransaction;
 use App\Models\Zone;
 use App\Services\EndSeatSession;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class StaffController extends Controller
 {
@@ -24,20 +20,17 @@ class StaffController extends Controller
         }
     }
 
-    /**
-     * แสดงหน้าจอมอนิเตอร์สถานะเครื่องคอมพิวเตอร์หน้าร้าน
-     * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
-     */
+    // แสดงหน้าจอมอนิเตอร์สถานะเครื่องคอมพิวเตอร์หน้าร้าน
     public function seatMonitor()
     {
         $this->authorizeStaff();
 
         // 1. ดึงข้อมูลโซนและเครื่องทั้งหมดพร้อมข้อมูลเซสชันที่กำลังเล่น
-        $zones = Zone::with(['seats.zone', 'seats.sessions' => function ($q) {
+        $zones = Zone::with(['seats.zone', 'seats.seatSessions' => function ($q) {
             $q->where('status', 'active')->with(['user', 'userPackage.package']);
         }])->get();
 
-        $seats = Seat::with(['zone', 'sessions' => function ($q) {
+        $seats = Seat::with(['zone', 'seatSessions' => function ($q) {
             $q->where('status', 'active')->with(['user', 'userPackage.package']);
         }])->orderBy('seat_number')->get();
 
@@ -57,10 +50,7 @@ class StaffController extends Controller
         ));
     }
 
-    /**
-     * ฟังก์ชันบังคับปิดเครื่องและคิดเงิน (โดยพนักงาน)
-     * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
-     */
+    // ฟังก์ชันบังคับปิดเครื่องและคิดเงิน (โดยพนักงาน)
     public function forceEnd(Request $request, EndSeatSession $endSeatSession)
     {
         $this->authorizeStaff();
@@ -80,10 +70,7 @@ class StaffController extends Controller
         return redirect()->back()->with('success', 'ปิดเครื่อง ' . ($seat ? $seat->seat_number : '') . ' และคิดเงินสำเร็จเรียบร้อยแล้ว');
     }
 
-    /**
-     * ฟังก์ชันสลับสถานะเครื่องระหว่าง "พร้อมใช้งาน" กับ "ซ่อมบำรุง"
-     * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
-     */
+    // ฟังก์ชันสลับสถานะเครื่องระหว่าง "พร้อมใช้งาน" กับ "ซ่อมบำรุง"
     public function toggleMaintenance(Request $request)
     {
         $this->authorizeStaff();
@@ -112,10 +99,7 @@ class StaffController extends Controller
         return redirect()->back()->with('error', 'ไม่สามารถปรับสถานะเครื่องที่กำลังใช้งานอยู่ได้');
     }
 
-    /**
-     * แสดงหน้าคิวอาหารในห้องครัว (Kitchen Queue)
-     * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
-     */
+    // แสดงหน้าคิวอาหารในห้องครัว (Kitchen Queue)
     public function kitchenQueue(Request $request)
     {
         $this->authorizeStaff();
@@ -145,10 +129,7 @@ class StaffController extends Controller
         ));
     }
 
-    /**
-     * ฟังก์ชันอัปเดตสถานะอาหารในครัว
-     * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
-     */
+    // ฟังก์ชันอัปเดตสถานะอาหารในครัว
     public function updateOrderStatus(Request $request)
     {
         $this->authorizeStaff();
@@ -183,10 +164,7 @@ class StaffController extends Controller
         return redirect()->back()->with('success', 'อัปเดตสถานะออเดอร์ #' . $order->id . ' เป็น ' . $status . ' เรียบร้อยแล้ว');
     }
 
-    /**
-     * ฟังก์ชันยืนยันการรับเงินสด
-     * สมาชิกคนที่ 5: ระบบพนักงานและครัว (Member 5)
-     */
+    // ฟังก์ชันยืนยันการรับเงินสด
     public function confirmCashPayment(Request $request)
     {
         $this->authorizeStaff();

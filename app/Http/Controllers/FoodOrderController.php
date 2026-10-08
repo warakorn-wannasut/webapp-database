@@ -16,10 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class FoodOrderController extends Controller
 {
-    /**
-     * แสดงหน้าเมนูสั่งอาหารและเครื่องดื่ม
-     * สมาชิกคนที่ 3: ระบบสั่งอาหารและเครื่องดื่ม POS (Member 3)
-     */
+    // แสดงหน้าเมนูสั่งอาหารและเครื่องดื่ม
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -63,10 +60,7 @@ class FoodOrderController extends Controller
         ));
     }
 
-    /**
-     * ฟังก์ชันสั่งซื้ออาหารและเครื่องดื่ม
-     * สมาชิกคนที่ 3: ระบบสั่งอาหารและเครื่องดื่ม POS (Member 3)
-     */
+    // ฟังก์ชันสั่งซื้ออาหารและเครื่องดื่ม
     public function placeOrder(Request $request)
     {
         $request->validate([

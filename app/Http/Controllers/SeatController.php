@@ -13,10 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SeatController extends Controller
 {
-    /**
-     * แสดงหน้าผังร้านและเลือกที่นั่งคอมพิวเตอร์
-     * สมาชิกคนที่ 2: ระบบจัดการที่นั่งและเซสชัน (Member 2)
-     */
+    // แสดงหน้าผังร้านและเลือกที่นั่งคอมพิวเตอร์
     public function index()
     {
         $user = Auth::user();
@@ -44,10 +41,7 @@ class SeatController extends Controller
         return view('pages.customer.seat-map', compact('zones', 'activeSession', 'availablePackages'));
     }
 
-    /**
-     * ฟังก์ชันเช็คอินเปิดเครื่องคอมพิวเตอร์
-     * สมาชิกคนที่ 2: ระบบจัดการที่นั่งและเซสชัน (Member 2)
-     */
+    // ฟังก์ชันเช็คอินเปิดเครื่องคอมพิวเตอร์
     public function checkIn(Request $request)
     {
         $request->validate([

@@ -12,27 +12,27 @@ Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth'])->group(function () {
     // -------------------------------------------------------------
-    // Customer Portal (สมาชิกคนที่ 1 - 4)
+    // Customer Portal
     // -------------------------------------------------------------
-    // สมาชิกคนที่ 1: Dashboard
+    // Dashboard & Profile
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/check-out', [DashboardController::class, 'checkOut'])->name('customer.check-out');
 
-    // สมาชิกคนที่ 2: Seat Map & Sessions
+    // Seat Map & Sessions
     Route::get('/seat-map', [SeatController::class, 'index'])->name('customer.seat-map');
     Route::post('/check-in', [SeatController::class, 'checkIn'])->name('customer.check-in');
 
-    // สมาชิกคนที่ 3: Food & Beverage POS
+    // Food & Beverage POS
     Route::get('/food-order', [FoodOrderController::class, 'index'])->name('customer.food-order');
     Route::post('/food-order', [FoodOrderController::class, 'placeOrder'])->name('customer.place-order');
 
-    // สมาชิกคนที่ 4: Wallet & Packages
+    // Wallet & Packages
     Route::get('/topup', [WalletController::class, 'index'])->name('customer.topup');
     Route::post('/topup', [WalletController::class, 'topUp'])->name('customer.do-topup');
     Route::post('/buy-package', [WalletController::class, 'buyPackage'])->name('customer.buy-package');
 
     // -------------------------------------------------------------
-    // Staff & Kitchen Portal (สมาชิกคนที่ 5)
+    // Staff & Kitchen Portal
     // -------------------------------------------------------------
     Route::get('/staff/seat-monitor', [StaffController::class, 'seatMonitor'])->name('staff.seat-monitor');
     Route::post('/staff/force-end', [StaffController::class, 'forceEnd'])->name('staff.force-end');
@@ -42,7 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/staff/orders/confirm-cash', [StaffController::class, 'confirmCashPayment'])->name('staff.confirm-cash');
 
     // -------------------------------------------------------------
-    // Admin Management Portal (สมาชิกคนที่ 5)
+    // Admin Management Portal
     // -------------------------------------------------------------
     Route::get('/admin/stock-manager', [AdminController::class, 'stockManager'])->name('admin.stock-manager');
     Route::post('/admin/stock/adjust', [AdminController::class, 'adjustStock'])->name('admin.adjust-stock');

@@ -12,10 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class WalletController extends Controller
 {
-    /**
-     * แสดงหน้ากระเป๋าเงิน เติมเงิน และรายการแพ็กเกจเวลา
-     * สมาชิกคนที่ 4: ระบบกระเป๋าเงินและการคิดเงิน (Member 4)
-     */
+    // แสดงหน้ากระเป๋าเงิน เติมเงิน และรายการแพ็กเกจเวลา
     public function index()
     {
         $user = Auth::user();
@@ -41,10 +38,7 @@ class WalletController extends Controller
         return view('pages.customer.topup', compact('user', 'packages', 'userPackages', 'myPackages', 'transactions'));
     }
 
-    /**
-     * ฟังก์ชันเติมเงินเข้ากระเป๋าเงิน (Wallet)
-     * สมาชิกคนที่ 4: ระบบกระเป๋าเงินและการคิดเงิน (Member 4)
-     */
+    // ฟังก์ชันเติมเงินเข้ากระเป๋าเงิน (Wallet)
     public function topUp(Request $request)
     {
         $request->validate([
@@ -74,10 +68,7 @@ class WalletController extends Controller
         return redirect()->back()->with('success', 'เติมเงินสำเร็จ ฿' . number_format($amount, 2) . ' ยอดเงินคงเหลืออัปเดตเรียบร้อยแล้ว');
     }
 
-    /**
-     * ฟังก์ชันซื้อแพ็กเกจเวลา
-     * สมาชิกคนที่ 4: ระบบกระเป๋าเงินและการคิดเงิน (Member 4)
-     */
+    // ฟังก์ชันซื้อแพ็กเกจเวลา
     public function buyPackage(Request $request)
     {
         $request->validate([

@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('customer.do-topup') }}" class="space-y-4">
+                <form id="topupForm" method="POST" action="{{ route('customer.do-topup') }}" class="space-y-4">
                     @csrf
 
                     <!-- Amount presets -->
@@ -90,16 +90,16 @@
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-zinc-300">ช่องทางการชำระเงิน:</label>
                         <div class="grid grid-cols-2 gap-2.5">
-                            <label class="flex items-center gap-2.5 p-3 border rounded-xl cursor-pointer text-xs border-red-500 bg-red-950/30">
-                                <input type="radio" name="topup_method" value="qr" checked class="text-red-600 focus:ring-red-500">
+                            <label id="methodLabelQr" class="flex items-center gap-2.5 p-3 border rounded-xl cursor-pointer text-xs border-red-500 bg-red-950/30 transition">
+                                <input type="radio" name="topup_method" value="qr" checked onchange="handleMethodChange(this.value)" class="text-red-600 focus:ring-red-500">
                                 <div>
                                     <span class="font-bold text-white block">สแกน QR PromptPay</span>
                                     <span class="text-[10px] text-zinc-400">เข้าทันที (จำลอง)</span>
                                 </div>
                             </label>
 
-                            <label class="flex items-center gap-2.5 p-3 border rounded-xl cursor-pointer text-xs border-[#232938] bg-[#141824]">
-                                <input type="radio" name="topup_method" value="cash" class="text-red-600 focus:ring-red-500">
+                            <label id="methodLabelCash" class="flex items-center gap-2.5 p-3 border rounded-xl cursor-pointer text-xs border-[#232938] bg-[#141824] transition">
+                                <input type="radio" name="topup_method" value="cash" onchange="handleMethodChange(this.value)" class="text-red-600 focus:ring-red-500">
                                 <div>
                                     <span class="font-bold text-white block">เงินสดที่เคาน์เตอร์</span>
                                     <span class="text-[10px] text-zinc-400">ชำระกับพนักงานร้าน</span>
@@ -109,8 +109,10 @@
                     </div>
 
                     <button
-                        type="submit"
-                        class="btn-primary w-full py-3 text-xs font-black"
+                        type="button"
+                        id="submitTopupBtn"
+                        onclick="handleTopupSubmit()"
+                        class="btn-primary w-full py-3 text-xs font-black cursor-pointer"
                     >
                         ⚡ ยืนยันการเติมเงิน
                     </button>
@@ -234,6 +236,84 @@
                 </div>
             </div>
         @endif
+
+        <!-- Modal จำลองการสแกน QR Code PromptPay -->
+        <div id="qrModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="p-6 max-w-sm w-full border border-red-500/40 bg-[#101420] rounded-2xl shadow-2xl space-y-4 text-center">
+                <div class="flex items-center justify-between pb-3 border-b border-[#232938]">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                        <span class="text-sm font-bold text-white">PromptPay QR Code</span>
+                    </div>
+                    <button type="button" onclick="closeQrModal()" class="text-zinc-400 hover:text-white text-lg font-bold leading-none cursor-pointer">&times;</button>
+                </div>
+
+                <div class="space-y-1">
+                    <p class="text-xs text-zinc-400">สแกนเพื่อชำระเงิน</p>
+                    <div class="text-2xl font-black text-amber-400 font-mono" id="modalQrAmount">฿100.00</div>
+                </div>
+
+                <!-- จำลอง QR Code Card PromptPay (สไตล์ทางการ) -->
+                <div style="background-color: #ffffff; border-radius: 1rem; width: 15rem; margin: 0 auto; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+                    <!-- PromptPay Header Bar -->
+                    <div style="background-color: #003d6b; padding: 0.625rem 0.5rem; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; background-color: #ffffff; border-radius: 0.375rem; padding: 0.25rem 0.75rem;">
+                            <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background-color: #dc2626; display: inline-block;"></span>
+                            <span style="color: #003d6b; font-size: 11px; font-weight: 900; letter-spacing: 0.05em; font-family: sans-serif;">THAI QR PAYMENT</span>
+                        </div>
+                    </div>
+
+                    <!-- QR Body -->
+                    <div style="padding: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #ffffff;">
+                        <svg class="w-44 h-44 text-black" viewBox="0 0 100 100" fill="currentColor">
+                        <rect x="0" y="0" width="30" height="30" fill="none" stroke="currentColor" stroke-width="6"/>
+                        <rect x="8" y="8" width="14" height="14"/>
+                        <rect x="70" y="0" width="30" height="30" fill="none" stroke="currentColor" stroke-width="6"/>
+                        <rect x="78" y="8" width="14" height="14"/>
+                        <rect x="0" y="70" width="30" height="30" fill="none" stroke="currentColor" stroke-width="6"/>
+                        <rect x="8" y="78" width="14" height="14"/>
+                        <rect x="36" y="8" width="8" height="8"/>
+                        <rect x="48" y="16" width="12" height="6"/>
+                        <rect x="36" y="26" width="6" height="10"/>
+                        <rect x="46" y="38" width="8" height="8"/>
+                        <rect x="10" y="44" width="10" height="6"/>
+                        <rect x="24" y="40" width="8" height="16"/>
+                        <rect x="38" y="60" width="12" height="12"/>
+                        <rect x="60" y="40" width="10" height="8"/>
+                        <rect x="74" y="36" width="16" height="6"/>
+                        <rect x="84" y="48" width="10" height="14"/>
+                        <rect x="60" y="60" width="16" height="8"/>
+                        <rect x="80" y="74" width="14" height="14"/>
+                        <rect x="64" y="84" width="10" height="10"/>
+                        <rect x="40" y="82" width="14" height="6"/>
+                    </svg>
+                    </div>
+                </div>
+                <br>
+                <div class="text-[11px] text-zinc-400 bg-[#141824] p-2.5 rounded-lg border border-[#232938]">
+                    ชื่อบัญชี: <span class="text-zinc-200 font-bold">Letsplay cafe</span><br>
+                    เลขอ้างอิง: <span class="text-zinc-400 font-mono">089-XXX-XXXX</span>
+                </div>
+
+                <div class="flex gap-2.5 pt-2">
+                    <button
+                        type="button"
+                        onclick="closeQrModal()"
+                        class="w-1/3 py-2.5 px-3 rounded-xl border border-[#232938] bg-[#141824] text-xs font-bold text-zinc-300 hover:bg-[#1e2430] hover:text-white transition cursor-pointer text-center"
+                    >
+                        ยกเลิก
+                    </button>
+                    <button
+                        type="button"
+                        id="confirmPaymentBtn"
+                        onclick="submitTopupForm()"
+                        class="w-2/3 py-2.5 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition shadow-lg shadow-red-950/40 cursor-pointer text-center"
+                    >
+                        ✓ สแกนจ่ายเสร็จแล้ว
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -246,6 +326,58 @@
             if (selected) {
                 selected.classList.add('border-red-500', 'bg-red-950/30', 'ring-1', 'ring-red-500');
             }
+        }
+
+        function handleMethodChange(method) {
+            const qrLabel = document.getElementById('methodLabelQr');
+            const cashLabel = document.getElementById('methodLabelCash');
+
+            if (method === 'qr') {
+                qrLabel.classList.add('border-red-500', 'bg-red-950/30');
+                qrLabel.classList.remove('border-[#232938]', 'bg-[#141824]');
+                cashLabel.classList.remove('border-red-500', 'bg-red-950/30');
+                cashLabel.classList.add('border-[#232938]', 'bg-[#141824]');
+            } else {
+                cashLabel.classList.add('border-red-500', 'bg-red-950/30');
+                cashLabel.classList.remove('border-[#232938]', 'bg-[#141824]');
+                qrLabel.classList.remove('border-red-500', 'bg-red-950/30');
+                qrLabel.classList.add('border-[#232938]', 'bg-[#141824]');
+            }
+        }
+
+        function handleTopupSubmit() {
+            const amountInput = document.getElementById('inputAmount');
+            const amount = parseFloat(amountInput.value);
+
+            if (!amount || amount <= 0) {
+                alert('กรุณาระบุจำนวนเงินที่ถูกต้อง');
+                amountInput.focus();
+                return;
+            }
+
+            const selectedMethod = document.querySelector('input[name="topup_method"]:checked')?.value || 'qr';
+
+            if (selectedMethod === 'qr') {
+                document.getElementById('modalQrAmount').textContent = '฿' + amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const modal = document.getElementById('qrModal');
+                modal.classList.remove('hidden');
+            } else {
+                submitTopupForm();
+            }
+        }
+
+        function closeQrModal() {
+            const modal = document.getElementById('qrModal');
+            modal.classList.add('hidden');
+        }
+
+        function submitTopupForm() {
+            const confirmBtn = document.getElementById('confirmPaymentBtn');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.innerText = 'กำลังดำเนินการ...';
+            }
+            document.getElementById('topupForm').submit();
         }
     </script>
 </x-layouts::app>
