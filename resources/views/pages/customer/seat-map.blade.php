@@ -201,10 +201,10 @@
                                                     @foreach ($availablePackages as $upkg)
                                                         <option
                                                             value="{{ $upkg->id }}"
-                                                            data-zone-id="{{ $upkg->package->zone_id ?? '' }}"
-                                                            data-zone-name="{{ $upkg->package->zone->name ?? 'ทุกโซน' }}"
+                                                            data-zone-id="{{ $upkg->package?->zone_id ?? '' }}"
+                                                            data-zone-name="{{ $upkg->package?->zone?->name ?? 'ทุกโซน' }}"
                                                         >
-                                                            {{ $upkg->package->name }} (เหลือ {{ $upkg->formattedRemainingTime() }})
+                                                            {{ $upkg->package?->name ?? 'แพ็กเกจชั่วโมง' }} (เหลือ {{ $upkg->formattedRemainingTime() }})
                                                         </option>
                                                     @endforeach
                                                 </select>

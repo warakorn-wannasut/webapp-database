@@ -30,6 +30,7 @@ class SeatController extends Controller
 
         // 3. ดึงรายการแพ็กเกจที่ลูกค้าซื้อไว้และยังไม่หมดเวลา
         $availablePackages = UserPackage::with('package.zone')
+            ->has('package')
             ->where('user_id', $user->id)
             ->where('remaining_minutes', '>', 0)
             ->where(function ($query) {

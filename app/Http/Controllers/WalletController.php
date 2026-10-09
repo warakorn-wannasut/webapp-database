@@ -23,6 +23,7 @@ class WalletController extends Controller
 
         // 2. ดึงรายการแพ็กเกจที่ผู้ใช้ซื้อไว้และยังมีเวลาเหลือ
         $userPackages = UserPackage::with('package.zone')
+            ->has('package')
             ->where('user_id', $user->id)
             ->where('remaining_minutes', '>', 0)
             ->where(function ($query) {

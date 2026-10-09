@@ -232,7 +232,7 @@
                         <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3 h-100">
                             <small class="text-secondary d-block">รูปแบบค่าบริการ</small>
                             @if ($activeSession->userPackage)
-                                <div class="fs-6 fw-bold text-danger text-truncate">{{ $activeSession->userPackage->package->name }}</div>
+                                <div class="fs-6 fw-bold text-danger text-truncate">{{ $activeSession->userPackage->package?->name ?? 'แพ็กเกจชั่วโมง' }}</div>
                                 <small class="text-light">
                                     คงเหลือ: <strong class="text-warning">{{ \App\Models\UserPackage::formatMinutes($sessionRemainingMinutes ?? 0) }}</strong>
                                 </small>
@@ -297,14 +297,14 @@
                             <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3 d-flex flex-column justify-content-between h-100">
                                 <div>
                                     <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <span class="fw-bold text-white">{{ $upkg->package->name }}</span>
-                                        @if ($upkg->package->zone)
+                                        <span class="fw-bold text-white">{{ $upkg->package?->name ?? 'แพ็กเกจชั่วโมง' }}</span>
+                                        @if ($upkg->package?->zone)
                                             <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
                                                 {{ $upkg->package->zone->name }}
                                             </span>
                                         @else
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                ทุกโซน
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                                {{ $upkg->package ? 'ทุกโซน' : 'ไม่ระบุโซน' }}
                                             </span>
                                         @endif
                                     </div>

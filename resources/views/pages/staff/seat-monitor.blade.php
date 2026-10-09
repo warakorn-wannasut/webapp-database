@@ -101,8 +101,8 @@
                                             <div class="d-flex justify-content-between">
                                                 <span class="text-secondary">โหมด:</span>
                                                 @if($session->userPackage)
-                                                    <strong class="text-danger text-truncate" style="max-width: 120px;" title="{{ $session->userPackage->package->name }}">
-                                                        {{ $session->userPackage->package->name }}
+                                                    <strong class="text-danger text-truncate" style="max-width: 120px;" title="{{ $session->userPackage->package?->name ?? 'แพ็กเกจชั่วโมง' }}">
+                                                        {{ $session->userPackage->package?->name ?? 'แพ็กเกจชั่วโมง' }}
                                                     </strong>
                                                 @else
                                                     <strong class="text-warning">Pay as you go</strong>

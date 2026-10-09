@@ -259,14 +259,14 @@
                                     <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
                                         <div>
                                             <div class="d-flex align-items-center gap-2">
-                                                <span class="fw-bold text-white">{{ $mp->package->name }}</span>
-                                                @if ($mp->package->zone)
+                                                <span class="fw-bold text-white">{{ $mp->package?->name ?? 'แพ็กเกจชั่วโมง' }}</span>
+                                                @if ($mp->package?->zone)
                                                     <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
                                                         {{ $mp->package->zone->name }}
                                                     </span>
                                                 @else
-                                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                        ทุกโซน
+                                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                                        {{ $mp->package ? 'ทุกโซน' : 'ไม่ระบุโซน' }}
                                                     </span>
                                                 @endif
                                             </div>
