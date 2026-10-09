@@ -117,26 +117,59 @@ class GamingCafeSeeder extends Seeder
             ]);
         }
 
-        // 4. Packages
+        // 4. Packages (แยกตามโซนตามอัตราค่าบริการของแต่ละโซน)
+        // 4.1 Standard Zone (อัตราปกติ ฿40/ชม.)
         Package::create([
-            'zone_id' => null, // all zones
-            'name' => 'แพ็กเกจ 2 ชั่วโมง',
-            'duration_hours' => 2,
-            'price' => 70.00,
+            'zone_id' => $zoneStd->id,
+            'name' => 'Standard 3 ชั่วโมง',
+            'duration_hours' => 3,
+            'price' => 100.00,
+        ]);
+        Package::create([
+            'zone_id' => $zoneStd->id,
+            'name' => 'Standard 6 ชั่วโมง',
+            'duration_hours' => 6,
+            'price' => 190.00,
+        ]);
+        Package::create([
+            'zone_id' => $zoneStd->id,
+            'name' => 'Standard 12 ชั่วโมง',
+            'duration_hours' => 12,
+            'price' => 350.00,
         ]);
 
+        // 4.2 VIP High-End Zone (อัตราปกติ ฿60/ชม.)
         Package::create([
-            'zone_id' => null,
-            'name' => 'แพ็กเกจ 5 ชั่วโมง (สุดคุ้ม)',
-            'duration_hours' => 5,
+            'zone_id' => $zoneVip->id,
+            'name' => 'VIP 3 ชั่วโมง',
+            'duration_hours' => 3,
             'price' => 150.00,
         ]);
-
         Package::create([
-            'zone_id' => null,
-            'name' => 'แพ็กเกจโต้รุ่ง 8 ชั่วโมง (Night Owl)',
-            'duration_hours' => 8,
-            'price' => 220.00,
+            'zone_id' => $zoneVip->id,
+            'name' => 'VIP 6 ชั่วโมง',
+            'duration_hours' => 6,
+            'price' => 280.00,
+        ]);
+        Package::create([
+            'zone_id' => $zoneVip->id,
+            'name' => 'VIP 12 ชั่วโมง',
+            'duration_hours' => 12,
+            'price' => 520.00,
+        ]);
+
+        // 4.3 Duo Private Room (อัตราปกติ ฿100/ชม.)
+        Package::create([
+            'zone_id' => $zoneDuo->id,
+            'name' => 'Duo Room 3 ชั่วโมง',
+            'duration_hours' => 3,
+            'price' => 250.00,
+        ]);
+        Package::create([
+            'zone_id' => $zoneDuo->id,
+            'name' => 'Duo Room 6 ชั่วโมง',
+            'duration_hours' => 6,
+            'price' => 480.00,
         ]);
 
         // 5. Food Categories & Products

@@ -42,4 +42,34 @@ class UserPackage extends Model
     {
         return $this->expired_at && $this->expired_at->isPast();
     }
+
+    public function formattedRemainingTime(): string
+    {
+        return self::formatMinutes($this->remaining_minutes);
+    }
+
+    public static function formatMinutes(int|float $totalMinutes): string
+    {
+        $mins = (int) floor($totalMinutes);
+        if ($mins <= 0) {
+            return '0 นาที';
+        }
+
+        $days = (int) floor($mins / 1440);
+        $hours = (int) floor(($mins % 1440) / 60);
+        $minutes = $mins % 60;
+
+        $parts = [];
+        if ($days > 0) {
+            $parts[] = "{$days} วัน";
+        }
+        if ($hours > 0) {
+            $parts[] = "{$hours} ชั่วโมง";
+        }
+        if ($minutes > 0 || empty($parts)) {
+            $parts[] = "{$minutes} นาที";
+        }
+
+        return implode(' ', $parts);
+    }
 }

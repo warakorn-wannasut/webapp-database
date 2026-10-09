@@ -68,7 +68,7 @@ class DashboardController extends Controller
         $availableBalance = $this->calculateAvailableBalance($user);
 
         // 5. ดึงรายการแพ็กเกจที่ผู้ใช้ซื้อไว้
-        $userPackages = UserPackage::with('package')
+        $userPackages = UserPackage::with('package.zone')
             ->where('user_id', $user->id)
             ->where('remaining_minutes', '>', 0)
             ->where(function ($query) {

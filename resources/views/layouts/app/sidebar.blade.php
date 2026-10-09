@@ -17,7 +17,7 @@
             </div>
 
             <!-- Quick Wallet for Mobile -->
-            <a href="{{ route('customer.topup') }}" class="badge text-bg-dark border border-secondary text-decoration-none py-2 px-2.5 d-flex align-items-center gap-1">
+            <a href="{{ route('customer.topup') }}" class="badge text-bg-dark border border-secondary text-decoration-none py-2 px-2.5 d-flex align-items-center gap-1 fs-7">
                 <span class="text-warning fw-bold">฿</span>
                 <span class="fw-bold">{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
             </a>
@@ -27,26 +27,26 @@
         <aside class="bs-sidebar d-none d-lg-flex flex-column position-fixed top-0 bottom-0 start-0 z-3 p-3 overflow-y-auto">
             <!-- Brand -->
             <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-white mb-3 px-1">
-                <div class="rounded-3 bg-danger d-flex align-items-center justify-center fw-bold text-white" style="width: 34px; height: 34px; font-size: 14px; line-height: 1;">
+                <div class="rounded-3 bg-danger d-flex align-items-center justify-center fw-bold text-white" style="width: 36px; height: 36px; font-size: 15px; line-height: 1;">
                     LP
                 </div>
                 <div class="lh-sm">
                     <div class="fw-black fs-6 tracking-wide">LETSPLAY <span class="text-danger">GAMING</span></div>
-                    <small class="text-secondary" style="font-size: 10px;">Cyber Cafe & Lounge</small>
+                    <small class="text-secondary" style="font-size: 12px;">Cyber Cafe & Lounge</small>
                 </div>
             </a>
 
             <!-- Wallet Widget -->
             <div class="bs-card p-3 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <small class="text-secondary fw-semibold" style="font-size: 11px;">ยอดเงินในกระเป๋า</small>
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 9px;">WALLET</span>
+                    <small class="text-secondary fw-semibold">ยอดเงินในกระเป๋า</small>
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 11px;">WALLET</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-baseline">
                     <span class="fs-5 fw-bold text-white font-monospace">
                         ฿{{ number_format(auth()->user()->balance ?? 0, 2) }}
                     </span>
-                    <a href="{{ route('customer.topup') }}" class="text-danger text-decoration-none fw-semibold" style="font-size: 11px;">
+                    <a href="{{ route('customer.topup') }}" class="text-danger text-decoration-none fw-semibold small">
                         + เติมเงิน
                     </a>
                 </div>
@@ -54,33 +54,33 @@
 
             <!-- Nav Links -->
             <nav class="nav flex-column gap-1 flex-grow-1">
-                <div class="text-secondary text-uppercase fw-bold px-2 pt-2 pb-1" style="font-size: 10px; letter-spacing: 0.05em;">
-                    บริการลูกค้า (Customer)
+                <div class="text-secondary text-uppercase fw-bold px-2 pt-2 pb-1" style="font-size: 11px; letter-spacing: 0.05em;">
+                    บริการลูกค้า
                 </div>
 
                 <a href="{{ route('dashboard') }}" class="bs-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2 fs-6"></i>
-                    <span>แดชบอร์ดส่วนตัว</span>
+                    <span>แดชบอร์ด</span>
                 </a>
 
                 <a href="{{ route('customer.seat-map') }}" class="bs-nav-link {{ request()->routeIs('customer.seat-map') ? 'active' : '' }}">
                     <i class="bi bi-display fs-6"></i>
-                    <span>ผังที่นั่ง (Seat Map)</span>
+                    <span>เลือกที่นั่ง (Seat Map)</span>
                 </a>
 
                 <a href="{{ route('customer.food-order') }}" class="bs-nav-link {{ request()->routeIs('customer.food-order') ? 'active' : '' }}">
                     <i class="bi bi-cup-hot fs-6"></i>
-                    <span>สั่งอาหาร/เครื่องดื่ม</span>
+                    <span>สั่งอาหารและเครื่องดื่ม</span>
                 </a>
 
                 <a href="{{ route('customer.topup') }}" class="bs-nav-link {{ request()->routeIs('customer.topup') ? 'active' : '' }}">
                     <i class="bi bi-wallet2 fs-6"></i>
-                    <span>เติมเงิน / ซื้อแพ็กเกจ</span>
+                    <span>เติมเงิน / แพ็กเกจเวลา</span>
                 </a>
 
                 @if (auth()->user()->isStaff())
-                    <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1" style="font-size: 10px; letter-spacing: 0.05em;">
-                        ระบบจัดการร้าน (Staff & Admin)
+                    <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1" style="font-size: 11px; letter-spacing: 0.05em;">
+                        จัดการร้าน (เจ้าหน้าที่)
                     </div>
 
                     <a href="{{ route('staff.seat-monitor') }}" class="bs-nav-link {{ request()->routeIs('staff.seat-monitor') ? 'active' : '' }}">
@@ -112,15 +112,15 @@
             <!-- Desktop User Dropdown -->
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3 hover-bg-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold me-2" style="width: 32px; height: 32px; font-size: 12px;">
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-center text-white fw-bold me-2" style="width: 34px; height: 34px; font-size: 13px;">
                         {{ auth()->user()->initials() ?? 'U' }}
                     </div>
                     <div class="overflow-hidden lh-sm me-auto">
-                        <div class="text-truncate fw-bold text-white" style="font-size: 13px;">{{ auth()->user()->name }}</div>
-                        <small class="text-secondary text-truncate d-block" style="font-size: 11px;">{{ auth()->user()->email }}</small>
+                        <div class="text-truncate fw-bold text-white" style="font-size: 14px;">{{ auth()->user()->name }}</div>
+                        <small class="text-secondary text-truncate d-block" style="font-size: 12px;">{{ auth()->user()->email }}</small>
                     </div>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary-subtle" style="font-size: 13px;">
+                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary-subtle">
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
                             <i class="bi bi-gear"></i> การตั้งค่าโปรไฟล์
@@ -152,24 +152,24 @@
                 <!-- Mobile Wallet Card -->
                 <div class="bs-card p-3 mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <small class="text-secondary" style="font-size: 11px;">ยอดเงินในกระเป๋า</small>
-                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 9px;">WALLET</span>
+                        <small class="text-secondary">ยอดเงินในกระเป๋า</small>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 11px;">WALLET</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-baseline">
                         <span class="fs-5 fw-bold text-white font-monospace">฿{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
-                        <a href="{{ route('customer.topup') }}" class="text-danger text-decoration-none fw-semibold" style="font-size: 11px;">+ เติมเงิน</a>
+                        <a href="{{ route('customer.topup') }}" class="text-danger text-decoration-none fw-semibold small">+ เติมเงิน</a>
                     </div>
                 </div>
 
                 <nav class="nav flex-column gap-1 flex-grow-1">
-                    <div class="text-secondary text-uppercase fw-bold px-2 pt-1 pb-1" style="font-size: 10px;">บริการลูกค้า</div>
+                    <div class="text-secondary text-uppercase fw-bold px-2 pt-1 pb-1" style="font-size: 11px;">บริการลูกค้า</div>
                     <a href="{{ route('dashboard') }}" class="bs-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><i class="bi bi-speedometer2"></i> แดชบอร์ด</a>
-                    <a href="{{ route('customer.seat-map') }}" class="bs-nav-link {{ request()->routeIs('customer.seat-map') ? 'active' : '' }}"><i class="bi bi-display"></i> ผังที่นั่ง</a>
-                    <a href="{{ route('customer.food-order') }}" class="bs-nav-link {{ request()->routeIs('customer.food-order') ? 'active' : '' }}"><i class="bi bi-cup-hot"></i> สั่งอาหาร</a>
-                    <a href="{{ route('customer.topup') }}" class="bs-nav-link {{ request()->routeIs('customer.topup') ? 'active' : '' }}"><i class="bi bi-wallet2"></i> เติมเงิน/แพ็กเกจ</a>
+                    <a href="{{ route('customer.seat-map') }}" class="bs-nav-link {{ request()->routeIs('customer.seat-map') ? 'active' : '' }}"><i class="bi bi-display"></i> เลือกที่นั่ง</a>
+                    <a href="{{ route('customer.food-order') }}" class="bs-nav-link {{ request()->routeIs('customer.food-order') ? 'active' : '' }}"><i class="bi bi-cup-hot"></i> สั่งอาหารและเครื่องดื่ม</a>
+                    <a href="{{ route('customer.topup') }}" class="bs-nav-link {{ request()->routeIs('customer.topup') ? 'active' : '' }}"><i class="bi bi-wallet2"></i> เติมเงิน / แพ็กเกจ</a>
 
                     @if (auth()->user()->isStaff())
-                        <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1" style="font-size: 10px;">จัดการร้าน</div>
+                        <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1" style="font-size: 11px;">จัดการร้าน</div>
                         <a href="{{ route('staff.seat-monitor') }}" class="bs-nav-link {{ request()->routeIs('staff.seat-monitor') ? 'active' : '' }}"><i class="bi bi-grid-3x3-gap"></i> มอนิเตอร์ที่นั่ง</a>
                         <a href="{{ route('staff.kitchen-queue') }}" class="bs-nav-link {{ request()->routeIs('staff.kitchen-queue') ? 'active' : '' }}"><i class="bi bi-fire"></i> คิวห้องครัว</a>
                         @if (auth()->user()->isAdmin())
@@ -183,8 +183,8 @@
 
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="fw-bold text-white" style="font-size: 13px;">{{ auth()->user()->name }}</div>
-                        <small class="text-secondary" style="font-size: 11px;">{{ auth()->user()->email }}</small>
+                        <div class="fw-bold text-white">{{ auth()->user()->name }}</div>
+                        <small class="text-secondary">{{ auth()->user()->email }}</small>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -196,12 +196,9 @@
             </div>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="flex-grow-1" style="margin-left: 0;">
-            <div class="d-none d-lg-block" style="width: 260px; float: left; height: 1px;"></div>
-            <div style="min-height: 100vh;">
-                {{ $slot }}
-            </div>
+        <!-- Main Content Area with Proper Margin Offset for Desktop Sidebar -->
+        <div class="bs-main-layout flex-grow-1 d-flex flex-column min-vh-100">
+            {{ $slot }}
         </div>
 
         @persist('toast')

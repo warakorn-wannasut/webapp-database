@@ -115,13 +115,13 @@
 
         <!-- Quick Filter Pills -->
         <div class="d-flex gap-2 overflow-x-auto pb-2 mb-4 text-nowrap">
-            <button class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">🔥 ยอดนิยมทั้งหมด</button>
-            <a href="{{ route('customer.seat-map') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3">🖥️ ผังโซนคอมพิวเตอร์</a>
-            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3">🍳 อาหารตามสั่ง & กะเพรา</a>
-            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3">🍜 มาม่าต้มยำ & ไวไว</a>
-            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3">🥔 ขนม เลย์ & ของทานเล่น</a>
-            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3">🥤 นมสด ชาไทย & โค้ก</a>
-            <a href="{{ route('customer.topup') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3">⚡ แพ็กเกจชั่วโมงสุดคุ้ม</a>
+            <button class="btn btn-danger btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-fire me-1"></i> ยอดนิยมทั้งหมด</button>
+            <a href="{{ route('customer.seat-map') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-display me-1"></i> ผังโซนคอมพิวเตอร์</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-egg-fried me-1"></i> อาหารตามสั่ง</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-cup-hot me-1"></i> บะหมี่และมาม่า</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-bag me-1"></i> ขนมและของทานเล่น</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-cup-straw me-1"></i> เครื่องดื่ม</a>
+            <a href="{{ route('customer.topup') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-clock-history me-1"></i> แพ็กเกจชั่วโมง</a>
         </div>
 
         <!-- Section 1: PC Zones -->
@@ -225,8 +225,8 @@
                 <div class="col">
                     <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
                         <div>
-                            <div class="display-6 mb-2">🍜</div>
-                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 9px;">ฮิตตลอดกาล</span>
+                            <div class="fs-1 text-danger mb-2"><i class="bi bi-cup-hot"></i></div>
+                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 10px;">เมนูยอดฮิต</span>
                             <div class="fw-bold text-truncate text-white small">มาม่าต้มยำหมูสับ</div>
                             <small class="text-secondary d-block" style="font-size: 11px;">ต้มยำน้ำข้นไข่เยิ้ม</small>
                         </div>
@@ -241,8 +241,8 @@
                 <div class="col">
                     <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
                         <div>
-                            <div class="display-6 mb-2">🍳</div>
-                            <span class="badge bg-warning-subtle text-warning mb-1" style="font-size: 9px;">ขายดีอันดับ 1</span>
+                            <div class="fs-1 text-warning mb-2"><i class="bi bi-egg-fried"></i></div>
+                            <span class="badge bg-warning-subtle text-warning mb-1" style="font-size: 10px;">ขายดีอันดับ 1</span>
                             <div class="fw-bold text-truncate text-white small">ข้าวกะเพราหมูสับ</div>
                             <small class="text-secondary d-block" style="font-size: 11px;">โปะไข่ดาวกรอบ</small>
                         </div>
@@ -257,8 +257,8 @@
                 <div class="col">
                     <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
                         <div>
-                            <div class="display-6 mb-2">🍛</div>
-                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 9px;">เมนูโปรด</span>
+                            <div class="fs-1 text-danger mb-2"><i class="bi bi-basket2"></i></div>
+                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 10px;">เมนูโปรด</span>
                             <div class="fw-bold text-truncate text-white small">ข้าวหมูกระเทียม</div>
                             <small class="text-secondary d-block" style="font-size: 11px;">หอมเจียวกรอบ</small>
                         </div>
@@ -273,8 +273,8 @@
                 <div class="col">
                     <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
                         <div>
-                            <div class="display-6 mb-2">🥔</div>
-                            <span class="badge bg-success-subtle text-success mb-1" style="font-size: 9px;">ขนมยอดฮิต</span>
+                            <div class="fs-1 text-success mb-2"><i class="bi bi-bag"></i></div>
+                            <span class="badge bg-success-subtle text-success mb-1" style="font-size: 10px;">ขนมยอดฮิต</span>
                             <div class="fw-bold text-truncate text-white small">เลย์ โนริสาหร่าย</div>
                             <small class="text-secondary d-block" style="font-size: 11px;">ซองใหญ่กรอบเพลิน</small>
                         </div>
@@ -289,8 +289,8 @@
                 <div class="col">
                     <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
                         <div>
-                            <div class="display-6 mb-2">🌭</div>
-                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 9px;">ของทอดในตำนาน</span>
+                            <div class="fs-1 text-danger mb-2"><i class="bi bi-box2"></i></div>
+                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 10px;">ของทอด</span>
                             <div class="fw-bold text-truncate text-white small">ไส้กรอกแดงทอด</div>
                             <small class="text-secondary d-block" style="font-size: 11px;">จิ้มน้ำจิ้มมะขาม</small>
                         </div>
@@ -305,8 +305,8 @@
                 <div class="col">
                     <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
                         <div>
-                            <div class="display-6 mb-2">🧋</div>
-                            <span class="badge bg-warning-subtle text-warning mb-1" style="font-size: 9px;">เย็นชื่นใจ</span>
+                            <div class="fs-1 text-warning mb-2"><i class="bi bi-cup-straw"></i></div>
+                            <span class="badge bg-warning-subtle text-warning mb-1" style="font-size: 10px;">เย็นชื่นใจ</span>
                             <div class="fw-bold text-truncate text-white small">ชาไทยเย็นเข้มข้น</div>
                             <small class="text-secondary d-block" style="font-size: 11px;">แก้วใหญ่ 22 ออนซ์</small>
                         </div>
@@ -327,7 +327,7 @@
                     <h3 class="h6 fw-bold text-white m-0">บัญชีสำหรับทดสอบระบบร้านเกม (Seeded Accounts)</h3>
                 </div>
                 <span class="badge bg-warning-subtle text-warning border border-warning-subtle font-monospace">
-                    🔑 รหัสผ่านทุกบัญชี: password
+                    <i class="bi bi-key me-1"></i> รหัสผ่านทุกบัญชี: password
                 </span>
             </div>
 

@@ -29,7 +29,7 @@ class SeatController extends Controller
             ->first();
 
         // 3. ดึงรายการแพ็กเกจที่ลูกค้าซื้อไว้และยังไม่หมดเวลา
-        $availablePackages = UserPackage::with('package')
+        $availablePackages = UserPackage::with('package.zone')
             ->where('user_id', $user->id)
             ->where('remaining_minutes', '>', 0)
             ->where(function ($query) {
@@ -65,7 +65,7 @@ class SeatController extends Controller
         }
 
         // 2. ตรวจสอบสถานะของที่นั่ง
-        $seat = Seat::find($seatId);
+        $seat = Seat::with('zone')->find($seatId);
         if ($seat == null) {
             return redirect()->back()->with('error', 'ไม่พบข้อมูลที่นั่ง');
         }
@@ -82,7 +82,7 @@ class SeatController extends Controller
                 return redirect()->back()->with('error', 'กรุณาเลือกแพ็กเกจที่ต้องการใช้งาน');
             }
 
-            $userPackage = UserPackage::where('id', $userPackageId)
+            $userPackage = UserPackage::with('package.zone')->where('id', $userPackageId)
                 ->where('user_id', $user->id)
                 ->first();
 
@@ -96,6 +96,13 @@ class SeatController extends Controller
 
             if ($userPackage->isExpired()) {
                 return redirect()->back()->with('error', 'แพ็กเกจนี้หมดอายุแล้ว');
+            }
+
+            // ตรวจสอบโซนของแพ็กเกจว่าตรงกับโซนของที่นั่งหรือไม่
+            if ($userPackage->package && $userPackage->package->zone_id !== null && $userPackage->package->zone_id !== $seat->zone_id) {
+                $pkgZoneName = $userPackage->package->zone ? $userPackage->package->zone->name : 'โซนอื่น';
+                $seatZoneName = $seat->zone ? $seat->zone->name : 'โซนนี้';
+                return redirect()->back()->with('error', "แพ็กเกจนี้ใช้ได้เฉพาะกับโซน {$pkgZoneName} เท่านั้น ไม่สามารถนำมาใช้กับ {$seatZoneName} ได้");
             }
 
             $selectedPackageId = $userPackage->id;

@@ -89,25 +89,33 @@
                                     </div>
 
                                     @if ($session)
-                                        <div class="pt-2 border-top border-secondary-subtle small d-flex flex-column gap-1">
+                                        <div class="pt-2 border-top border-secondary-subtle small d-flex flex-column gap-1.5">
                                             <div class="d-flex justify-content-between">
                                                 <span class="text-secondary">ผู้เล่น:</span>
-                                                <strong class="text-white text-truncate" style="max-width: 110px;">{{ $session->user->name }}</strong>
+                                                <strong class="text-white text-truncate" style="max-width: 120px;">{{ $session->user->name }}</strong>
                                             </div>
                                             <div class="d-flex justify-content-between">
-                                                <span class="text-secondary">เวลาเล่น:</span>
-                                                <strong class="text-light font-monospace">{{ $elapsedMins }} นาที</strong>
+                                                <span class="text-secondary">เล่นไปแล้ว:</span>
+                                                <strong class="text-light font-monospace">{{ \App\Models\UserPackage::formatMinutes($elapsedMins) }}</strong>
                                             </div>
                                             <div class="d-flex justify-content-between">
                                                 <span class="text-secondary">โหมด:</span>
                                                 @if($session->userPackage)
-                                                    <strong class="text-danger text-truncate" style="max-width: 110px;">{{ $session->userPackage->package->name }}</strong>
+                                                    <strong class="text-danger text-truncate" style="max-width: 120px;" title="{{ $session->userPackage->package->name }}">
+                                                        {{ $session->userPackage->package->name }}
+                                                    </strong>
                                                 @else
-                                                    <strong class="text-warning">Pay-as-you-go</strong>
+                                                    <strong class="text-warning">Pay as you go</strong>
                                                 @endif
                                             </div>
+                                            @if($session->userPackage)
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="text-secondary">แพ็กเกจคงเหลือ:</span>
+                                                    <strong class="text-danger font-monospace">{{ $session->userPackage->formattedRemainingTime() }}</strong>
+                                                </div>
+                                            @endif
                                             <div class="d-flex justify-content-between">
-                                                <span class="text-secondary">Wallet:</span>
+                                                <span class="text-secondary">ยอดเงินในบัญชี:</span>
                                                 <strong class="text-warning font-monospace">฿{{ number_format($session->user->balance, 2) }}</strong>
                                             </div>
                                         </div>

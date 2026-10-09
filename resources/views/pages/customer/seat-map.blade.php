@@ -2,13 +2,13 @@
     <div class="d-flex flex-column gap-4">
         <!-- Notifications -->
         @if (session()->has('success'))
-            <div class="alert alert-success d-flex align-items-center gap-2 border-success-subtle bg-success-subtle text-success py-3 px-4 rounded-3 m-0">
+            <div class="alert alert-success d-flex align-items-center gap-2 border-success-subtle bg-success-subtle text-success py-3 px-4 rounded-3 m-0 shadow-sm">
                 <i class="bi bi-check-circle-fill fs-5"></i>
                 <div>{{ session('success') }}</div>
             </div>
         @endif
         @if (session()->has('error'))
-            <div class="alert alert-danger d-flex align-items-center gap-2 border-danger-subtle bg-danger-subtle text-danger py-3 px-4 rounded-3 m-0">
+            <div class="alert alert-danger d-flex align-items-center gap-2 border-danger-subtle bg-danger-subtle text-danger py-3 px-4 rounded-3 m-0 shadow-sm">
                 <i class="bi bi-exclamation-triangle-fill fs-5"></i>
                 <div>{{ session('error') }}</div>
             </div>
@@ -21,21 +21,21 @@
                     <span class="bg-danger rounded" style="width: 4px; height: 24px;"></span>
                     <h2 class="h4 fw-bold text-white m-0">ผังที่นั่งคอมพิวเตอร์ (Seat Map)</h2>
                 </div>
-                <small class="text-secondary ps-3">เลือกเครื่องคอมพิวเตอร์ที่ว่างเพื่อเริ่มต้นใช้งาน (Check-in)</small>
+                <small class="text-secondary ps-3">เลือกเครื่องคอมพิวเตอร์ที่ว่างเพื่อเริ่มใช้งาน</small>
             </div>
 
-            <div class="d-flex flex-wrap align-items-center gap-2 small">
-                <div class="badge bg-dark-subtle border border-secondary-subtle text-success d-flex align-items-center gap-1.5 py-1.5 px-2.5">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <div class="badge bg-dark-subtle border border-secondary-subtle text-success d-flex align-items-center gap-2 py-2 px-3">
                     <span class="badge bg-success rounded-circle p-1"></span>
-                    <span>ว่าง (Available)</span>
+                    <span>ว่างพร้อมใช้งาน</span>
                 </div>
-                <div class="badge bg-dark-subtle border border-secondary-subtle text-danger d-flex align-items-center gap-1.5 py-1.5 px-2.5">
+                <div class="badge bg-dark-subtle border border-secondary-subtle text-danger d-flex align-items-center gap-2 py-2 px-3">
                     <span class="badge bg-danger rounded-circle p-1"></span>
-                    <span>มีผู้ใช้งาน (Occupied)</span>
+                    <span>มีผู้ใช้งานอยู่</span>
                 </div>
-                <div class="badge bg-dark-subtle border border-secondary-subtle text-secondary d-flex align-items-center gap-1.5 py-1.5 px-2.5">
+                <div class="badge bg-dark-subtle border border-secondary-subtle text-secondary d-flex align-items-center gap-2 py-2 px-3">
                     <span class="badge bg-secondary rounded-circle p-1"></span>
-                    <span>ปรับปรุง (Maintenance)</span>
+                    <span>ปิดปรับปรุง</span>
                 </div>
             </div>
         </div>
@@ -45,11 +45,11 @@
                 <div class="d-flex align-items-center gap-2">
                     <span class="spinner-grow spinner-grow-sm text-warning" style="width: 10px; height: 10px;"></span>
                     <span class="small fw-semibold">
-                        ขณะนี้คุณกำลังเปิดใช้งานเครื่อง <strong class="text-white text-decoration-underline">{{ $activeSession->seat->seat_number }}</strong> อยู่
+                        คุณกำลังเปิดใช้งานเครื่อง <strong class="text-white text-decoration-underline">{{ $activeSession->seat->seat_number }}</strong> อยู่
                     </span>
                 </div>
                 <a href="{{ route('dashboard') }}" class="btn btn-warning btn-sm fw-bold px-3 rounded-pill">
-                    ดูแดชบอร์ดเครื่อง <i class="bi bi-arrow-right"></i>
+                    กลับไปที่แดชบอร์ด <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
         @endif
@@ -65,8 +65,8 @@
                             <small class="text-secondary">{{ $zone->description }}</small>
                         </div>
                     </div>
-                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle align-self-start align-self-sm-auto">
-                        ฿{{ number_format($zone->hourly_rate, 2) }} / ชม.
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-7 py-1.5 px-3">
+                        <i class="bi bi-tag me-1"></i> ฿{{ number_format($zone->hourly_rate, 2) }} / ชั่วโมง
                     </span>
                 </div>
 
@@ -79,7 +79,7 @@
                         <div class="col">
                             <div
                                 @if ($seat->isAvailable() && ! $activeSession)
-                                    onclick="openCheckInModal({{ $seat->id }}, '{{ $seat->seat_number }}', '{{ $zone->name }}', {{ $zone->hourly_rate }})"
+                                    onclick="openCheckInModal({{ $seat->id }}, '{{ $seat->seat_number }}', {{ $zone->id }}, '{{ $zone->name }}', {{ $zone->hourly_rate }})"
                                     role="button"
                                 @endif
                                 class="card text-center p-3 rounded-4 transition h-100 d-flex flex-column align-items-center justify-content-between
@@ -95,7 +95,7 @@
                                     @endif
                                 "
                             >
-                                <div class="rounded-3 d-flex align-items-center justify-center mb-2 fs-4
+                                <div class="rounded-3 d-flex align-items-center justify-center mb-2 fs-3
                                     @if($isCurrent) text-warning
                                     @elseif($seat->status === 'available') text-success
                                     @elseif($seat->status === 'occupied') text-danger
@@ -115,9 +115,9 @@
                                     @elseif($seat->status === 'occupied') text-danger
                                     @else text-secondary
                                     @endif
-                                " style="font-size: 11px;">
+                                ">
                                     @if($isCurrent) เครื่องของคุณ
-                                    @elseif($seat->status === 'available') กดเพื่อเปิดเครื่อง
+                                    @elseif($seat->status === 'available') คลิกเพื่อเปิดเครื่อง
                                     @elseif($seat->status === 'occupied') ไม่ว่าง
                                     @else ปรับปรุง
                                     @endif
@@ -136,7 +136,7 @@
                     <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle pb-3 mb-3">
                         <div class="d-flex align-items-center gap-2" id="checkInModalLabel">
                             <span class="bg-danger rounded" style="width: 4px; height: 20px;"></span>
-                            <h3 class="h5 fw-bold text-white m-0">ยืนยันการเปิดเครื่อง (Check-in)</h3>
+                            <h3 class="h5 fw-bold text-white m-0">ยืนยันการเปิดเครื่อง</h3>
                         </div>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -146,54 +146,65 @@
                         <input type="hidden" name="seat_id" id="modalSeatId" value="">
 
                         <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3 small">
-                            <div class="d-flex justify-content-between mb-1">
+                            <div class="d-flex justify-content-between mb-1.5">
                                 <span class="text-secondary">หมายเลขเครื่อง:</span>
                                 <strong class="text-white fs-6 font-monospace" id="modalSeatNumber">-</strong>
                             </div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="text-secondary">โซนที่นั่ง:</span>
+                            <div class="d-flex justify-content-between mb-1.5">
+                                <span class="text-secondary">โซนบริการ:</span>
                                 <strong class="text-danger" id="modalZoneName">-</strong>
                             </div>
-                            <div class="d-flex justify-content-between mb-1">
+                            <div class="d-flex justify-content-between mb-1.5">
                                 <span class="text-secondary">อัตราค่าบริการปกติ:</span>
                                 <strong class="text-success font-monospace" id="modalHourlyRate">-</strong>
                             </div>
                             <div class="d-flex justify-content-between pt-2 border-top border-secondary-subtle mt-2">
-                                <span class="text-secondary">ยอดเงินคงเหลือของคุณ:</span>
+                                <span class="text-secondary">ยอดเงินในกระเป๋าของคุณ:</span>
                                 <strong class="text-warning font-monospace fs-6">฿{{ number_format(auth()->user()->balance ?? 0, 2) }}</strong>
                             </div>
                         </div>
 
                         <!-- Choose Billing Mode -->
                         <div>
-                            <label class="form-label text-secondary small fw-bold text-uppercase" style="font-size: 11px;">เลือกรูปแบบการคิดค่าบริการ:</label>
+                            <label class="form-label text-secondary small fw-bold text-uppercase">เลือกรูปแบบการชำระเงิน:</label>
 
                             <div class="d-flex flex-column gap-2">
                                 <label class="form-check p-3 rounded-3 border border-secondary-subtle bg-dark-subtle d-flex align-items-start gap-2 cursor-pointer transition">
                                     <input type="radio" name="billing_mode" value="pay_as_you_go" checked onchange="togglePackageSelect(false)" class="form-check-input mt-1">
                                     <div>
-                                        <strong class="text-white small d-block">Pay-as-you-go (ตัดเงินตามจริงจาก Wallet)</strong>
-                                        <small class="text-secondary" style="font-size: 11px;">คิดเงินตามนาทีที่เล่นจริงและหักจาก Wallet เมื่อกดออกจากเครื่อง</small>
+                                        <strong class="text-white small d-block">
+                                            <i class="bi bi-wallet2 me-1 text-danger"></i> จ่ายตามจริง (Pay as you go)
+                                        </strong>
+                                        <small class="text-secondary">หักเงินจากกระเป๋าเงินตามระยะเวลาที่เล่นจริงเมื่อสิ้นสุดการใช้งาน</small>
                                     </div>
                                 </label>
 
                                 <label class="form-check p-3 rounded-3 border border-secondary-subtle bg-dark-subtle d-flex align-items-start gap-2 cursor-pointer transition">
                                     <input type="radio" name="billing_mode" value="package" onchange="togglePackageSelect(true)" class="form-check-input mt-1">
                                     <div class="w-100">
-                                        <strong class="text-white small d-block">ใช้แพ็กเกจชั่วโมงสะสม</strong>
-                                        <small class="text-secondary d-block mb-2" style="font-size: 11px;">หักเวลาจากแพ็กเกจชั่วโมงที่คุณซื้อไว้ล่วงหน้า</small>
+                                        <strong class="text-white small d-block">
+                                            <i class="bi bi-clock-history me-1 text-danger"></i> ใช้แพ็กเกจชั่วโมงประจำโซน
+                                        </strong>
+                                        <small class="text-secondary d-block mb-2">หักเวลาจากแพ็กเกจชั่วโมงที่คุณซื้อไว้สำหรับโซนนี้</small>
 
                                         <div id="packageSelectContainer" class="d-none">
                                             @if ($availablePackages->isEmpty())
-                                                <div class="alert alert-danger p-2 small m-0" style="font-size: 11px;">
-                                                    คุณยังไม่มีแพ็กเกจชั่วโมงสะสม กรุณาเลือก Pay-as-you-go หรือไปซื้อแพ็กเกจก่อน
+                                                <div class="alert alert-danger p-2.5 small m-0">
+                                                    คุณยังไม่มีแพ็กเกจชั่วโมง สามารถเลือกเล่นแบบคิดตามจริง หรือไปซื้อแพ็กเกจได้ที่หน้าเติมเงิน
                                                 </div>
                                             @else
-                                                <select name="user_package_id" class="form-select form-select-sm bg-dark border-secondary-subtle text-light">
-                                                    <option value="">-- กรุณาเลือกแพ็กเกจ --</option>
+                                                <div id="noZonePackageWarning" class="alert alert-warning p-2.5 small m-0 d-none">
+                                                    ไม่มีแพ็กเกจชั่วโมงสำหรับโซนนี้ (สามารถเล่นแบบคิดตามจริง หรือซื้อแพ็กเกจเพิ่มได้)
+                                                </div>
+                                                <select name="user_package_id" id="userPackageSelect" class="form-select form-select-sm bg-dark border-secondary-subtle text-light">
+                                                    <option value="">-- เลือกแพ็กเกจที่ต้องการใช้งาน --</option>
                                                     @foreach ($availablePackages as $upkg)
-                                                        <option value="{{ $upkg->id }}">
-                                                            {{ $upkg->package->name }} (เหลือ {{ $upkg->remaining_minutes }} นาที)
+                                                        <option
+                                                            value="{{ $upkg->id }}"
+                                                            data-zone-id="{{ $upkg->package->zone_id ?? '' }}"
+                                                            data-zone-name="{{ $upkg->package->zone->name ?? 'ทุกโซน' }}"
+                                                        >
+                                                            {{ $upkg->package->name }} (เหลือ {{ $upkg->formattedRemainingTime() }})
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -208,8 +219,8 @@
                             <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">
                                 ยกเลิก
                             </button>
-                            <button type="submit" class="btn btn-danger btn-sm px-4 fw-bold rounded-pill">
-                                🚀 ยืนยันเปิดเครื่อง
+                            <button type="submit" id="submitCheckInBtn" class="btn btn-danger btn-sm px-4 fw-bold rounded-pill">
+                                <i class="bi bi-power me-1"></i> เริ่มต้นใช้งานเครื่อง
                             </button>
                         </div>
                     </form>
@@ -219,20 +230,66 @@
     </div>
 
     <script>
-        function openCheckInModal(seatId, seatNumber, zoneName, hourlyRate) {
+        let currentSeatZoneId = null;
+
+        function openCheckInModal(seatId, seatNumber, zoneId, zoneName, hourlyRate) {
+            currentSeatZoneId = zoneId;
             document.getElementById('modalSeatId').value = seatId;
             document.getElementById('modalSeatNumber').innerText = seatNumber;
             document.getElementById('modalZoneName').innerText = zoneName;
-            document.getElementById('modalHourlyRate').innerText = '฿' + Number(hourlyRate).toFixed(2) + ' / ชม.';
+            document.getElementById('modalHourlyRate').innerText = '฿' + Number(hourlyRate).toFixed(2) + ' / ชั่วโมง';
+
+            filterPackagesForZone(zoneId);
+
             const modalEl = document.getElementById('checkInModal');
             const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
             modal.show();
         }
 
+        function filterPackagesForZone(zoneId) {
+            const select = document.getElementById('userPackageSelect');
+            const warning = document.getElementById('noZonePackageWarning');
+            if (!select) return;
+
+            let matchingCount = 0;
+            const options = select.querySelectorAll('option');
+
+            options.forEach(opt => {
+                if (opt.value === '') {
+                    opt.style.display = '';
+                    return;
+                }
+                const optZoneId = opt.getAttribute('data-zone-id');
+                if (!optZoneId || Number(optZoneId) === Number(zoneId)) {
+                    opt.style.display = '';
+                    matchingCount++;
+                } else {
+                    opt.style.display = 'none';
+                    if (opt.selected) {
+                        select.value = '';
+                    }
+                }
+            });
+
+            if (warning) {
+                if (matchingCount === 0) {
+                    warning.classList.remove('d-none');
+                    select.classList.add('d-none');
+                } else {
+                    warning.classList.add('d-none');
+                    select.classList.remove('d-none');
+                }
+            }
+        }
+
         function togglePackageSelect(isPackage) {
             const container = document.getElementById('packageSelectContainer');
+            if (!container) return;
             if (isPackage) {
                 container.classList.remove('d-none');
+                if (currentSeatZoneId) {
+                    filterPackagesForZone(currentSeatZoneId);
+                }
             } else {
                 container.classList.add('d-none');
             }

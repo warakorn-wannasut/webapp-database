@@ -30,4 +30,26 @@ class Package extends Model
     {
         return $this->hasMany(UserPackage::class);
     }
+
+    public function normalPrice(): ?float
+    {
+        if ($this->zone) {
+            return (float) $this->zone->hourly_rate * $this->duration_hours;
+        }
+        return null;
+    }
+
+    public function savingsAmount(): ?float
+    {
+        $normal = $this->normalPrice();
+        if ($normal !== null) {
+            return max(0.0, round($normal - (float) $this->price, 2));
+        }
+        return null;
+    }
+
+    public function formattedDuration(): string
+    {
+        return UserPackage::formatMinutes($this->duration_hours * 60);
+    }
 }

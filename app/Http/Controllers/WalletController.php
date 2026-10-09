@@ -17,13 +17,18 @@ class WalletController extends Controller
     {
         $user = Auth::user();
 
-        // 1. ดึงรายการแพ็กเกจทั้งหมดที่มีในร้าน
+        // 1. ดึงข้อมูลโซนพร้อมแพ็กเกจของแต่ละโซน
+        $zones = \App\Models\Zone::with('packages')->get();
         $packages = Package::with('zone')->get();
 
         // 2. ดึงรายการแพ็กเกจที่ผู้ใช้ซื้อไว้และยังมีเวลาเหลือ
-        $userPackages = UserPackage::with('package')
+        $userPackages = UserPackage::with('package.zone')
             ->where('user_id', $user->id)
             ->where('remaining_minutes', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('expired_at')
+                    ->orWhere('expired_at', '>', Carbon::now());
+            })
             ->latest()
             ->get();
 
@@ -35,7 +40,7 @@ class WalletController extends Controller
 
         $myPackages = $userPackages;
 
-        return view('pages.customer.topup', compact('user', 'packages', 'userPackages', 'myPackages', 'transactions'));
+        return view('pages.customer.topup', compact('user', 'zones', 'packages', 'userPackages', 'myPackages', 'transactions'));
     }
 
     // ฟังก์ชันเติมเงินเข้ากระเป๋าเงิน (Wallet)
@@ -115,6 +120,8 @@ class WalletController extends Controller
             'expired_at' => Carbon::now()->addDays(30),
         ]);
 
-        return redirect()->back()->with('success', 'ซื้อแพ็กเกจ ' . $package->name . ' สำเร็จ! ได้รับเวลา ' . $totalMinutes . ' นาที');
+        $zoneName = $package->zone ? $package->zone->name : 'ทุกโซน';
+        $formattedDuration = UserPackage::formatMinutes($totalMinutes);
+        return redirect()->back()->with('success', "ซื้อแพ็กเกจ {$package->name} สำเร็จ ได้รับเวลา {$formattedDuration} สำหรับใช้งานในโซน {$zoneName}");
     }
 }
