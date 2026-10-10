@@ -87,6 +87,25 @@ class GamingCafeTest extends TestCase
         ]);
     }
 
+    public function test_topup_rejects_invalid_amount(): void
+    {
+        $this->actingAs($this->user);
+
+        // ทดสอบส่งค่าน้อยกว่า 20 (เช่น 15 บาท)
+        $resLow = $this->post(route('customer.do-topup'), [
+            'amount' => 15,
+            'topup_method' => 'cash',
+        ]);
+        $resLow->assertSessionHasErrors('amount');
+
+        // ทดสอบส่งค่าเกิน 100,000
+        $resExcess = $this->post(route('customer.do-topup'), [
+            'amount' => 150000,
+            'topup_method' => 'cash',
+        ]);
+        $resExcess->assertSessionHasErrors('amount');
+    }
+
     public function test_buy_package_and_checkin_checkout_flow(): void
     {
         $now = Carbon::create(2026, 9, 18, 12, 0, 0);
@@ -246,14 +265,38 @@ class GamingCafeTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_package_overtime_deducts_from_wallet(): void
+    public function test_insufficient_balance_cannot_checkin_pay_as_you_go(): void
+    {
+        $this->actingAs($this->user);
+        // มีเงิน 10 บาท (น้อยกว่าขั้นต่ำ 20 บาท)
+        $this->user->update(['balance' => 10.00]);
+
+        $response = $this->from(route('customer.seat-map'))->post(route('customer.check-in'), [
+            'seat_id' => $this->seat->id,
+            'billing_mode' => 'pay_as_you_go',
+        ]);
+
+        $response->assertRedirect(route('customer.seat-map'));
+        $response->assertSessionHas('error');
+
+        $this->seat->refresh();
+        $this->assertEquals('available', $this->seat->status);
+
+        $session = SeatSession::where('user_id', $this->user->id)->where('status', 'active')->first();
+        $this->assertNull($session);
+
+        $this->user->refresh();
+        $this->assertEquals(10.00, (float) $this->user->balance);
+    }
+
+    public function test_package_session_ends_without_deducting_wallet_balance(): void
     {
         $now = Carbon::create(2026, 9, 18, 16, 0, 0);
         Carbon::setTestNow($now);
 
         $this->actingAs($this->user);
 
-        // ซื้อแพ็กเกจ
+        // ซื้อแพ็กเกจ (ราคา 100 บาท จากเงินเดิม 200 บาท เหลือ 100 บาท)
         $this->post(route('customer.buy-package'), [
             'package_id' => $this->package->id,
         ]);
@@ -268,21 +311,21 @@ class GamingCafeTest extends TestCase
             'user_package_id' => $userPkg->id,
         ]);
 
-        // จำลองเล่น 50 นาที (แพ็กเกจคลุม 30 นาที, เกิน 20 นาที = 20 บาท)
+        // จำลองเล่น 50 นาที (เกินเวลาแพ็กเกจ 30 นาที)
         Carbon::setTestNow($now->copy()->addMinutes(50));
 
         $this->post(route('customer.check-out'));
         $userPkg->refresh();
         $this->user->refresh();
 
+        // เวลาในแพ็กเกจถูกตัดเหลือ 0
         $this->assertEquals(0, $userPkg->remaining_minutes);
-        // เงินเดิม 200 - 100 (ค่าแพ็กเกจ) = 100. 100 - 20 (ค่าเวลาเกิน) = 80 บาท
-        $this->assertEquals(80.00, (float) $this->user->balance);
+        // เงินในกระเป๋าต้องคงเดิม 100 บาท ไม่มีการหักเงินเพิ่ม
+        $this->assertEquals(100.00, (float) $this->user->balance);
 
-        $this->assertDatabaseHas('wallet_transactions', [
+        // ต้องไม่มีการหักเงินค่าล่วงเวลา session_overtime
+        $this->assertDatabaseMissing('wallet_transactions', [
             'user_id' => $this->user->id,
-            'type' => 'deduct',
-            'amount' => 20.00,
             'ref_type' => 'session_overtime',
         ]);
 
@@ -332,5 +375,101 @@ class GamingCafeTest extends TestCase
 
         $responseAdmin = $this->get(route('admin.stock-manager'));
         $responseAdmin->assertStatus(403);
+    }
+
+    public function test_ordering_food_without_active_session_is_rejected(): void
+    {
+        $this->actingAs($this->user);
+
+        // สั่งอาหารโดยที่ยังไม่ได้เปิดเครื่อง (ไม่มี active session)
+        $res = $this->post(route('customer.place-order'), [
+            'seat_id' => $this->seat->id,
+            'items' => [
+                ['product_id' => $this->product->id, 'quantity' => 1],
+            ],
+            'payment_method' => 'wallet',
+        ]);
+
+        $res->assertSessionHas('error', 'คุณยังไม่ได้เปิดใช้งานเครื่องนี้ กรุณาเปิดเครื่องก่อนทำการสั่งอาหาร');
+        $this->assertEquals(10, $this->product->fresh()->stock_quantity);
+    }
+
+    public function test_auto_end_expired_package_session_deducts_and_frees_seat(): void
+    {
+        $this->actingAs($this->user);
+        $this->user->update(['balance' => 0.00]);
+
+        $userPkg = UserPackage::create([
+            'user_id' => $this->user->id,
+            'package_id' => $this->package->id,
+            'remaining_minutes' => 60,
+            'purchased_at' => Carbon::now()->subHours(2),
+        ]);
+
+        // เปิดเครื่องด้วยแพ็กเกจ 60 นาที แต่เล่นไปแล้ว 65 นาที และ balance = 0
+        $session = SeatSession::create([
+            'user_id' => $this->user->id,
+            'seat_id' => $this->seat->id,
+            'user_package_id' => $userPkg->id,
+            'start_time' => Carbon::now()->subMinutes(65),
+            'rate_snapshot' => 60.00,
+            'status' => 'active',
+        ]);
+        $this->seat->update(['status' => 'occupied']);
+
+        $res = $this->get(route('dashboard'));
+        $res->assertOk();
+
+        $session->refresh();
+        $this->seat->refresh();
+        $userPkg->refresh();
+
+        $this->assertEquals('completed', $session->status);
+        $this->assertEquals('available', $this->seat->status);
+        $this->assertEquals(0, $userPkg->remaining_minutes);
+    }
+
+    public function test_buy_package_with_insufficient_balance_is_rejected(): void
+    {
+        $this->user->update(['balance' => 20.00]);
+        $this->actingAs($this->user);
+
+        // ราคาแพ็กเกจ 100 บาท แต่มีเงิน 20 บาท
+        $res = $this->post(route('customer.buy-package'), [
+            'package_id' => $this->package->id,
+        ]);
+
+        $res->assertSessionHas('error', 'ยอดเงินในกระเป๋าไม่พอซื้อแพ็กเกจนี้ กรุณาเติมเงินก่อน');
+        $this->assertEquals(20.00, (float) $this->user->fresh()->balance);
+        $this->assertDatabaseMissing('user_packages', [
+            'user_id' => $this->user->id,
+            'package_id' => $this->package->id,
+        ]);
+    }
+
+    public function test_order_food_with_insufficient_stock_is_rejected(): void
+    {
+        $this->actingAs($this->user);
+
+        SeatSession::create([
+            'user_id' => $this->user->id,
+            'seat_id' => $this->seat->id,
+            'start_time' => Carbon::now(),
+            'rate_snapshot' => 60.00,
+            'status' => 'active',
+        ]);
+
+        // สั่ง 15 ชิ้น แต่สต็อกมีแค่ 10 ชิ้น
+        $res = $this->post(route('customer.place-order'), [
+            'seat_id' => $this->seat->id,
+            'items' => [
+                ['product_id' => $this->product->id, 'quantity' => 15],
+            ],
+            'payment_method' => 'wallet',
+        ]);
+
+        $res->assertSessionHas('error');
+        $this->assertEquals(10, $this->product->fresh()->stock_quantity);
+        $this->assertEquals(200.00, (float) $this->user->fresh()->balance);
     }
 }

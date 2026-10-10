@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        protected EndSeatSession $endSeatSession
+    ) {}
+
     // แสดงหน้าแดชบอร์ดหลักของลูกค้า
     public function index()
     {
@@ -22,6 +26,7 @@ class DashboardController extends Controller
 
         // 1. ตรวจสอบและตัดจบเซสชันที่เวลาหรือเงินหมดอัตโนมัติ
         $this->autoEndExpiredSessions();
+        $user->refresh();
 
         // 2. ดึงข้อมูลเครื่องที่กำลังเปิดใช้งานอยู่
         $activeSession = SeatSession::with(['seat.zone', 'userPackage.package'])
@@ -31,41 +36,13 @@ class DashboardController extends Controller
             ->first();
 
         // 3. คำนวณเวลาและค่าบริการที่ใช้ไปในเซสชันปัจจุบัน
-        $elapsedMinutes = 0;
-        $estimatedCost = 0.00;
-        $sessionRemainingMinutes = null;
-
-        if ($activeSession != null) {
-            $startTime = Carbon::parse($activeSession->start_time);
-            $usedSeconds = $startTime->diffInSeconds(Carbon::now());
-            $elapsedMinutes = (int) ceil($usedSeconds / 60);
-            if ($elapsedMinutes < 1) {
-                $elapsedMinutes = 1;
-            }
-            //ใช้แบบซื้อ package
-            if ($activeSession->user_package_id != null && $activeSession->userPackage != null) {
-                $packageMins = (int) $activeSession->userPackage->remaining_minutes;
-                $sessionRemainingMinutes = max(0, $packageMins - $elapsedMinutes);
-
-                if ($elapsedMinutes > $packageMins) {
-                    $excessMinutes = $elapsedMinutes - $packageMins;
-                    $excessHours = $excessMinutes / 60;
-                    $estimatedCost = round($excessHours * (float) $activeSession->rate_snapshot, 2);
-                }
-            // ใช้แบบเติมเงินแล้วหักเลย
-            } else {
-                $hours = $elapsedMinutes / 60;
-                $estimatedCost = round($hours * (float) $activeSession->rate_snapshot, 2);
-                $hourlyRate = (float) $activeSession->rate_snapshot;
-                if ($hourlyRate > 0) {
-                    $totalAffordableMins = (int) floor(((float) $user->balance / $hourlyRate) * 60);
-                    $sessionRemainingMinutes = max(0, $totalAffordableMins - $elapsedMinutes);
-                }
-            }
-        }
+        $stats = $this->calculateSessionStats($activeSession, $user);
+        $elapsedMinutes = $stats['elapsedMinutes'];
+        $estimatedCost = $stats['estimatedCost'];
+        $sessionRemainingMinutes = $stats['sessionRemainingMinutes'];
 
         // 4. คำนวณยอดเงินคงเหลือที่ใช้ได้จริง (หักค่าชั่วโมงที่กำลังเล่นอยู่) ป้องกันเวลาสั่งอาหารจนไม่เหลือให้ค่าเครื่อง
-        $availableBalance = $this->calculateAvailableBalance($user);
+        $availableBalance = $this->calculateAvailableBalance($user, $activeSession);
 
         // 5. ดึงรายการแพ็กเกจที่ผู้ใช้ซื้อไว้
         $userPackages = UserPackage::with('package.zone')
@@ -97,7 +74,7 @@ class DashboardController extends Controller
     }
 
     // ฟังก์ชันเช็คเอาท์และปิดเครื่อง
-    public function checkOut(Request $request, EndSeatSession $endSeatSession)
+    public function checkOut(Request $request)
     {
         $user = Auth::user();
 
@@ -106,97 +83,109 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->first();
 
-        if ($session == null) {
+        if ($session === null) {
             return redirect()->back()->with('error', 'ไม่พบเครื่องที่กำลังใช้งานอยู่');
         }
 
         // ส่งการคิดเงินและปิดเครื่องให้บริการกลาง เพื่อใช้กฎเดียวกับพนักงาน
-        $endSeatSession->handle($session);
+        $this->endSeatSession->handle($session);
 
         return redirect()->back()->with('success', 'เช็คเอาท์ออกจากเครื่องสำเร็จ');
     }
 
-    // คำนวณยอดเงินที่ใช้ได้จริงหลังหักค่าเครื่องที่กำลังเล่นอยู่
-    private function calculateAvailableBalance(User $user): float
+    // คำนวณสถิติเวลาและค่าใช้จ่ายของเซสชันปัจจุบัน
+    private function calculateSessionStats(?SeatSession $activeSession, User $user): array
     {
-        $freshUser = User::find($user->id);
-        if ($freshUser == null) {
-            return 0.00;
-        }
-
-        $activeSession = SeatSession::where('user_id', $freshUser->id)
-            ->where('status', 'active')
-            ->latest()
-            ->first();
-
-        if ($activeSession == null) {
-            return max(0.00, (float) $freshUser->balance);
-        }
-
-        $startTime = Carbon::parse($activeSession->start_time);
-        $usedSeconds = $startTime->diffInSeconds(Carbon::now());
-        $usedMinutes = (int) ceil($usedSeconds / 60);
-        if ($usedMinutes < 1) {
-            $usedMinutes = 1;
-        }
-
+        $elapsedMinutes = 0;
         $estimatedCost = 0.00;
-        if ($activeSession->user_package_id != null && $activeSession->userPackage != null) {
-            $remainingMinutes = $activeSession->userPackage->remaining_minutes;
-            if ($usedMinutes > $remainingMinutes) {
-                $excess = $usedMinutes - $remainingMinutes;
-                $estimatedCost = round(($excess / 60) * (float) $activeSession->rate_snapshot, 2);
-            }        
-        } else {
-            $estimatedCost = round(($usedMinutes / 60) * (float) $activeSession->rate_snapshot, 2);
+        $sessionRemainingMinutes = null;
+
+        if ($activeSession === null) {
+            return compact('elapsedMinutes', 'estimatedCost', 'sessionRemainingMinutes');
         }
-        // คำนวณเงินที่สามารถใช้ได้จริงหลังหักค่าเครื่องกรณีแบบ package
-        return max(0.00, round((float) $freshUser->balance - $estimatedCost, 2));
+
+        $elapsedMinutes = $this->usedMinutes($activeSession);
+        $hourlyRate = (float) $activeSession->rate_snapshot;
+
+        // กรณีใช้แบบแพ็กเกจ (ค่าบริการเป็น 0.00 เสมอ)
+        if ($activeSession->user_package_id !== null && $activeSession->userPackage !== null) {
+            $packageMins = (int) $activeSession->userPackage->remaining_minutes;
+            $sessionRemainingMinutes = max(0, $packageMins - $elapsedMinutes);
+            $estimatedCost = 0.00;
+        // กรณีใช้แบบเติมเงินแล้วหักตามจริง (Pay as you go)
+        } else {
+            $estimatedCost = round(($elapsedMinutes / 60) * $hourlyRate, 2);
+            if ($hourlyRate > 0) {
+                $totalAffordableMins = (int) floor(((float) $user->balance / $hourlyRate) * 60);
+                $sessionRemainingMinutes = max(0, $totalAffordableMins - $elapsedMinutes);
+            }
+        }
+
+        return compact('elapsedMinutes', 'estimatedCost', 'sessionRemainingMinutes');
     }
 
-    // ตรวจสอบและตัดจบเซสชันอัตโนมัติเมื่อเงินหมด
+    // คำนวณยอดเงินที่ใช้ได้จริงหลังหักค่าเครื่องที่กำลังเล่นอยู่
+    private function calculateAvailableBalance(User $user, ?SeatSession $activeSession = null): float
+    {
+        $balance = (float) $user->balance;
+
+        // ถ้าไม่ได้เปิดเครื่อง หรือเล่นด้วยแพ็กเกจเวลา เงินในกระเป๋าจะใช้ได้เต็มจำนวน
+        if ($activeSession === null || $activeSession->user_package_id !== null) {
+            return max(0.00, $balance);
+        }
+
+        $usedMinutes = $this->usedMinutes($activeSession);
+        $hourlyRate = (float) $activeSession->rate_snapshot;
+        $estimatedCost = round(($usedMinutes / 60) * $hourlyRate, 2);
+
+        return max(0.00, round($balance - $estimatedCost, 2));
+    }
+
+    // คำนวณจำนวนนาทีที่เซสชันใช้งานไปแล้วจนถึงปัจจุบัน
+    private function usedMinutes(SeatSession $session): int
+    {
+        $startTime = Carbon::parse($session->start_time);
+        return max(1, (int) ceil($startTime->diffInSeconds(Carbon::now()) / 60));
+    }
+
+    // คำนวณจำนวนนาทีสูงสุดที่ผู้ใช้เล่นได้ตามแพ็กเกจหรือยอดเงินคงเหลือ
+    private function getMaxAllowedMinutes(SeatSession $session, User $user): int
+    {
+        // กรณีแพ็กเกจ: เล่นได้ตามเวลาแพ็กเกจที่มี หมดเวลาแล้วตัดจบ
+        if ($session->user_package_id !== null && $session->userPackage !== null) {
+            return (int) $session->userPackage->remaining_minutes;
+        }
+
+        // กรณีคิดตามจริง: เล่นได้จนกว่าเงินในกระเป๋าจะหมด
+        $hourlyRate = (float) $session->rate_snapshot;
+        $balance = max(0.0, (float) $user->balance);
+        return $hourlyRate > 0 ? (int) floor(($balance / $hourlyRate) * 60) : 0;
+    }
+
+    // ตรวจสอบและตัดจบเซสชันอัตโนมัติเมื่อเวลาแพ็กเกจหรือยอดเงินหมด
     private function autoEndExpiredSessions(): void
     {
-        $activeSessions = SeatSession::where('status', 'active')->with(['user', 'userPackage'])->get();
+        $activeSessions = SeatSession::where('status', 'active')
+            ->with(['user', 'userPackage'])
+            ->get();
 
         foreach ($activeSessions as $session) {
             $user = $session->user;
-            if ($user == null) {
+            if ($user === null) {
                 continue;
             }
 
-            $startTime = Carbon::parse($session->start_time);
-            $usedSeconds = $startTime->diffInSeconds(Carbon::now());
-            $usedMinutes = (int) ceil($usedSeconds / 60);
+            $usedMinutes = $this->usedMinutes($session);
+            $maxAllowedMinutes = $this->getMaxAllowedMinutes($session, $user);
 
-            $isExpired = false;
-
-            if ($session->user_package_id != null && $session->userPackage != null) {
-                if ($usedMinutes >= $session->userPackage->remaining_minutes && $user->balance <= 0) {
-                    $isExpired = true;
+            if ($usedMinutes >= $maxAllowedMinutes) {
+                // คำนวณเวลาสิ้นสุดที่เวลาหรือเงินหมดจริง (ไม่เกินเวลาปัจจุบัน)
+                $endTime = Carbon::parse($session->start_time)->addMinutes(max(1, $maxAllowedMinutes));
+                if ($endTime->isAfter(Carbon::now())) {
+                    $endTime = Carbon::now();
                 }
-            } else {
-                $cost = round(($usedMinutes / 60) * (float) $session->rate_snapshot, 2);
-                if ($cost >= $user->balance && $user->balance <= 0) {
-                    $isExpired = true;
-                } elseif ($user->balance > 0) {
-                    $maxMinutes = (int) floor(($user->balance / (float) $session->rate_snapshot) * 60);
-                    if ($usedMinutes >= $maxMinutes && $maxMinutes > 0) {
-                        $isExpired = true;
-                    }
-                }
-            }
 
-            if ($isExpired) {
-                $seat = Seat::find($session->seat_id);
-                $session->end_time = Carbon::now();
-                $session->status = 'completed';
-                $session->save();
-
-                if ($seat != null) {
-                    $seat->status = 'available';
-                    $seat->save();
-                }
+                $this->endSeatSession->handle($session, $endTime);
             }
         }
     }

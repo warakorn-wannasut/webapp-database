@@ -30,10 +30,6 @@ class StaffController extends Controller
             $q->where('status', 'active')->with(['user', 'userPackage.package']);
         }])->get();
 
-        $seats = Seat::with(['zone', 'seatSessions' => function ($q) {
-            $q->where('status', 'active')->with(['user', 'userPackage.package']);
-        }])->orderBy('seat_number')->get();
-
         // 2. สรุปจำนวนเครื่องตามสถานะ
         $totalSeats = Seat::count();
         $occupiedSeats = Seat::where('status', 'occupied')->count();
@@ -42,7 +38,6 @@ class StaffController extends Controller
 
         return view('pages.staff.seat-monitor', compact(
             'zones',
-            'seats',
             'totalSeats',
             'occupiedSeats',
             'availableSeats',

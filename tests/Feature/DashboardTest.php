@@ -79,3 +79,37 @@ test('dashboard displays 15-minute time low alert when time is almost exhausted'
     $response->assertSee('TIME LOW');
     $response->assertSee('เวลาใช้งานของคุณใกล้จะหมดแล้ว');
 });
+
+test('autoEndExpiredSessions automatically completes session and deducts wallet for pay-as-you-go', function () {
+    $user = User::factory()->create(['balance' => 30.00]);
+    $zone = Zone::create(['name' => 'Standard Zone', 'hourly_rate' => 60.00]);
+    $seat = Seat::create(['zone_id' => $zone->id, 'seat_number' => 'S02', 'status' => 'occupied']);
+
+    // ผู้ใช้มี 30 บาท ค่าเครื่อง 60 บาท/ชม. (เล่นได้ 30 นาที) แต่เล่นไปแล้ว 35 นาที
+    $session = SeatSession::create([
+        'user_id' => $user->id,
+        'seat_id' => $seat->id,
+        'start_time' => Carbon::now()->subMinutes(35),
+        'rate_snapshot' => 60.00,
+        'status' => 'active',
+    ]);
+
+    $this->actingAs($user);
+    $response = $this->get(route('dashboard'));
+    $response->assertOk();
+
+    $session->refresh();
+    $seat->refresh();
+    $user->refresh();
+
+    expect($session->status)->toBe('completed');
+    expect($seat->status)->toBe('available');
+    expect((float) $user->balance)->toBe(0.00);
+    $this->assertDatabaseHas('wallet_transactions', [
+        'user_id' => $user->id,
+        'type' => 'deduct',
+        'ref_type' => 'session',
+        'ref_id' => $session->id,
+    ]);
+});
+

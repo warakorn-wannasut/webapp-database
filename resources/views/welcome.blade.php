@@ -6,7 +6,7 @@
     <title>Letsplay Gaming Cafe | ร้านเกมและคาเฟ่ 24 ชม.</title>
     @include('partials.head')
 </head>
-<body class="bg-black text-light min-vh-100 d-flex flex-column justify-content-between">
+<body class="min-vh-100 d-flex flex-column justify-content-between">
     <!-- Navbar -->
     <header class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary-subtle px-3 py-2 shadow-sm">
         <div class="container-fluid max-w-7xl">

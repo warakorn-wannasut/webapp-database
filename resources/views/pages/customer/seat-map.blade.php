@@ -41,16 +41,34 @@
         </div>
 
         @if ($activeSession)
-            <div class="alert alert-warning border-warning-subtle bg-warning-subtle text-warning d-flex justify-content-between align-items-center p-3 rounded-4 shadow-sm m-0">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="spinner-grow spinner-grow-sm text-warning" style="width: 10px; height: 10px;"></span>
-                    <span class="small fw-semibold">
-                        คุณกำลังเปิดใช้งานเครื่อง <strong class="text-white text-decoration-underline">{{ $activeSession->seat->seat_number }}</strong> อยู่
-                    </span>
+            <div class="card bg-dark border-warning rounded-4 p-3.5 shadow-sm">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-warning text-dark d-flex align-items-center justify-content-center fs-3 flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-display-fill"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="spinner-grow spinner-grow-sm text-warning" style="width: 10px; height: 10px;"></span>
+                                <h3 class="h6 fw-bold text-white m-0">
+                                    คุณกำลังใช้งานเครื่อง {{ $activeSession->seat->seat_number }} ({{ $activeSession->seat->zone->name }}) อยู่ในขณะนี้
+                                </h3>
+                                <span class="badge bg-warning text-dark fw-bold">ONLINE</span>
+                            </div>
+                            <small class="text-secondary d-block mt-1">
+                                คุณมีเครื่องที่เปิดใช้งานอยู่แล้ว หากต้องการเปลี่ยนเครื่องหรือย้ายที่นั่ง กรุณาเช็คเอาท์ออกจากเครื่องเดิมก่อน
+                            </small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                        <a href="{{ route('customer.food-order', ['seat_id' => $activeSession->seat_id]) }}" class="btn btn-outline-secondary text-light btn-sm fw-semibold px-3 py-2 rounded-pill">
+                            <i class="bi bi-cup-hot me-1 text-danger"></i> สั่งอาหาร
+                        </a>
+                        <a href="{{ route('dashboard') }}" class="btn btn-warning btn-sm fw-bold px-3.5 py-2 rounded-pill">
+                            <i class="bi bi-speedometer2 me-1"></i> กลับไปที่แดชบอร์ด
+                        </a>
+                    </div>
                 </div>
-                <a href="{{ route('dashboard') }}" class="btn btn-warning btn-sm fw-bold px-3 rounded-pill">
-                    กลับไปที่แดชบอร์ด <i class="bi bi-arrow-right"></i>
-                </a>
             </div>
         @endif
 
@@ -86,7 +104,7 @@
                                     {{ $isCurrent ? 'bg-warning-subtle border-warning shadow' : '' }}
                                     @if (! $isCurrent)
                                         @if($seat->status === 'available')
-                                            bg-dark-subtle border-secondary-subtle hover-border-danger cursor-pointer shadow-sm
+                                            {{ $activeSession ? 'bg-dark-subtle border-secondary-subtle opacity-75' : 'bg-dark-subtle border-secondary-subtle hover-border-danger cursor-pointer shadow-sm' }}
                                         @elseif($seat->status === 'occupied')
                                             bg-dark border-secondary-subtle opacity-50 cursor-not-allowed
                                         @else
@@ -117,7 +135,7 @@
                                     @endif
                                 ">
                                     @if($isCurrent) เครื่องของคุณ
-                                    @elseif($seat->status === 'available') คลิกเพื่อเปิดเครื่อง
+                                    @elseif($seat->status === 'available') {{ $activeSession ? 'ว่าง' : 'คลิกเพื่อเปิดเครื่อง' }}
                                     @elseif($seat->status === 'occupied') ไม่ว่าง
                                     @else ปรับปรุง
                                     @endif
@@ -162,6 +180,26 @@
                                 <span class="text-secondary">ยอดเงินในกระเป๋าของคุณ:</span>
                                 <strong class="text-warning font-monospace fs-6">฿{{ number_format(auth()->user()->balance ?? 0, 2) }}</strong>
                             </div>
+                            <div class="d-flex justify-content-between pt-1">
+                                <span class="text-secondary">เวลาที่เล่นได้โดยประมาณ:</span>
+                                <strong class="text-info font-monospace fs-6" id="modalPlayableTime">-</strong>
+                            </div>
+                            @if ((float)(auth()->user()->balance ?? 0) < 20.00)
+                                <div id="insufficientBalanceAlert" class="alert alert-danger p-2.5 small mt-2 mb-0">
+                                    <div class="d-flex align-items-center gap-1.5 fw-bold text-danger">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <span>ยอดเงินไม่พอสำหรับการเปิดเครื่อง</span>
+                                    </div>
+                                    <div class="mt-1 text-light">
+                                        การเล่นแบบคิดตามจริงต้องมียอดเงินอย่างน้อย ฿20.00 (คุณมี ฿{{ number_format(auth()->user()->balance ?? 0, 2) }})
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="{{ route('customer.topup') }}" class="btn btn-warning btn-sm py-1 px-3 fw-bold">
+                                            <i class="bi bi-wallet2 me-1"></i> เติมเงินทันที
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Choose Billing Mode -->
@@ -230,6 +268,7 @@
     </div>
 
     <script>
+        const userBalance = {{ (float) (auth()->user()->balance ?? 0) }};
         let currentSeatZoneId = null;
 
         function openCheckInModal(seatId, seatNumber, zoneId, zoneName, hourlyRate) {
@@ -239,11 +278,36 @@
             document.getElementById('modalZoneName').innerText = zoneName;
             document.getElementById('modalHourlyRate').innerText = '฿' + Number(hourlyRate).toFixed(2) + ' / ชั่วโมง';
 
+            const rate = Number(hourlyRate);
+            const totalMinutes = Math.floor((userBalance / rate) * 60);
+            if (userBalance >= 20 && rate > 0) {
+                const hours = Math.floor(totalMinutes / 60);
+                const mins = totalMinutes % 60;
+                document.getElementById('modalPlayableTime').innerText = hours > 0 ? `${hours} ชม ${mins} นาที` : `${mins} นาที`;
+            } else {
+                document.getElementById('modalPlayableTime').innerText = 'ยอดเงินไม่พอ (ขั้นต่ำ ฿20.00)';
+            }
+
             filterPackagesForZone(zoneId);
+            checkPayAsYouGoAbility();
 
             const modalEl = document.getElementById('checkInModal');
             const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
             modal.show();
+        }
+
+        function checkPayAsYouGoAbility() {
+            const payRadio = document.querySelector('input[name="billing_mode"][value="pay_as_you_go"]');
+            const submitBtn = document.getElementById('submitCheckInBtn');
+            const isPayAsYouGo = payRadio ? payRadio.checked : true;
+
+            if (isPayAsYouGo && userBalance < 20) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50');
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50');
+            }
         }
 
         function filterPackagesForZone(zoneId) {
@@ -284,15 +348,18 @@
 
         function togglePackageSelect(isPackage) {
             const container = document.getElementById('packageSelectContainer');
-            if (!container) return;
-            if (isPackage) {
-                container.classList.remove('d-none');
-                if (currentSeatZoneId) {
-                    filterPackagesForZone(currentSeatZoneId);
+            if (container) {
+                if (isPackage) {
+                    container.classList.remove('d-none');
+                    if (currentSeatZoneId) {
+                        filterPackagesForZone(currentSeatZoneId);
+                    }
+                } else {
+                    container.classList.add('d-none');
                 }
-            } else {
-                container.classList.add('d-none');
             }
+
+            checkPayAsYouGoAbility();
         }
     </script>
 </x-layouts::app>

@@ -69,41 +69,55 @@
             </div>
 
             <!-- Pop-up Modal แจ้งเตือน 15 นาทีสุดท้าย -->
-            <div class="modal fade show d-block" id="timeExpiringModal" tabindex="-1" style="background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);" x-data="{ showWarningModal: true }" x-show="showWarningModal">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-danger shadow-lg p-3 text-center">
-                        <div class="modal-body">
-                            <div class="mx-auto rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px; font-size: 28px;">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
-                            </div>
-                            <span class="badge bg-danger-subtle text-danger mb-2">TIME EXPIRING SOON</span>
-                            <h3 class="h5 fw-bold text-white mb-2">
-                                เวลาใช้งานของคุณใกล้จะหมดแล้ว!
-                            </h3>
-                            <p class="small text-secondary mb-3">
-                                เหลือเวลาใช้งานอีกประมาณ <span class="text-danger fw-bold fs-6">{{ \App\Models\UserPackage::formatMinutes($sessionRemainingMinutes) }}</span>
-                            </p>
-
-                            <div class="p-3 rounded-3 bg-dark-subtle border border-secondary-subtle text-start small mb-3">
-                                @if ($activeSession)
-                                    <div class="d-flex justify-content-between mb-1.5">
-                                        <span class="text-secondary">เครื่องที่กำลังใช้งาน:</span>
-                                        <span class="fw-bold text-white">เครื่อง {{ $activeSession->seat->seat_number }} ({{ $activeSession->seat->zone->name }})</span>
-                                    </div>
-                                @endif
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-secondary">ยอดเงินในกระเป๋าคงเหลือ:</span>
-                                    <span class="fw-bold font-monospace text-warning">฿{{ number_format($user->balance, 2) }}</span>
+            <div
+                id="timeExpiringModal"
+                x-data="{ showWarningModal: true }"
+                x-show="showWarningModal"
+                x-cloak
+                class="position-fixed top-0 start-0 w-100 h-100 overflow-auto"
+                style="z-index: 1055; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);"
+            >
+                <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
+                    <div class="modal-dialog modal-dialog-centered w-100 m-0" style="max-width: 500px;">
+                        <div class="modal-content border-danger shadow-lg p-3 text-center bg-dark">
+                            <div class="modal-body">
+                                <div class="mx-auto rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px; font-size: 28px;">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
                                 </div>
-                            </div>
+                                <span class="badge bg-danger-subtle text-danger mb-2">TIME EXPIRING SOON</span>
+                                <h3 class="h5 fw-bold text-white mb-2">
+                                    เวลาใช้งานของคุณใกล้จะหมดแล้ว!
+                                </h3>
+                                <p class="small text-secondary mb-3">
+                                    เหลือเวลาใช้งานอีกประมาณ <span class="text-danger fw-bold fs-6">{{ \App\Models\UserPackage::formatMinutes($sessionRemainingMinutes) }}</span>
+                                </p>
 
-                            <div class="d-flex flex-column gap-2">
-                                <a href="{{ route('customer.topup') }}" class="btn btn-danger btn-sm fw-bold py-2">
-                                    <i class="bi bi-wallet2 me-1"></i> เติมเงินหรือซื้อแพ็กเกจชั่วโมง
-                                </a>
-                                <button type="button" @click="showWarningModal = false" class="btn btn-outline-secondary btn-sm py-2">
-                                    รับทราบ (ปิดหน้าต่างนี้)
-                                </button>
+                                <div class="p-3 rounded-3 bg-dark-subtle border border-secondary-subtle text-start small mb-3">
+                                    @if ($activeSession)
+                                        <div class="d-flex justify-content-between mb-1.5">
+                                            <span class="text-secondary">เครื่องที่กำลังใช้งาน:</span>
+                                            <span class="fw-bold text-white">เครื่อง {{ $activeSession->seat->seat_number }} ({{ $activeSession->seat->zone->name }})</span>
+                                        </div>
+                                    @endif
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-secondary">ยอดเงินในกระเป๋าคงเหลือ:</span>
+                                        <span class="fw-bold font-monospace text-warning">฿{{ number_format($user->balance, 2) }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ route('customer.topup') }}" class="btn btn-danger btn-sm fw-bold py-2">
+                                        <i class="bi bi-wallet2 me-1"></i> เติมเงินหรือซื้อแพ็กเกจชั่วโมง
+                                    </a>
+                                    <button
+                                        type="button"
+                                        @click="showWarningModal = false"
+                                        onclick="document.getElementById('timeExpiringModal').style.display='none'"
+                                        class="btn btn-outline-secondary btn-sm py-2"
+                                    >
+                                        รับทราบ (ปิดหน้าต่างนี้)
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -355,11 +369,27 @@
                                         <td class="py-2.5 px-3">
                                             @if ($tx->type === 'topup')
                                                 <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                    เติมเงิน ({{ $tx->ref_type === 'qr_topup' ? 'พร้อมเพย์' : ($tx->ref_type === 'cash_topup' ? 'เงินสด' : $tx->ref_type) }})
+                                                    @if ($tx->ref_type === 'qr_topup')
+                                                        เติมเงิน (พร้อมเพย์)
+                                                    @elseif ($tx->ref_type === 'cash_topup')
+                                                        เติมเงิน (เงินสด)
+                                                    @elseif ($tx->ref_type === 'initial_seed')
+                                                        ยอดเงินเริ่มต้น
+                                                    @else
+                                                        เติมเงินเข้าบัญชี
+                                                    @endif
                                                 </span>
                                             @elseif ($tx->type === 'deduct')
                                                 <span class="badge bg-secondary-subtle text-light border border-secondary">
-                                                    หักค่าบริการ ({{ $tx->ref_type === 'package_purchase' ? 'ซื้อแพ็กเกจ' : ($tx->ref_type === 'session' ? 'ค่าเครื่อง' : ($tx->ref_type === 'order' ? 'สั่งอาหาร' : $tx->ref_type)) }})
+                                                    @if ($tx->ref_type === 'package_purchase')
+                                                        ซื้อแพ็กเกจชั่วโมง
+                                                    @elseif ($tx->ref_type === 'session')
+                                                        ค่าชั่วโมงเล่นเกม
+                                                    @elseif ($tx->ref_type === 'order')
+                                                        สั่งอาหารและเครื่องดื่ม
+                                                    @else
+                                                        หักค่าบริการ
+                                                    @endif
                                                 </span>
                                             @else
                                                 <span class="badge bg-info-subtle text-info border border-info-subtle">คืนเงิน</span>
@@ -445,127 +475,4 @@
             </div>
         </div>
     </div>
-
-    <!-- 4. Floating Status Bar (วิดเจ็ตแสดงสถานะเครื่องมุมจอ) -->
-    @if ($activeSession)
-        <div
-            x-data="{
-                minimized: false,
-                elapsedSeconds: {{ $elapsedMinutes * 60 }},
-                remainingSeconds: {{ $sessionRemainingMinutes !== null ? $sessionRemainingMinutes * 60 : 'null' }},
-                formatDHMS(totalSecs) {
-                    if (totalSecs === null || totalSecs < 0) return '0 นาที';
-                    const totalMins = Math.floor(totalSecs / 60);
-                    const days = Math.floor(totalMins / 1440);
-                    const hours = Math.floor((totalMins % 1440) / 60);
-                    const mins = totalMins % 60;
-
-                    let parts = [];
-                    if (days > 0) parts.push(days + ' วัน');
-                    if (hours > 0) parts.push(hours + ' ชม.');
-                    parts.push(mins + ' นาที');
-                    return parts.join(' ');
-                },
-                init() {
-                    setInterval(() => {
-                        this.elapsedSeconds++;
-                        if (this.remainingSeconds !== null && this.remainingSeconds > 0) {
-                            this.remainingSeconds--;
-                        }
-                    }, 1000);
-                }
-            }"
-            class="position-fixed bottom-0 end-0 m-4 z-3"
-            style="user-select: none;"
-        >
-            <!-- Minimized Pill -->
-            <div
-                x-show="minimized"
-                x-cloak
-                @click="minimized = false"
-                class="badge bg-dark border border-danger-subtle rounded-pill py-2.5 px-3.5 shadow-lg d-flex align-items-center gap-2 cursor-pointer hover-border-danger"
-            >
-                <span class="spinner-grow spinner-grow-sm text-success" style="width: 8px; height: 8px;"></span>
-                <span class="font-monospace text-white fw-bold">เครื่อง {{ $activeSession->seat->seat_number }}</span>
-                <span class="text-secondary">|</span>
-                @if ($sessionRemainingMinutes !== null)
-                    <span class="text-warning font-monospace fw-bold" x-text="'เหลือ ' + formatDHMS(remainingSeconds)"></span>
-                @else
-                    <span class="text-light font-monospace fw-bold" x-text="'เล่นไป ' + formatDHMS(elapsedSeconds)"></span>
-                @endif
-                <span class="text-secondary">|</span>
-                <span class="text-success font-monospace fw-bold">฿{{ number_format($estimatedCost, 2) }}</span>
-                <span class="badge bg-secondary-subtle text-secondary rounded-circle ms-1">+</span>
-            </div>
-
-            <!-- Expanded Card -->
-            <div
-                x-show="!minimized"
-                x-cloak
-                class="card bg-dark border-secondary-subtle rounded-4 p-3 shadow-lg"
-                style="width: 330px;"
-            >
-                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle pb-2 mb-2">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-success rounded-circle p-1"></span>
-                        <span class="text-danger fw-bold small">LETSPLAY CLIENT HUD</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-danger-subtle text-danger fs-7">
-                            {{ $activeSession->seat->seat_number }} ({{ $activeSession->seat->zone->name }})
-                        </span>
-                        <button type="button" @click="minimized = true" class="btn btn-sm btn-link text-secondary p-0 text-decoration-none">
-                            <i class="bi bi-dash-lg"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row g-2 mb-2 text-center">
-                    <div class="col-6">
-                        <div class="p-2 bg-dark-subtle border border-secondary-subtle rounded-3">
-                            <small class="text-secondary d-block">
-                                {{ $sessionRemainingMinutes !== null ? 'เวลาคงเหลือ' : 'เวลาที่เล่นไปแล้ว' }}
-                            </small>
-                            <span class="fw-bold font-monospace fs-7 {{ $sessionRemainingMinutes !== null && $sessionRemainingMinutes <= 15 ? 'text-danger' : 'text-warning' }}">
-                                @if ($sessionRemainingMinutes !== null)
-                                    <span x-text="formatDHMS(remainingSeconds)"></span>
-                                @else
-                                    <span x-text="formatDHMS(elapsedSeconds)"></span>
-                                @endif
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-2 bg-dark-subtle border border-secondary-subtle rounded-3">
-                            <small class="text-secondary d-block">ค่าบริการขณะนี้</small>
-                            <span class="fw-bold font-monospace text-success fs-6">
-                                ฿{{ number_format($estimatedCost, 2) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row g-1 pt-1">
-                    <div class="col-4">
-                        <a href="{{ route('customer.food-order') }}?seat_id={{ $activeSession->seat_id }}" class="btn btn-outline-secondary text-light btn-sm w-100 py-1">
-                            <i class="bi bi-cup-hot me-1"></i> สั่งอาหาร
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="{{ route('customer.topup') }}" class="btn btn-outline-secondary text-light btn-sm w-100 py-1">
-                            <i class="bi bi-wallet2 me-1"></i> เติมเงิน
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <form method="POST" action="{{ route('customer.check-out') }}" onsubmit="return confirm('ยืนยันการปิดเครื่องและสิ้นสุดการใช้งานหรือไม่?');" class="m-0">
-                            @csrf
-                            <button type="submit" class="btn btn-danger btn-sm w-100 py-1 fw-bold">
-                                <i class="bi bi-power me-1"></i> เช็คเอาท์
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 </x-layouts::app>

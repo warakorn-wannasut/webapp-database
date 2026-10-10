@@ -24,7 +24,8 @@ class SeatController extends Controller
         }])->get();
 
         // 2. ตรวจสอบเครื่องที่ลูกค้ากำลังเปิดใช้งานอยู่
-        $activeSession = SeatSession::where('user_id', $user->id)
+        $activeSession = SeatSession::with('seat.zone')
+            ->where('user_id', $user->id)
             ->where('status', 'active')
             ->first();
 
@@ -108,10 +109,10 @@ class SeatController extends Controller
 
             $selectedPackageId = $userPackage->id;
         } else {
-            // เล่นแบบคิดตามจริง ตรวจสอบยอดเงินในกระเป๋า
+            // เล่นแบบคิดตามจริง ต้องมีขั้นต่ำ 20 บาท
             $freshUser = User::find($user->id);
-            if ($freshUser->balance <= 0) {
-                return redirect()->back()->with('error', 'ยอดเงินในกระเป๋าของคุณไม่เพียงพอสำหรับการเล่นแบบคิดตามจริง');
+            if ((float) $freshUser->balance < 20.00) {
+                return redirect()->back()->with('error', 'ยอดเงินในกระเป๋าต้องมีอย่างน้อย ฿20.00 จึงจะสามารถเปิดเครื่องได้ กรุณาเติมเงินก่อนใช้งาน');
             }
         }
 

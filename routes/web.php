@@ -28,8 +28,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Wallet & Packages
     Route::get('/topup', [WalletController::class, 'index'])->name('customer.topup');
-    Route::post('/topup', [WalletController::class, 'topUp'])->name('customer.do-topup');
-    Route::post('/buy-package', [WalletController::class, 'buyPackage'])->name('customer.buy-package');
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/topup', [WalletController::class, 'topUp'])->name('customer.do-topup');
+        Route::post('/buy-package', [WalletController::class, 'buyPackage'])->name('customer.buy-package');
+    });
 
     // -------------------------------------------------------------
     // Staff & Kitchen Portal

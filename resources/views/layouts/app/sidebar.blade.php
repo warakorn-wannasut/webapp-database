@@ -3,7 +3,7 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="bg-black text-light min-vh-100 d-flex flex-column">
+    <body class="min-vh-100 d-flex flex-column">
         <!-- Mobile Top Navbar -->
         <header class="navbar navbar-dark bg-dark d-lg-none border-bottom border-secondary-subtle sticky-top px-3 py-2">
             <div class="d-flex align-items-center gap-2">
@@ -24,7 +24,7 @@
         </header>
 
         <!-- Desktop Fixed Sidebar -->
-        <aside class="bs-sidebar d-none d-lg-flex flex-column position-fixed top-0 bottom-0 start-0 z-3 p-3 overflow-y-auto">
+        <aside class="bs-sidebar d-none d-lg-flex flex-column position-fixed top-0 bottom-0 start-0 z-3 p-3 overflow-y-auto overflow-x-hidden">
             <!-- Brand -->
             <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-white mb-3 px-1">
                 <div class="rounded-3 bg-danger d-flex align-items-center justify-center fw-bold text-white" style="width: 36px; height: 36px; font-size: 15px; line-height: 1;">
@@ -110,28 +110,36 @@
             <hr class="border-secondary-subtle my-3">
 
             <!-- Desktop User Dropdown -->
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3 hover-bg-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-center text-white fw-bold me-2" style="width: 34px; height: 34px; font-size: 13px;">
+            <div class="dropdown dropup mt-auto">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3 hover-bg-secondary w-100" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 0;">
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold me-2 flex-shrink-0" style="width: 36px; height: 36px; font-size: 13px;">
                         {{ auth()->user()->initials() ?? 'U' }}
                     </div>
-                    <div class="overflow-hidden lh-sm me-auto">
-                        <div class="text-truncate fw-bold text-white" style="font-size: 14px;">{{ auth()->user()->name }}</div>
-                        <small class="text-secondary text-truncate d-block" style="font-size: 12px;">{{ auth()->user()->email }}</small>
+                    <div class="overflow-hidden lh-sm me-auto pe-1" style="min-width: 0;">
+                        <div class="text-truncate fw-bold text-white" style="font-size: 13px;">{{ auth()->user()->name }}</div>
+                        <small class="text-secondary text-truncate d-block" style="font-size: 11px;">{{ auth()->user()->email }}</small>
                     </div>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary-subtle">
+                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary-subtle w-100 mb-2 py-1" style="min-width: 100%; max-width: 100%;">
                     <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
-                            <i class="bi bi-gear"></i> การตั้งค่าโปรไฟล์
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-truncate" href="{{ route('profile.edit') }}">
+                            <i class="bi bi-gear text-secondary"></i>
+                            <span>การตั้งค่าโปรไฟล์</span>
                         </a>
                     </li>
-                    <li><hr class="dropdown-divider border-secondary-subtle"></li>
                     <li>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-truncate" href="{{ route('appearance.edit') }}">
+                            <i class="bi bi-palette text-secondary"></i>
+                            <span>โหมดการแสดงผล</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider border-secondary-subtle my-1"></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}" class="m-0">
                             @csrf
-                            <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2">
-                                <i class="bi bi-box-arrow-right"></i> ออกจากระบบ
+                            <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 text-truncate">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>ออกจากระบบ</span>
                             </button>
                         </form>
                     </li>
@@ -200,6 +208,8 @@
         <div class="bs-main-layout flex-grow-1 d-flex flex-column min-vh-100">
             {{ $slot }}
         </div>
+
+        @include('partials.floating-hud')
 
         @persist('toast')
             <flux:toast.group>

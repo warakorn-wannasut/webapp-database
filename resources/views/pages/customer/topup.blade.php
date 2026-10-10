@@ -14,6 +14,40 @@
             </div>
         @endif
 
+        <!-- Explanation Card: กระเป๋าเงิน (Wallet) vs แพ็กเกจชั่วโมง (Packages) -->
+        <div class="card bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="bg-danger rounded" style="width: 4px; height: 22px;"></span>
+                <h2 class="h5 fw-bold text-white m-0">ความแตกต่างระหว่าง "กระเป๋าเงิน (Wallet)" กับ "แพ็กเกจชั่วโมง"</h2>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded-3 bg-dark-subtle border border-secondary-subtle h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-1.5 px-2.5">
+                                <i class="bi bi-wallet2 me-1"></i> ฝั่งซ้าย: เติมเงินเข้ากระเป๋า (Wallet)
+                            </span>
+                        </div>
+                        <p class="small text-secondary m-0">
+                            คือ <strong class="text-white">เงินสดในระบบ</strong> เติมแล้วนำไปใช้ได้ทุกอย่าง ไม่ว่าจะเป็นเล่นเกมแบบคิดตามจริงรายชั่วโมง สั่งอาหาร หรือใช้ซื้อแพ็กเกจ
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded-3 bg-dark-subtle border border-secondary-subtle h-100">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1.5 px-2.5">
+                                <i class="bi bi-clock-history me-1"></i> ฝั่งขวา: ซื้อแพ็กเกจชั่วโมง (Packages)
+                            </span>
+                        </div>
+                        <p class="small text-secondary m-0">
+                            คือ <strong class="text-white">การเหมาเวลาล่วงหน้า</strong> โดยใช้เงินในกระเป๋าซื้อ เพื่อให้ได้ราคาเฉลี่ยต่อชั่วโมงที่ <strong class="text-success">ประหยัดและคุ้มค่ากว่า</strong> การคิดเงินตามจริง
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4">
             <!-- Section 1: Wallet Top-up -->
             <div class="col-12 col-xl-5">
@@ -70,7 +104,8 @@
                                     type="number"
                                     name="amount"
                                     id="inputAmount"
-                                    min="1"
+                                    min="20"
+                                    max="10000"
                                     step="1"
                                     value="100"
                                     required
@@ -78,6 +113,7 @@
                                     class="form-control bg-dark-subtle border-secondary-subtle text-white fw-bold font-monospace py-2"
                                 />
                             </div>
+                            <small class="text-secondary mt-1 d-block">ขั้นต่ำ ฿20.00 สูงสุด ฿10,000.00</small>
                         </div>
 
                         <!-- Payment Method -->
@@ -141,7 +177,7 @@
                             @foreach ($zones as $idx => $z)
                                 <li class="nav-item" role="presentation">
                                     <button
-                                        class="nav-link py-1.5 px-3 rounded-3 small fw-semibold {{ $idx === 0 ? 'active btn-danger' : 'text-secondary border border-secondary-subtle bg-dark-subtle' }}"
+                                        class="nav-link py-1.5 px-3 rounded-3 small fw-semibold {{ $idx === 0 ? 'active' : '' }}"
                                         id="zone-tab-{{ $z->id }}"
                                         data-bs-toggle="pill"
                                         data-bs-target="#zone-pane-{{ $z->id }}"
@@ -180,7 +216,7 @@
                                     </div>
 
                                     @php
-                                        $zonePackages = $packages->where('zone_id', $z->id);
+                                        $zonePackages = $z->packages;
                                     @endphp
 
                                     @if ($zonePackages->isEmpty())
@@ -317,11 +353,29 @@
                                     <td class="py-2.5 px-3">
                                         @if ($tx->type === 'topup')
                                             <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                <i class="bi bi-plus-circle me-1"></i> เติมเงิน ({{ $tx->ref_type === 'qr_topup' ? 'พร้อมเพย์' : ($tx->ref_type === 'cash_topup' ? 'เงินสด' : $tx->ref_type) }})
+                                                <i class="bi bi-plus-circle me-1"></i>
+                                                @if ($tx->ref_type === 'qr_topup')
+                                                    เติมเงิน (พร้อมเพย์)
+                                                @elseif ($tx->ref_type === 'cash_topup')
+                                                    เติมเงิน (เงินสด)
+                                                @elseif ($tx->ref_type === 'initial_seed')
+                                                    ยอดเงินเริ่มต้น
+                                                @else
+                                                    เติมเงินเข้าบัญชี
+                                                @endif
                                             </span>
                                         @elseif ($tx->type === 'deduct')
                                             <span class="badge bg-secondary-subtle text-light border border-secondary">
-                                                <i class="bi bi-dash-circle me-1"></i> หักค่าบริการ ({{ $tx->ref_type === 'package_purchase' ? 'ซื้อแพ็กเกจ' : ($tx->ref_type === 'session' ? 'ค่าเครื่อง' : ($tx->ref_type === 'order' ? 'สั่งอาหาร' : $tx->ref_type)) }})
+                                                <i class="bi bi-dash-circle me-1"></i>
+                                                @if ($tx->ref_type === 'package_purchase')
+                                                    ซื้อแพ็กเกจชั่วโมง
+                                                @elseif ($tx->ref_type === 'session')
+                                                    ค่าชั่วโมงเล่นเกม
+                                                @elseif ($tx->ref_type === 'order')
+                                                    สั่งอาหารและเครื่องดื่ม
+                                                @else
+                                                    หักค่าบริการ
+                                                @endif
                                             </span>
                                         @else
                                             <span class="badge bg-info-subtle text-info border border-info-subtle">
@@ -452,8 +506,14 @@
             const amountInput = document.getElementById('inputAmount');
             const amount = parseFloat(amountInput.value);
 
-            if (!amount || amount <= 0) {
-                alert('กรุณาระบุจำนวนเงินที่ถูกต้อง');
+            if (!amount || amount < 20) {
+                alert('กรุณาระบุจำนวนเงินขั้นต่ำ 20 บาทขึ้นไป');
+                amountInput.focus();
+                return;
+            }
+
+            if (amount > 10000) {
+                alert('กรุณาระบุจำนวนเงินไม่เกิน 10,000 บาท');
                 amountInput.focus();
                 return;
             }

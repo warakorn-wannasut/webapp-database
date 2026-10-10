@@ -28,20 +28,27 @@
                 </span>
             </div>
         @else
-            <div class="alert alert-warning border-warning-subtle bg-warning-subtle text-warning d-flex justify-content-between align-items-center p-3 rounded-4 shadow-sm m-0">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <small class="fw-semibold">
-                        คุณยังไม่ได้เปิดใช้งานเครื่องคอมพิวเตอร์ในร้าน กรุณาเปิดเครื่องก่อนทำการสั่งอาหาร
-                    </small>
+            <div class="alert alert-warning border-warning-subtle bg-warning-subtle text-warning d-flex flex-column flex-md-row justify-content-between align-items-md-center p-3.5 rounded-4 shadow-sm m-0 gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 bg-warning text-dark d-flex align-items-center justify-content-center fs-4 flex-shrink-0" style="width: 44px; height: 44px;">
+                        <i class="bi bi-display"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-white fs-6">
+                            คุณยังไม่ได้เปิดใช้งานเครื่องคอมพิวเตอร์ในร้าน
+                        </div>
+                        <small class="text-warning-emphasis d-block mt-0.5">
+                            กรุณาเปิดเครื่องก่อนทำการสั่งอาหาร เพื่อให้พนักงานจัดส่งอาหารถึงโต๊ะของคุณได้อย่างถูกต้อง
+                        </small>
+                    </div>
                 </div>
-                <a href="{{ route('customer.seat-map') }}" class="btn btn-warning btn-sm fw-bold px-3 rounded-pill">
-                    เลือกที่นั่ง <i class="bi bi-arrow-right"></i>
+                <a href="{{ route('customer.seat-map') }}" class="btn btn-warning btn-sm fw-bold px-4 py-2 rounded-pill flex-shrink-0 text-nowrap">
+                    <i class="bi bi-geo-alt me-1"></i> ไปที่หน้าผังที่นั่งเพื่อเปิดเครื่อง
                 </a>
             </div>
         @endif
 
-        <div class="row g-4">
+        <div class="row g-4 {{ ! $activeSeat ? 'opacity-75' : '' }}">
             <!-- Products & Menu Section -->
             <div class="col-12 col-lg-8 d-flex flex-column gap-4">
                 <div class="card bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
@@ -118,6 +125,7 @@
                                     @if ($prod->stock_quantity > 0)
                                         <button
                                             type="button"
+                                            @disabled(! $activeSeat)
                                             onclick="addToCart({{ $prod->id }}, '{{ addslashes($prod->name) }}', {{ $prod->price }}, {{ $prod->stock_quantity }})"
                                             class="btn btn-danger btn-sm px-3 fw-bold rounded-pill"
                                         >
@@ -168,14 +176,6 @@
                                 </div>
                             </div>
                             <span class="badge bg-danger-subtle text-danger">ผูกเครื่องแล้ว</span>
-                        </div>
-                    @else
-                        <div class="p-3 bg-warning-subtle border border-warning-subtle rounded-3 text-center mb-3 text-warning">
-                            <small class="d-block fw-bold">คุณยังไม่ได้เปิดเครื่องคอมพิวเตอร์</small>
-                            <small class="text-secondary d-block mb-2">ระบบจำเป็นต้องทราบหมายเลขเครื่องเพื่อไปส่งอาหาร</small>
-                            <a href="{{ route('customer.seat-map') }}" class="btn btn-warning btn-sm w-100 fw-bold">
-                                <i class="bi bi-display me-1"></i> ไปเลือกที่นั่งก่อน
-                            </a>
                         </div>
                     @endif
 
@@ -339,11 +339,114 @@
             totalText.innerText = '฿' + total.toFixed(2);
         }
 
+        let isConfirmedQr = false;
+
         document.getElementById('checkoutForm').addEventListener('submit', function(e) {
             if (Object.keys(cart).length === 0) {
                 e.preventDefault();
                 alert('กรุณาเลือกอาหารใส่ตะกร้าก่อนสั่งซื้อ');
+                return;
+            }
+
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'wallet';
+
+            if (paymentMethod === 'promptpay' && !isConfirmedQr) {
+                e.preventDefault();
+                let total = 0;
+                Object.values(cart).forEach(item => {
+                    total += item.price * item.quantity;
+                });
+                document.getElementById('modalFoodQrAmount').innerText = '฿' + total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const modalEl = document.getElementById('foodQrModal');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
             }
         });
+
+        function submitFoodOrderDirect() {
+            isConfirmedQr = true;
+            const confirmBtn = document.getElementById('foodConfirmPaymentBtn');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.innerText = 'กำลังส่งออเดอร์...';
+            }
+            document.getElementById('checkoutForm').submit();
+        }
     </script>
+
+    <!-- Modal จำลอง QR Code PromptPay สำหรับการชำระเงินค่าอาหาร -->
+    <div class="modal fade" id="foodQrModal" tabindex="-1" aria-labelledby="foodQrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border border-danger-subtle rounded-4 p-4 text-center shadow-lg">
+                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary-subtle pb-3 mb-3">
+                    <div class="d-flex align-items-center gap-2" id="foodQrModalLabel">
+                        <span class="badge bg-danger rounded-circle p-1"></span>
+                        <span class="fw-bold text-white small">ชำระเงินผ่าน PromptPay QR</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="mb-3">
+                    <small class="text-secondary d-block">ยอดชำระที่ต้องสแกน</small>
+                    <div class="fs-3 fw-black text-warning font-monospace" id="modalFoodQrAmount">฿0.00</div>
+                    @if ($activeSeat)
+                        <small class="text-light d-block mt-1">จัดส่งที่เครื่อง {{ $activeSeat->seat_number }} ({{ $activeSeat->zone->name }})</small>
+                    @endif
+                </div>
+
+                <!-- จำลอง QR Code Card PromptPay (สไตล์ทางการ) -->
+                <div class="bg-white rounded-4 mx-auto overflow-hidden shadow mb-3" style="width: 240px;">
+                    <!-- PromptPay Header Bar -->
+                    <div style="background-color: #003d6b; padding: 0.625rem 0.5rem; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; background-color: #ffffff; border-radius: 0.375rem; padding: 0.25rem 0.75rem;">
+                            <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background-color: #dc2626; display: inline-block;"></span>
+                            <span style="color: #003d6b; font-size: 11px; font-weight: 900; letter-spacing: 0.05em; font-family: sans-serif;">THAI QR PAYMENT</span>
+                        </div>
+                    </div>
+
+                    <!-- QR Body -->
+                    <div style="padding: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #ffffff;">
+                        <svg class="text-black" style="width: 160px; height: 160px;" viewBox="0 0 100 100" fill="currentColor">
+                            <rect x="0" y="0" width="30" height="30" fill="none" stroke="currentColor" stroke-width="6"/>
+                            <rect x="8" y="8" width="14" height="14"/>
+                            <rect x="70" y="0" width="30" height="30" fill="none" stroke="currentColor" stroke-width="6"/>
+                            <rect x="78" y="8" width="14" height="14"/>
+                            <rect x="0" y="70" width="30" height="30" fill="none" stroke="currentColor" stroke-width="6"/>
+                            <rect x="8" y="78" width="14" height="14"/>
+                            <rect x="36" y="8" width="8" height="8"/>
+                            <rect x="48" y="16" width="12" height="6"/>
+                            <rect x="36" y="26" width="6" height="10"/>
+                            <rect x="46" y="38" width="8" height="8"/>
+                            <rect x="10" y="44" width="10" height="6"/>
+                            <rect x="24" y="40" width="8" height="16"/>
+                            <rect x="38" y="60" width="12" height="12"/>
+                            <rect x="60" y="40" width="10" height="8"/>
+                            <rect x="74" y="36" width="16" height="6"/>
+                            <rect x="84" y="48" width="10" height="14"/>
+                            <rect x="60" y="60" width="16" height="8"/>
+                            <rect x="80" y="74" width="14" height="14"/>
+                            <rect x="64" y="84" width="10" height="10"/>
+                            <rect x="40" y="82" width="14" height="6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-dark-subtle p-2.5 rounded-3 border border-secondary-subtle small mb-3">
+                    <div class="text-secondary" style="font-size: 12px;">
+                        ชื่อผู้รับ: <span class="text-light fw-bold">LETSPLAY GAMING CAFE</span><br>
+                        หมายเลขอ้างอิง: <span class="text-secondary font-monospace">089-123-4567</span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary w-50 small fw-bold" data-bs-dismiss="modal">
+                        ยกเลิก
+                    </button>
+                    <button type="button" id="foodConfirmPaymentBtn" onclick="submitFoodOrderDirect()" class="btn btn-danger w-50 small fw-bold">
+                        <i class="bi bi-check2"></i> ชำระเงินเรียบร้อย
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-layouts::app>

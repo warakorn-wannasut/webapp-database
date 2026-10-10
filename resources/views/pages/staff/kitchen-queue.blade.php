@@ -58,27 +58,39 @@
                                 <div>
                                     <small class="text-secondary fw-bold" style="font-size: 11px;">ออเดอร์ #{{ $order->id }}</small>
                                     <h3 class="h4 fw-black text-white m-0">
-                                        โต๊ะ {{ $order->seat ? $order->seat->seat_number : '-' }}
+                                        เครื่อง {{ $order->seat ? $order->seat->seat_number : '-' }}
                                     </h3>
                                     <small class="text-secondary" style="font-size: 11px;">
-                                        {{ $order->user ? $order->user->name : '-' }} ({{ $order->created_at->format('H:i:s') }})
+                                        {{ $order->user ? $order->user->name : '-' }} &bull; {{ $order->created_at->format('H:i') }} น.
                                     </small>
                                 </div>
 
                                 <div class="text-end">
-                                    <span class="badge
-                                        @if($order->order_status === 'pending') bg-warning-subtle text-warning border border-warning-subtle
-                                        @elseif($order->order_status === 'preparing') bg-info-subtle text-info border border-info-subtle
-                                        @elseif($order->order_status === 'served') bg-success-subtle text-success border border-success-subtle
-                                        @else bg-danger-subtle text-danger border border-danger-subtle
-                                        @endif
-                                    " style="font-size: 10px;">
-                                        {{ strtoupper($order->order_status) }}
-                                    </span>
+                                    @if ($order->order_status === 'pending')
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-1 px-2" style="font-size: 11px;">
+                                            <i class="bi bi-hourglass-split me-1"></i> รอดำเนินการ
+                                        </span>
+                                    @elseif ($order->order_status === 'preparing')
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle py-1 px-2 d-inline-flex align-items-center gap-1" style="font-size: 11px;">
+                                            <span class="spinner-grow spinner-grow-sm text-info" style="width: 7px; height: 7px;"></span> กำลังปรุงอาหาร
+                                        </span>
+                                    @elseif ($order->order_status === 'served')
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2" style="font-size: 11px;">
+                                            <i class="bi bi-check-circle-fill me-1"></i> เสิร์ฟแล้ว
+                                        </span>
+                                    @else
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2" style="font-size: 11px;">
+                                            <i class="bi bi-x-circle me-1"></i> ยกเลิก
+                                        </span>
+                                    @endif
 
                                     <div class="mt-1">
-                                        <span class="badge {{ $order->payment_status === 'paid' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }}" style="font-size: 9px;">
-                                            {{ $order->payment_status === 'paid' ? 'จ่ายแล้ว (' . $order->payment_method . ')' : 'รอเก็บเงิน (' . $order->payment_method . ')' }}
+                                        <span class="badge {{ $order->payment_status === 'paid' ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-warning-subtle text-warning border border-warning-subtle' }}" style="font-size: 10px;">
+                                            @if ($order->payment_status === 'paid')
+                                                <i class="bi bi-check2"></i> ชำระแล้ว ({{ $order->payment_method === 'wallet' ? 'กระเป๋าเงิน' : ($order->payment_method === 'cash' ? 'เงินสด' : 'พร้อมเพย์') }})
+                                            @else
+                                                <i class="bi bi-clock"></i> รอเก็บเงิน ({{ $order->payment_method === 'cash' ? 'เงินสด' : ($order->payment_method === 'promptpay' ? 'พร้อมเพย์' : 'กระเป๋าเงิน') }})
+                                            @endif
                                         </span>
                                     </div>
                                 </div>
@@ -107,12 +119,12 @@
                             </div>
 
                             <!-- Cash Confirmation if pending -->
-                            @if ($order->payment_status === 'pending_payment')
+                            @if ($order->payment_method === 'cash' && $order->payment_status === 'pending_payment')
                                 <form method="POST" action="{{ route('staff.confirm-cash') }}" class="mb-2">
                                     @csrf
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                                     <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold rounded-pill text-dark">
-                                        ยืนยันรับเงินสดแล้ว (฿{{ number_format($order->total_amount, 2) }})
+                                        <i class="bi bi-cash-stack me-1"></i> ยืนยันรับเงินสดแล้ว (฿{{ number_format($order->total_amount, 2) }})
                                     </button>
                                 </form>
                             @endif
@@ -125,8 +137,8 @@
                                             @csrf
                                             <input type="hidden" name="order_id" value="{{ $order->id }}">
                                             <input type="hidden" name="status" value="preparing">
-                                            <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold rounded-pill">
-                                                กำลังทำอาหาร &rarr;
+                                            <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold rounded-pill py-2">
+                                                <i class="bi bi-fire me-1"></i> เริ่มทำอาหาร &rarr;
                                             </button>
                                         </form>
                                     </div>
@@ -136,7 +148,7 @@
                                             @csrf
                                             <input type="hidden" name="order_id" value="{{ $order->id }}">
                                             <input type="hidden" name="status" value="cancelled">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill py-2">
                                                 ยกเลิก
                                             </button>
                                         </form>
@@ -147,10 +159,22 @@
                                             @csrf
                                             <input type="hidden" name="order_id" value="{{ $order->id }}">
                                             <input type="hidden" name="status" value="served">
-                                            <button type="submit" class="btn btn-success btn-sm w-100 fw-bold rounded-pill">
-                                                เสิร์ฟที่โต๊ะเรียบร้อยแล้ว &check;
+                                            <button type="submit" class="btn btn-outline-success btn-sm w-100 fw-bold rounded-pill py-2">
+                                                <i class="bi bi-send-check me-1"></i> ทำเสร็จแล้ว &bull; กดเพื่อเสิร์ฟ
                                             </button>
                                         </form>
+                                    </div>
+                                @elseif ($order->order_status === 'served')
+                                    <div class="col-12">
+                                        <div class="badge bg-success-subtle text-success border border-success-subtle w-100 py-2 rounded-pill small fw-semibold">
+                                            <i class="bi bi-check-circle-fill me-1"></i> เสิร์ฟที่โต๊ะเรียบร้อยแล้ว
+                                        </div>
+                                    </div>
+                                @elseif ($order->order_status === 'cancelled')
+                                    <div class="col-12">
+                                        <div class="badge bg-danger-subtle text-danger border border-danger-subtle w-100 py-2 rounded-pill small fw-semibold">
+                                            <i class="bi bi-x-circle me-1"></i> ยกเลิกออเดอร์แล้ว
+                                        </div>
                                     </div>
                                 @endif
                             </div>

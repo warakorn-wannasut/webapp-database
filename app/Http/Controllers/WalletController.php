@@ -6,9 +6,11 @@ use App\Models\Package;
 use App\Models\User;
 use App\Models\UserPackage;
 use App\Models\WalletTransaction;
+use App\Models\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class WalletController extends Controller
 {
@@ -18,8 +20,8 @@ class WalletController extends Controller
         $user = Auth::user();
 
         // 1. ดึงข้อมูลโซนพร้อมแพ็กเกจของแต่ละโซน
-        $zones = \App\Models\Zone::with('packages')->get();
-        $packages = Package::with('zone')->get();
+        $zones = Zone::with('packages')->get();
+        $packages = $zones->flatMap->packages;
 
         // 2. ดึงรายการแพ็กเกจที่ผู้ใช้ซื้อไว้และยังมีเวลาเหลือ
         $userPackages = UserPackage::with('package.zone')
@@ -48,28 +50,28 @@ class WalletController extends Controller
     public function topUp(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:20|max:10000',
             'topup_method' => 'required|in:qr,cash',
         ]);
 
         $amount = (float) $request->input('amount');
         $topupMethod = $request->input('topup_method');
-        $refType = ($topupMethod == 'qr') ? 'qr_topup' : 'cash_topup';
-
-        // 1. ค้นหาผู้ใช้และเพิ่มยอดเงินในกระเป๋า
+        $refType = ($topupMethod === 'qr') ? 'qr_topup' : 'cash_topup';
         $user = Auth::user();
-        $freshUser = User::find($user->id);
-        $freshUser->balance = (float) $freshUser->balance + $amount;
-        $freshUser->save();
 
-        // 2. บันทึกประวัติการเติมเงินลงตาราง wallet_transactions
-        WalletTransaction::create([
-            'user_id' => $freshUser->id,
-            'type' => 'topup',
-            'amount' => $amount,
-            'ref_type' => $refType,
-            'ref_id' => null,
-        ]);
+        DB::transaction(function () use ($user, $amount, $refType) {
+            $freshUser = User::where('id', $user->id)->lockForUpdate()->first();
+            $freshUser->balance = (float) $freshUser->balance + $amount;
+            $freshUser->save();
+
+            WalletTransaction::create([
+                'user_id' => $freshUser->id,
+                'type' => 'topup',
+                'amount' => $amount,
+                'ref_type' => $refType,
+                'ref_id' => null,
+            ]);
+        });
 
         return redirect()->back()->with('success', 'เติมเงินสำเร็จ ฿' . number_format($amount, 2) . ' ยอดเงินคงเหลืออัปเดตเรียบร้อยแล้ว');
     }
@@ -81,47 +83,52 @@ class WalletController extends Controller
             'package_id' => 'required|exists:packages,id',
         ]);
 
-        $packageId = (int) $request->input('package_id');
+        $package = Package::with('zone')->findOrFail((int) $request->input('package_id'));
         $user = Auth::user();
 
-        // 1. ค้นหาข้อมูลแพ็กเกจ
-        $package = Package::find($packageId);
-        if ($package == null) {
-            return redirect()->back()->with('error', 'ไม่พบแพ็กเกจที่เลือก');
-        }
-
-        $packagePrice = (float) $package->price;
-        $freshUser = User::find($user->id);
-
-        // 2. ตรวจสอบว่าเงินในกระเป๋าพอซื้อไหม
-        if ((float) $freshUser->balance < $packagePrice) {
+        // ตรวจสอบยอดเงินเบื้องต้นก่อนเปิด database transaction
+        if ((float) $user->balance < (float) $package->price) {
             return redirect()->back()->with('error', 'ยอดเงินในกระเป๋าไม่พอซื้อแพ็กเกจนี้ กรุณาเติมเงินก่อน');
         }
 
-        // 3. หักเงินค่าแพ็กเกจออกจากกระเป๋า
-        $freshUser->balance = (float) $freshUser->balance - $packagePrice;
-        $freshUser->save();
+        try {
+            DB::transaction(function () use ($user, $package) {
+                $freshUser = User::where('id', $user->id)->lockForUpdate()->first();
+                $packagePrice = (float) $package->price;
 
-        // 4. บันทึกประวัติการหักเงินลงตาราง wallet_transactions
-        WalletTransaction::create([
-            'user_id' => $freshUser->id,
-            'type' => 'deduct',
-            'amount' => $packagePrice,
-            'ref_type' => 'package_purchase',
-            'ref_id' => $package->id,
-        ]);
+                if ((float) $freshUser->balance < $packagePrice) {
+                    throw new \Exception('ยอดเงินในกระเป๋าไม่พอซื้อแพ็กเกจนี้ กรุณาเติมเงินก่อน');
+                }
 
-        // 5. บันทึกข้อมูลแพ็กเกจของสมาชิก (อายุการใช้งาน 30 วัน)
-        $totalMinutes = $package->duration_hours * 60;
-        UserPackage::create([
-            'user_id' => $freshUser->id,
-            'package_id' => $package->id,
-            'remaining_minutes' => $totalMinutes,
-            'purchased_at' => Carbon::now(),
-            'expired_at' => Carbon::now()->addDays(30),
-        ]);
+                // หักเงินค่าแพ็กเกจออกจากกระเป๋า
+                $freshUser->balance = (float) $freshUser->balance - $packagePrice;
+                $freshUser->save();
+
+                // บันทึกประวัติการหักเงินลงตาราง wallet_transactions
+                WalletTransaction::create([
+                    'user_id' => $freshUser->id,
+                    'type' => 'deduct',
+                    'amount' => $packagePrice,
+                    'ref_type' => 'package_purchase',
+                    'ref_id' => $package->id,
+                ]);
+
+                // บันทึกข้อมูลแพ็กเกจของสมาชิก (อายุการใช้งาน 30 วัน)
+                $totalMinutes = $package->duration_hours * 60;
+                UserPackage::create([
+                    'user_id' => $freshUser->id,
+                    'package_id' => $package->id,
+                    'remaining_minutes' => $totalMinutes,
+                    'purchased_at' => Carbon::now(),
+                    'expired_at' => Carbon::now()->addDays(30),
+                ]);
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         $zoneName = $package->zone ? $package->zone->name : 'ทุกโซน';
+        $totalMinutes = $package->duration_hours * 60;
         $formattedDuration = UserPackage::formatMinutes($totalMinutes);
         return redirect()->back()->with('success', "ซื้อแพ็กเกจ {$package->name} สำเร็จ ได้รับเวลา {$formattedDuration} สำหรับใช้งานในโซน {$zoneName}");
     }
