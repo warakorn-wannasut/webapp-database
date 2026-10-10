@@ -1,63 +1,57 @@
 <!DOCTYPE html>
-<html lang="th" class="dark">
+<html lang="th" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salai Gaming Café | บริการร้านเกมและอาหารสไตล์เกาหลี 24 ชม.</title>
+    <title>Letsplay Gaming Cafe | ร้านเกมและคาเฟ่ 24 ชม.</title>
     @include('partials.head')
 </head>
-<body class="salai-bg min-h-screen text-slate-100 flex flex-col justify-between selection:bg-red-600 selection:text-white">
-    <!-- Navbar (Salai Termgames Style) -->
-    <header class="border-b border-[#1e2430] bg-[#0a0c10]/90 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between gap-4">
+<body class="min-vh-100 d-flex flex-column justify-content-between">
+    <!-- Navbar -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary-subtle px-3 py-2 shadow-sm">
+        <div class="container-fluid max-w-7xl">
             <!-- Brand Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center font-black text-white text-lg shadow-[0_0_18px_rgba(220,38,38,0.6)] group-hover:scale-105 transition-transform">
-                    SG
+            <a href="{{ route('home') }}" class="navbar-brand d-flex align-items-center gap-2 text-decoration-none">
+                <div class="rounded-3 bg-danger d-flex align-items-center justify-center fw-bold text-white" style="width: 38px; height: 38px; font-size: 16px;">
+                    LP
                 </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-extrabold text-xl text-white tracking-wide font-sans">
-                            SALAI <span class="text-red-500">GAMING</span>
-                        </span>
-                        <span class="salai-badge-red text-[10px]">24 HRS</span>
+                <div class="lh-sm">
+                    <div class="fw-black fs-5 tracking-wide text-white">
+                        LETSPLAY <span class="text-danger">GAMING CAFE</span>
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1" style="font-size: 10px;">24 HRS</span>
                     </div>
-                    <p class="text-[11px] text-zinc-400 -mt-1 hidden sm:block">PC Bang & Korean Café</p>
+                    <small class="text-secondary d-none d-sm-block" style="font-size: 11px;">Gaming Café & Internet Lounge</small>
                 </div>
             </a>
 
-            <!-- Search Bar Pill (Salai Style) -->
-            <div class="hidden md:flex flex-1 max-w-md mx-4">
-                <div class="relative w-full">
-                    <input type="text" placeholder="ค้นหาเกม, โซนคอม, หรือเมนูอาหาร..." class="w-full bg-[#141824] border border-[#232938] rounded-full py-2 pl-10 pr-4 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all">
-                    <svg class="w-4 h-4 text-zinc-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 1114 0z"/>
-                    </svg>
+            <!-- Search Bar Pill (Desktop) -->
+            <div class="d-none d-md-flex flex-grow-1 mx-4" style="max-width: 420px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark-subtle border-secondary-subtle text-secondary">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control form-control-sm bg-dark-subtle border-secondary-subtle text-light" placeholder="ค้นหาเกม, โซนคอม, กะเพรา, มาม่า, เลย์...">
                 </div>
             </div>
 
             <!-- Nav Actions & Auth -->
-            <div class="flex items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
                 @auth
                     <!-- Quick Wallet Pill -->
-                    <a href="{{ route('customer.topup') }}" class="hidden sm:flex items-center gap-2 bg-[#161a25] border border-[#262d3d] hover:border-red-500/50 rounded-full px-3.5 py-1.5 transition group">
-                        <div class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">
-                            ฿
-                        </div>
-                        <span class="text-xs font-bold text-zinc-200 group-hover:text-red-400">
-                            {{ number_format(auth()->user()->balance, 2) }}
-                        </span>
-                        <span class="text-[10px] bg-red-600 text-white font-bold px-1.5 py-0.5 rounded-full">+ เติม</span>
+                    <a href="{{ route('customer.topup') }}" class="btn btn-outline-secondary btn-sm rounded-pill d-none d-sm-flex align-items-center gap-2 px-3">
+                        <span class="badge bg-warning text-dark rounded-circle" style="width: 20px; height: 20px; line-height: 12px; font-size: 11px;">฿</span>
+                        <span class="fw-bold text-light font-monospace">{{ number_format(auth()->user()->balance, 2) }}</span>
+                        <span class="badge bg-danger rounded-pill" style="font-size: 10px;">+ เติม</span>
                     </a>
 
-                    <a href="{{ route('dashboard') }}" class="salai-btn-primary text-xs py-2 px-4">
-                        เข้าสู่แดชบอร์ด &rarr;
+                    <a href="{{ route('dashboard') }}" class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">
+                        เข้าสู่แดชบอร์ด <i class="bi bi-arrow-right"></i>
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white transition">
+                    <a href="{{ route('login') }}" class="btn btn-link text-light text-decoration-none btn-sm">
                         เข้าสู่ระบบ
                     </a>
-                    <a href="{{ route('register') }}" class="salai-btn-primary text-xs py-2 px-4">
+                    <a href="{{ route('register') }}" class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">
                         สมัครสมาชิก
                     </a>
                 @endauth
@@ -66,47 +60,52 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 space-y-10 w-full">
-        <!-- Hero Promo Banner (Salai Termgames Big Banner) -->
-        <div class="relative overflow-hidden rounded-3xl border border-[#232938] bg-gradient-to-r from-[#17080a] via-[#131622] to-[#0a0c10] p-6 sm:p-10 shadow-2xl">
-            <!-- Background Decorative Glow -->
-            <div class="absolute -right-16 -top-16 w-80 h-80 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -left-16 -bottom-16 w-80 h-80 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <main class="container py-4 flex-grow-1">
+        <!-- Hero Promo Banner -->
+        <div class="card bg-dark border-secondary-subtle rounded-4 overflow-hidden position-relative p-4 p-md-5 mb-4 shadow-lg">
+            <img
+                src="https://cmsassets.rgpub.io/sanity/images/dsfx7636/news_live/4c679fc9b8f253d5915261338f81fe1043fded45-3440x1020.jpg?accountingTag=VAL&fit=fill&fm=jpg&q=80&h=1020"
+                alt="Valorant Gaming Hero"
+                class="position-absolute top-0 end-0 bottom-0 start-0 w-100 h-100 object-fit-cover opacity-25"
+                style="pointer-events: none;"
+            >
+            <div class="position-absolute top-0 end-0 bottom-0 start-0 bg-gradient" style="background: linear-gradient(90deg, #0c0f17 20%, rgba(12,15,23,0.85) 60%, transparent 100%); pointer-events: none;"></div>
 
-            <div class="relative z-10 max-w-2xl space-y-4">
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="salai-badge-red text-xs">
-                        🔥 เว็บจัดการร้านเกม & คาเฟ่อันดับ 1
+            <div class="position-relative z-1" style="max-width: 680px;">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2.5">
+                        <i class="bi bi-clock"></i> เปิดบริการ 24 ชั่วโมง • ศาลายา
                     </span>
-                    <span class="salai-badge-gold text-xs">
-                        ⚡ ปรับลดราคาเกมมิ่งเกียร์ใหม่
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-1 px-2.5">
+                        <i class="bi bi-lightning-charge"></i> เน็ตไฟเบอร์ 1000/1000 ปิงต่ำ 5ms
+                    </span>
+                    <span class="badge bg-info-subtle text-info border border-info-subtle py-1 px-2.5">
+                        <i class="bi bi-snow"></i> แอร์เย็น 23°C ตลอดวัน
                     </span>
                 </div>
 
-                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-                    เติมเวลาเล่นเกม & สั่งของอร่อย <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-400 to-amber-400">
-                        ส่งตรงถึงโต๊ะคอมทันที
-                    </span>
+                <h1 class="display-6 fw-black text-white mb-3">
+                    ร้านเกมสเปกท็อป จอ 240Hz แอร์เย็นฉ่ำ <br>
+                    <span class="text-danger">พร้อมอาหารถึงโต๊ะ 24 ชม.</span>
                 </h1>
 
-                <p class="text-sm sm:text-base text-zinc-400 leading-relaxed">
-                    ระบบร้านเกมสไตล์เกาหลี (PC Bang) ครบวงจร คิดค่าบริการอัตโนมัติตามเวลาจริงหรือซื้อแพ็กเกจชั่วโมงสุดคุ้ม พร้อมรามยอนและอาหารร้อนเสิร์ฟถึงที่นั่ง
+                <p class="text-secondary fs-6 mb-4 lh-base">
+                    สัมผัสบรรยากาศร้านเกมยุคใหม่ย่านศาลายา สเปกแรงเล่นลื่นทุกเกม Valorant, GTA V, Apex Legends พร้อมสั่งข้าวกะเพรา มาม่าต้มยำ ขนมเลย์ และน้ำอัดลมเย็นเจี๊ยบส่งตรงถึงโต๊ะคอม ไม่ต้องลุกให้เสียจังหวะ
                 </p>
 
-                <div class="pt-2 flex flex-wrap items-center gap-3">
+                <div class="d-flex flex-wrap gap-2">
                     @auth
-                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-sm py-2.5 px-6">
-                            🖥️ เลือกผังที่นั่งเล่นเกม
+                        <a href="{{ route('customer.seat-map') }}" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow">
+                            <i class="bi bi-display"></i> เลือกผังโต๊ะคอม
                         </a>
-                        <a href="{{ route('customer.food-order') }}" class="salai-card text-xs font-semibold px-5 py-2.5 text-zinc-300 hover:text-white border-[#262d3d] hover:border-red-500/50">
-                            🍜 เมนูอาหารเกาหลี
+                        <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light fw-bold px-4 py-2 rounded-3">
+                            <i class="bi bi-cup-hot"></i> สั่งอาหาร & เครื่องดื่ม
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="salai-btn-primary text-sm py-2.5 px-6">
-                            🚀 เข้าสู่ระบบเพื่อเริ่มใช้งาน
+                        <a href="{{ route('login') }}" class="btn btn-danger fw-bold px-4 py-2 rounded-3 shadow">
+                            <i class="bi bi-rocket-takeoff"></i> เข้าสู่ระบบเพื่อเปิดเครื่อง
                         </a>
-                        <a href="{{ route('register') }}" class="salai-card text-xs font-semibold px-5 py-2.5 text-zinc-300 hover:text-white border-[#262d3d] hover:border-red-500/50">
+                        <a href="{{ route('register') }}" class="btn btn-outline-secondary text-light fw-bold px-4 py-2 rounded-3">
                             สมัครสมาชิกใหม่
                         </a>
                     @endauth
@@ -114,352 +113,304 @@
             </div>
         </div>
 
-        <!-- Quick Filter Category Pills (Salai Style) -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide text-sm">
-            <button class="salai-pill bg-red-600 text-white font-semibold shadow-lg shadow-red-600/30 whitespace-nowrap">
-                🔥 ยอดนิยมทั้งหมด
-            </button>
-            <a href="{{ route('customer.seat-map') }}" class="salai-pill bg-[#131622] hover:bg-[#1a1f30] text-zinc-300 hover:text-white border border-[#232938] whitespace-nowrap">
-                🖥️ โซน PC Gaming
-            </a>
-            <a href="{{ route('customer.food-order') }}" class="salai-pill bg-[#131622] hover:bg-[#1a1f30] text-zinc-300 hover:text-white border border-[#232938] whitespace-nowrap">
-                🍜 รามยอน & ของทานเล่น
-            </a>
-            <a href="{{ route('customer.topup') }}" class="salai-pill bg-[#131622] hover:bg-[#1a1f30] text-zinc-300 hover:text-white border border-[#232938] whitespace-nowrap">
-                ⚡ แพ็กเกจชั่วโมงสุดคุ้ม
-            </a>
-            <a href="{{ route('customer.topup') }}" class="salai-pill bg-[#131622] hover:bg-[#1a1f30] text-zinc-300 hover:text-white border border-[#232938] whitespace-nowrap">
-                💳 เติมเงิน Wallet อัตโนมัติ
-            </a>
+        <!-- Quick Filter Pills -->
+        <div class="d-flex gap-2 overflow-x-auto pb-2 mb-4 text-nowrap">
+            <button class="btn btn-danger btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-fire me-1"></i> ยอดนิยมทั้งหมด</button>
+            <a href="{{ route('customer.seat-map') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-display me-1"></i> ผังโซนคอมพิวเตอร์</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-egg-fried me-1"></i> อาหารตามสั่ง</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-cup-hot me-1"></i> บะหมี่และมาม่า</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-bag me-1"></i> ขนมและของทานเล่น</a>
+            <a href="{{ route('customer.food-order') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-cup-straw me-1"></i> เครื่องดื่ม</a>
+            <a href="{{ route('customer.topup') }}" class="btn btn-outline-secondary text-light btn-sm rounded-pill px-3"><i class="bi bi-clock-history me-1"></i> แพ็กเกจชั่วโมง</a>
         </div>
 
-        <!-- Section 1: โซนที่นั่งเกมมิ่งยอดนิยม (PC Bang Zones) -->
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
-                    <h2 class="text-xl font-black text-white tracking-wide font-sans">
-                        โซนที่นั่งเกมมิ่งระดับพรีเมียม (PC Zones)
-                    </h2>
+        <!-- Section 1: PC Zones -->
+        <section class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="bg-danger rounded" style="width: 4px; height: 22px;"></span>
+                    <h2 class="h5 fw-bold text-white m-0">โซนที่นั่งเกมมิ่งระดับพรีเมียม (PC Zones)</h2>
                 </div>
-                <a href="{{ route('customer.seat-map') }}" class="text-xs font-semibold text-red-400 hover:text-red-300">
-                    ดูผังที่นั่งทั้งหมด &rarr;
+                <a href="{{ route('customer.seat-map') }}" class="text-danger text-decoration-none fw-semibold small">
+                    ดูผังที่นั่งทั้งหมด <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="row g-4">
                 <!-- Standard Zone -->
-                <div class="salai-card p-5 flex flex-col justify-between group">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="salai-badge-red">STANDARD PC</span>
-                            <span class="text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
-                                ยอดนิยม
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-red-400 transition-colors">
-                            โซนคอมมาตรฐาน (Standard Zone)
-                        </h3>
-                        <p class="text-xs text-zinc-400 leading-relaxed">
-                            สเปกเกมมิ่งลื่นไหล i5 Gen 13, RTX 4060, จอ 165Hz พร้อมเก้าอี้เกมมิ่งระบายอากาศ
-                        </p>
-                    </div>
-
-                    <div class="pt-4 border-t border-[#1e2430] mt-4 flex items-center justify-between">
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-4 p-4 d-flex flex-column justify-content-between shadow-sm">
                         <div>
-                            <span class="text-2xl font-black text-white">฿20</span>
-                            <span class="text-xs text-zinc-400">/ 1 ชม.</span>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">STANDARD PC</span>
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle small">165Hz Fast IPS</span>
+                            </div>
+                            <h3 class="h5 fw-bold text-white mb-2">โซนคอมมาตรฐาน (Standard Zone)</h3>
+                            <p class="text-secondary small mb-3">
+                                Intel Core i5-13400F, RTX 4060 8GB, RAM 32GB, จอ 24.5" 165Hz Fast IPS, คีย์บอร์ด Mechanical, เก้าอี้เกมมิ่งระบายอากาศ เล่นลื่นทุกเกม FPS
+                            </p>
                         </div>
-                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-2 px-3.5">
-                            เลือกโต๊ะนี้
-                        </a>
+                        <div class="pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fs-4 fw-black text-white font-monospace">฿40</span>
+                                <small class="text-secondary">/ 1 ชม.</small>
+                            </div>
+                            <a href="{{ route('customer.seat-map') }}" class="btn btn-danger btn-sm px-3 fw-bold rounded-3">เลือกโต๊ะนี้</a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- VIP Lounge Zone -->
-                <div class="salai-card p-5 flex flex-col justify-between group border-red-500/20">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="salai-badge-gold">VIP LOUNGE</span>
-                            <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/20">
-                                HOT DEAL
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-red-400 transition-colors">
-                            ห้องวีไอพี เลานจ์ (VIP Lounge)
-                        </h3>
-                        <p class="text-xs text-zinc-400 leading-relaxed">
-                            สเปกคอมไฮเอนด์ i7 Gen 14, RTX 4070 Ti, จอ 240Hz โค้ง คีย์บอร์ด Custom และหูฟัง 7.1
-                        </p>
-                    </div>
-
-                    <div class="pt-4 border-t border-[#1e2430] mt-4 flex items-center justify-between">
+                <!-- VIP Zone -->
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 bg-dark border-danger-subtle rounded-4 p-4 d-flex flex-column justify-content-between shadow-sm">
                         <div>
-                            <span class="text-2xl font-black text-white">฿35</span>
-                            <span class="text-xs text-zinc-400">/ 1 ชม.</span>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle">VIP LOUNGE</span>
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">240Hz 0.5ms</span>
+                            </div>
+                            <h3 class="h5 fw-bold text-white mb-2">ห้องวีไอพี เลานจ์ (VIP Lounge)</h3>
+                            <p class="text-secondary small mb-3">
+                                Intel Core i7-14700KF, RTX 4070 Ti 12GB, RAM 32GB DDR5, จอโค้ง 27" 240Hz 0.5ms, คีย์บอร์ด Custom Linear, หูฟัง HyperX 7.1 รอบทิศทาง
+                            </p>
                         </div>
-                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-2 px-3.5">
-                            เลือกโต๊ะนี้
-                        </a>
+                        <div class="pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fs-4 fw-black text-white font-monospace">฿60</span>
+                                <small class="text-secondary">/ 1 ชม.</small>
+                            </div>
+                            <a href="{{ route('customer.seat-map') }}" class="btn btn-danger btn-sm px-3 fw-bold rounded-3">เลือกโต๊ะนี้</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Pro Streamer Zone -->
-                <div class="salai-card p-5 flex flex-col justify-between group">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="salai-badge-red">PRO STREAMER</span>
-                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                                เก็บเสียง
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-white group-hover:text-red-400 transition-colors">
-                            ห้องสตรีมเมอร์ส่วนตัว (Pro Studio)
-                        </h3>
-                        <p class="text-xs text-zinc-400 leading-relaxed">
-                            สเปกตัวท็อป RTX 4090, ไมค์ Shure, กล้อง Sony 4K, ไฟสตูดิโอ และห้องเก็บเสียงส่วนตัว
-                        </p>
-                    </div>
-
-                    <div class="pt-4 border-t border-[#1e2430] mt-4 flex items-center justify-between">
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-4 p-4 d-flex flex-column justify-content-between shadow-sm">
                         <div>
-                            <span class="text-2xl font-black text-white">฿50</span>
-                            <span class="text-xs text-zinc-400">/ 1 ชม.</span>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">PRO STREAMER</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle small">Studio 4K</span>
+                            </div>
+                            <h3 class="h5 fw-bold text-white mb-2">ห้องสตรีมเมอร์ (Pro Studio)</h3>
+                            <p class="text-secondary small mb-3">
+                                Intel Core i9-14900K, RTX 4090 24GB, RAM 64GB, จอคู่ 280Hz, ไมค์สตูดิโอ Shure, กล้อง Sony 4K, ไฟ Elgato, ห้องกระจกเก็บเสียงเป็นส่วนตัว
+                            </p>
                         </div>
-                        <a href="{{ route('customer.seat-map') }}" class="salai-btn-primary text-xs py-2 px-3.5">
-                            เลือกโต๊ะนี้
-                        </a>
+                        <div class="pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fs-4 fw-black text-white font-monospace">฿100</span>
+                                <small class="text-secondary">/ 1 ชม.</small>
+                            </div>
+                            <a href="{{ route('customer.seat-map') }}" class="btn btn-danger btn-sm px-3 fw-bold rounded-3">เลือกโต๊ะนี้</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Section 2: เมนูอาหารเกาหลีและของทานเล่น (Korean Food & Drinks) -->
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <div class="salai-step-header">
-                    <span class="salai-step-bar"></span>
-                    <h2 class="text-xl font-black text-white tracking-wide font-sans">
-                        เมนูอาหารเกาหลีพร้อมเสิร์ฟถึงโต๊ะ (Food & Drink)
-                    </h2>
+        <!-- Section 2: Food & Snacks -->
+        <section class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="bg-danger rounded" style="width: 4px; height: 22px;"></span>
+                    <h2 class="h5 fw-bold text-white m-0">เมนูยอดฮิตประจำร้าน เสิร์ฟร้อนถึงโต๊ะ (Food & Snacks)</h2>
                 </div>
-                <a href="{{ route('customer.food-order') }}" class="text-xs font-semibold text-red-400 hover:text-red-300">
-                    ดูเมนูทั้งหมด &rarr;
+                <a href="{{ route('customer.food-order') }}" class="text-danger text-decoration-none fw-semibold small">
+                    ดูเมนูทั้งหมด <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <!-- Shin Ramyun -->
-                <div class="salai-card p-3.5 flex flex-col justify-between group">
-                    <div class="space-y-2">
-                        <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-red-950 to-zinc-900 border border-[#232938] flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
-                            🍜
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-6 g-3">
+                <!-- Mama Tom Yum -->
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fs-1 text-danger mb-2"><i class="bi bi-cup-hot"></i></div>
+                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 10px;">เมนูยอดฮิต</span>
+                            <div class="fw-bold text-truncate text-white small">มาม่าต้มยำหมูสับ</div>
+                            <small class="text-secondary d-block" style="font-size: 11px;">ต้มยำน้ำข้นไข่เยิ้ม</small>
                         </div>
-                        <span class="salai-badge-red text-[10px]">ซิกเนเจอร์</span>
-                        <h4 class="font-bold text-xs text-white line-clamp-1 group-hover:text-red-400">ชินรามยอนไข่ชีส</h4>
-                        <p class="text-[11px] text-zinc-400 line-clamp-1">รามยอนเกาหลีเข้มข้น</p>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#1e2430] flex items-center justify-between">
-                        <span class="font-black text-sm text-white">฿79</span>
-                        <a href="{{ route('customer.food-order') }}" class="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-xs font-bold transition">
-                            +
-                        </a>
+                        <div class="pt-2 border-top border-secondary-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-white">฿45</span>
+                            <a href="{{ route('customer.food-order') }}" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">+</a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Korean Fried Chicken -->
-                <div class="salai-card p-3.5 flex flex-col justify-between group">
-                    <div class="space-y-2">
-                        <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-amber-950 to-zinc-900 border border-[#232938] flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
-                            🍗
+                <!-- Kaprao -->
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fs-1 text-warning mb-2"><i class="bi bi-egg-fried"></i></div>
+                            <span class="badge bg-warning-subtle text-warning mb-1" style="font-size: 10px;">ขายดีอันดับ 1</span>
+                            <div class="fw-bold text-truncate text-white small">ข้าวกะเพราหมูสับ</div>
+                            <small class="text-secondary d-block" style="font-size: 11px;">โปะไข่ดาวกรอบ</small>
                         </div>
-                        <span class="salai-badge-gold text-[10px]">ขายดี</span>
-                        <h4 class="font-bold text-xs text-white line-clamp-1 group-hover:text-red-400">ไก่ทอดซอสเผ็ดเกาหลี</h4>
-                        <p class="text-[11px] text-zinc-400 line-clamp-1">คลุกซอสเข้มข้น 4 ชิ้น</p>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#1e2430] flex items-center justify-between">
-                        <span class="font-black text-sm text-white">฿89</span>
-                        <a href="{{ route('customer.food-order') }}" class="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-xs font-bold transition">
-                            +
-                        </a>
+                        <div class="pt-2 border-top border-secondary-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-white">฿59</span>
+                            <a href="{{ route('customer.food-order') }}" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">+</a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Tteokbokki -->
-                <div class="salai-card p-3.5 flex flex-col justify-between group">
-                    <div class="space-y-2">
-                        <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-red-950 to-zinc-900 border border-[#232938] flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
-                            🍲
+                <!-- Moo Kratiem -->
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fs-1 text-danger mb-2"><i class="bi bi-basket2"></i></div>
+                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 10px;">เมนูโปรด</span>
+                            <div class="fw-bold text-truncate text-white small">ข้าวหมูกระเทียม</div>
+                            <small class="text-secondary d-block" style="font-size: 11px;">หอมเจียวกรอบ</small>
                         </div>
-                        <span class="salai-badge-red text-[10px]">รสจัดจ้าน</span>
-                        <h4 class="font-bold text-xs text-white line-clamp-1 group-hover:text-red-400">ต๊อกบกกีชีสยืด</h4>
-                        <p class="text-[11px] text-zinc-400 line-clamp-1">แป้งเหนียวนุ่มชีสเยิ้ม</p>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#1e2430] flex items-center justify-between">
-                        <span class="font-black text-sm text-white">฿89</span>
-                        <a href="{{ route('customer.food-order') }}" class="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-xs font-bold transition">
-                            +
-                        </a>
+                        <div class="pt-2 border-top border-secondary-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-white">฿59</span>
+                            <a href="{{ route('customer.food-order') }}" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">+</a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Kimbap -->
-                <div class="salai-card p-3.5 flex flex-col justify-between group">
-                    <div class="space-y-2">
-                        <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-emerald-950 to-zinc-900 border border-[#232938] flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
-                            🍱
+                <!-- Lay's -->
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fs-1 text-success mb-2"><i class="bi bi-bag"></i></div>
+                            <span class="badge bg-success-subtle text-success mb-1" style="font-size: 10px;">ขนมยอดฮิต</span>
+                            <div class="fw-bold text-truncate text-white small">เลย์ โนริสาหร่าย</div>
+                            <small class="text-secondary d-block" style="font-size: 11px;">ซองใหญ่กรอบเพลิน</small>
                         </div>
-                        <span class="salai-badge-gold text-[10px]">ทานง่าย</span>
-                        <h4 class="font-bold text-xs text-white line-clamp-1 group-hover:text-red-400">คิมบับไส้ทูน่ามาโย</h4>
-                        <p class="text-[11px] text-zinc-400 line-clamp-1">ข้าวห่อสาหร่ายสไตล์เกาหลี</p>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#1e2430] flex items-center justify-between">
-                        <span class="font-black text-sm text-white">฿69</span>
-                        <a href="{{ route('customer.food-order') }}" class="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-xs font-bold transition">
-                            +
-                        </a>
+                        <div class="pt-2 border-top border-secondary-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-white">฿30</span>
+                            <a href="{{ route('customer.food-order') }}" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">+</a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Iced Americano -->
-                <div class="salai-card p-3.5 flex flex-col justify-between group">
-                    <div class="space-y-2">
-                        <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-900 border border-[#232938] flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
-                            ☕
+                <!-- Red Sausage -->
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fs-1 text-danger mb-2"><i class="bi bi-box2"></i></div>
+                            <span class="badge bg-danger-subtle text-danger mb-1" style="font-size: 10px;">ของทอด</span>
+                            <div class="fw-bold text-truncate text-white small">ไส้กรอกแดงทอด</div>
+                            <small class="text-secondary d-block" style="font-size: 11px;">จิ้มน้ำจิ้มมะขาม</small>
                         </div>
-                        <span class="salai-badge-red text-[10px]">ตื่นเต็มตา</span>
-                        <h4 class="font-bold text-xs text-white line-clamp-1 group-hover:text-red-400">อเมริกาโน่เย็นคั่วเข้ม</h4>
-                        <p class="text-[11px] text-zinc-400 line-clamp-1">กาแฟสดแท้สำหรับเล่นเกมดึก</p>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#1e2430] flex items-center justify-between">
-                        <span class="font-black text-sm text-white">฿45</span>
-                        <a href="{{ route('customer.food-order') }}" class="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-xs font-bold transition">
-                            +
-                        </a>
+                        <div class="pt-2 border-top border-secondary-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-white">฿35</span>
+                            <a href="{{ route('customer.food-order') }}" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">+</a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Sparkling Soda -->
-                <div class="salai-card p-3.5 flex flex-col justify-between group">
-                    <div class="space-y-2">
-                        <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-sky-950 to-zinc-900 border border-[#232938] flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
-                            🥤
+                <!-- Thai Tea -->
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary-subtle rounded-3 p-3 text-center d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="fs-1 text-warning mb-2"><i class="bi bi-cup-straw"></i></div>
+                            <span class="badge bg-warning-subtle text-warning mb-1" style="font-size: 10px;">เย็นชื่นใจ</span>
+                            <div class="fw-bold text-truncate text-white small">ชาไทยเย็นเข้มข้น</div>
+                            <small class="text-secondary d-block" style="font-size: 11px;">แก้วใหญ่ 22 ออนซ์</small>
                         </div>
-                        <span class="salai-badge-gold text-[10px]">สดชื่น</span>
-                        <h4 class="font-bold text-xs text-white line-clamp-1 group-hover:text-red-400">ยุสุโซดาซ่าส์</h4>
-                        <p class="text-[11px] text-zinc-400 line-clamp-1">ส้มยุสุเกาหลีโซดาเย็นเจี๊ยบ</p>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#1e2430] flex items-center justify-between">
-                        <span class="font-black text-sm text-white">฿40</span>
-                        <a href="{{ route('customer.food-order') }}" class="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-xs font-bold transition">
-                            +
-                        </a>
+                        <div class="pt-2 border-top border-secondary-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-white">฿35</span>
+                            <a href="{{ route('customer.food-order') }}" class="btn btn-danger btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">+</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Section 3: ข้อมูลบัญชีสำหรับทดสอบระบบ (Demo Accounts Box) -->
-        <div class="salai-card-glow p-6 rounded-3xl space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#232938] pb-3">
-                <div class="flex items-center gap-2">
-                    <span class="salai-step-bar"></span>
-                    <h3 class="font-bold text-base text-white font-sans">
-                        บัญชีสำหรับทดสอบระบบร้านเกม (Seeded Accounts)
-                    </h3>
+        <!-- Section 3: Seeded Accounts Box -->
+        <section class="card bg-dark border-secondary-subtle rounded-4 p-4 mb-5 shadow-sm">
+            <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom border-secondary-subtle pb-3 mb-3 gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="bg-danger rounded" style="width: 4px; height: 20px;"></span>
+                    <h3 class="h6 fw-bold text-white m-0">บัญชีสำหรับทดสอบระบบร้านเกม (Seeded Accounts)</h3>
                 </div>
-                <span class="salai-badge-gold text-xs font-mono">
-                    🔑 รหัสผ่านทุกบัญชี: password
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle font-monospace">
+                    <i class="bi bi-key me-1"></i> รหัสผ่านทุกบัญชี: password
                 </span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="p-4 bg-[#141824] border border-[#232938] rounded-2xl space-y-1 hover:border-red-500/40 transition">
-                    <span class="salai-badge-red text-[10px]">
-                        CUSTOMER 1 (ลูกค้า)
-                    </span>
-                    <p class="text-sm font-bold text-white mt-1">Username: customer1</p>
-                    <p class="text-xs text-zinc-400 font-mono">Email: cust1@pcbang.test</p>
-                    <p class="text-xs text-emerald-400 font-semibold">ยอดเงินเริ่มต้น: ฿300.00</p>
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3">
+                        <span class="badge bg-danger-subtle text-danger mb-1">CUSTOMER 1 (ลูกค้า)</span>
+                        <div class="fw-bold text-white small">Username: customer1</div>
+                        <small class="text-secondary font-monospace d-block">Email: cust1@pcbang.test</small>
+                        <small class="text-success fw-semibold d-block">ยอดเงินเริ่มต้น: ฿300.00</small>
+                    </div>
                 </div>
 
-                <div class="p-4 bg-[#141824] border border-[#232938] rounded-2xl space-y-1 hover:border-amber-500/40 transition">
-                    <span class="salai-badge-gold text-[10px]">
-                        STAFF (พนักงานร้าน)
-                    </span>
-                    <p class="text-sm font-bold text-white mt-1">Username: staff</p>
-                    <p class="text-xs text-zinc-400 font-mono">Email: staff@pcbang.test</p>
-                    <p class="text-xs text-zinc-400">หน้าที่: คิวครัว + มอนิเตอร์โต๊ะ</p>
+                <div class="col-12 col-md-4">
+                    <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3">
+                        <span class="badge bg-warning-subtle text-warning mb-1">STAFF (พนักงาน)</span>
+                        <div class="fw-bold text-white small">Username: staff</div>
+                        <small class="text-secondary font-monospace d-block">Email: staff@pcbang.test</small>
+                        <small class="text-secondary d-block">หน้าที่: คิวครัว + มอนิเตอร์โต๊ะ</small>
+                    </div>
                 </div>
 
-                <div class="p-4 bg-[#141824] border border-[#232938] rounded-2xl space-y-1 hover:border-purple-500/40 transition">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
-                        ADMIN (ผู้ดูแลร้าน)
-                    </span>
-                    <p class="text-sm font-bold text-white mt-1">Username: admin</p>
-                    <p class="text-xs text-zinc-400 font-mono">Email: admin@pcbang.test</p>
-                    <p class="text-xs text-zinc-400">หน้าที่: คลังสินค้า + สรุปยอดขาย</p>
+                <div class="col-12 col-md-4">
+                    <div class="p-3 bg-dark-subtle border border-secondary-subtle rounded-3">
+                        <span class="badge bg-info-subtle text-info mb-1">ADMIN (ผู้ดูแลร้าน)</span>
+                        <div class="fw-bold text-white small">Username: admin</div>
+                        <small class="text-secondary font-monospace d-block">Email: admin@pcbang.test</small>
+                        <small class="text-secondary d-block">หน้าที่: คลังสินค้า + สรุปยอดขาย</small>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Section 4: ทำไมต้อง Salai Gaming Café (Trust & Features) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="salai-card p-5 space-y-2">
-                <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center font-black text-lg border border-red-500/30">
-                    ⚡
+        <!-- Section 4: Perks -->
+        <section class="row g-4 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="card h-100 bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
+                    <div class="rounded-3 bg-danger-subtle text-danger d-flex align-items-center justify-content-center fs-4 mb-3" style="width: 44px; height: 44px;">
+                        <i class="bi bi-speedometer2"></i>
+                    </div>
+                    <h4 class="h6 fw-bold text-white mb-2">เน็ตไฟเบอร์ 1000/1000 สำหรับเกมเมอร์</h4>
+                    <p class="text-secondary small m-0">เชื่อมต่อเราเตอร์เกมมิ่งตรง ปิงนิ่ง เล่นลื่น ไม่มีกระตุก</p>
                 </div>
-                <h4 class="font-bold text-sm text-white">เช็คอินและคิดเงินอัตโนมัติ</h4>
-                <p class="text-xs text-zinc-400 leading-relaxed">
-                    ระบบคำนวณค่าบริการตามเวลาจริงระดับวินาที รองรับการหักจากยอด Wallet หรือตัดเวลาจากแพ็กเกจชั่วโมงสะสม
-                </p>
             </div>
 
-            <div class="salai-card p-5 space-y-2">
-                <div class="w-10 h-10 rounded-xl bg-amber-600/20 text-amber-500 flex items-center justify-center font-black text-lg border border-amber-500/30">
-                    🍜
+            <div class="col-12 col-md-4">
+                <div class="card h-100 bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
+                    <div class="rounded-3 bg-warning-subtle text-warning d-flex align-items-center justify-content-center fs-4 mb-3" style="width: 44px; height: 44px;">
+                        <i class="bi bi-cup-hot"></i>
+                    </div>
+                    <h4 class="h6 fw-bold text-white mb-2">พร้อมเสิร์ฟถึงโต๊ะคอมตลอด 24 ชม.</h4>
+                    <p class="text-secondary small m-0">สั่งอาหาร ขนม น้ำอัดลม ได้จากหน้าจอ ไม่ต้องลุกจากเก้าอี้</p>
                 </div>
-                <h4 class="font-bold text-sm text-white">สั่งอาหารเสิร์ฟร้อนถึงโต๊ะ</h4>
-                <p class="text-xs text-zinc-400 leading-relaxed">
-                    ตัดสต็อกทันทีด้วย Atomic Database Locks รองรับการชำระผ่าน Wallet, สแกน QR PromptPay หรือเงินสดปลายทาง
-                </p>
             </div>
 
-            <div class="salai-card p-5 space-y-2">
-                <div class="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-500 flex items-center justify-center font-black text-lg border border-emerald-500/30">
-                    🛡️
+            <div class="col-12 col-md-4">
+                <div class="card h-100 bg-dark border-secondary-subtle rounded-4 p-4 shadow-sm">
+                    <div class="rounded-3 bg-info-subtle text-info d-flex align-items-center justify-content-center fs-4 mb-3" style="width: 44px; height: 44px;">
+                        <i class="bi bi-snow"></i>
+                    </div>
+                    <h4 class="h6 fw-bold text-white mb-2">แอร์เย็นเจี๊ยบ เก้าอี้ Ergonomic</h4>
+                    <p class="text-secondary small m-0">เบาะหนานุ่มระบายอากาศ รองรับสรีระ เล่นยาวข้ามคืนสบายหลัง</p>
                 </div>
-                <h4 class="font-bold text-sm text-white">ฐานข้อมูลมาตรฐาน 3NF & ปลอดภัย</h4>
-                <p class="text-xs text-zinc-400 leading-relaxed">
-                    ออกแบบตารางครบ 3rd Normal Form พร้อมบันทึกประวัติการเงิน (Audit Trail) และ Transaction ปลอดภัยสูงสุด
-                </p>
             </div>
-        </div>
+        </section>
     </main>
 
-    <!-- Footer (Salai Termgames Style) -->
-    <footer class="border-t border-[#1e2430] bg-[#07090d] py-10 mt-12 text-xs text-zinc-400">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-sm">
-                        SG
-                    </div>
-                    <span class="font-extrabold text-base text-white">
-                        SALAI <span class="text-red-500">GAMING CAFÉ</span>
-                    </span>
-                </div>
-
-                <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-zinc-400">
-                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> พร้อมเพย์ QR</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> ทรูมันนี่ วอลเล็ท</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> เงินสดหน้าเคาน์เตอร์</span>
-                </div>
+    <!-- Footer -->
+    <footer class="border-top border-secondary-subtle bg-dark py-4 text-secondary small">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger rounded-2 px-2 py-1">LP</span>
+                <span class="fw-bold text-white">Letsplay <span class="text-danger">Gaming Cafe</span></span>
             </div>
 
-            <div class="border-t border-[#1e2430] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
-                <p>&copy; 2026 Salai Gaming Café Management System. สไตล์ร้านเกมและคาเฟ่ครบวงจร</p>
-                <p>พัฒนาด้วย Laravel 13 &bull; Livewire 4 &bull; SQLite &bull; Tailwind CSS</p>
+            <div class="d-flex flex-wrap gap-3">
+                <span><i class="bi bi-qr-code text-success"></i> พร้อมเพย์ QR</span>
+                <span><i class="bi bi-wallet2 text-primary"></i> วอลเล็ท</span>
+                <span><i class="bi bi-cash-coin text-warning"></i> เงินสดเคาน์เตอร์</span>
+            </div>
+
+            <div class="text-secondary" style="font-size: 11px;">
+                &copy; {{ date('Y') }} Letsplay Gaming Cafe. All rights reserved.
             </div>
         </div>
     </footer>

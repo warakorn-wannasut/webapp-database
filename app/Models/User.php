@@ -59,6 +59,13 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(UserPackage::class);
     }
 
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'user_packages')
+            ->withPivot(['id', 'remaining_minutes', 'purchased_at', 'expired_at'])
+            ->withTimestamps();
+    }
+
     public function seatSessions()
     {
         return $this->hasMany(SeatSession::class);
@@ -94,10 +101,13 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function initials(): string
     {
-        $initials = Str::initials($this->name ?: $this->username, true);
+        $cleanName = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $this->name ?: $this->username);
+        $cleanName = trim(preg_replace('/\s+/', ' ', (string) $cleanName));
+
+        $initials = Str::initials($cleanName ?: ($this->name ?: $this->username), true);
 
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
-            : $initials;
+            : ($initials ?: 'U');
     }
 }

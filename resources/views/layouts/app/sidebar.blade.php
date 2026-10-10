@@ -1,143 +1,215 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen salai-bg text-slate-100 selection:bg-red-600 selection:text-white">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-[#1e2430] bg-[#0c0f16]/95 backdrop-blur-md">
-            <flux:sidebar.header>
-                <div class="flex items-center gap-2.5 px-2 py-1">
-                    <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-sm shadow-[0_0_12px_rgba(220,38,38,0.7)]">
-                        SG
-                    </div>
-                    <div>
-                        <span class="font-extrabold text-sm text-white tracking-wide">
-                            SALAI <span class="text-red-500">GAMING</span>
-                        </span>
-                    </div>
-                </div>
-                <flux:sidebar.collapse class="lg:hidden" />
-            </flux:sidebar.header>
+    <body class="min-vh-100 d-flex flex-column">
+        <!-- Mobile Top Navbar -->
+        <header class="navbar navbar-dark bg-dark d-lg-none border-bottom border-secondary-subtle sticky-top px-3 py-2">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <a href="{{ route('dashboard') }}" class="navbar-brand d-flex align-items-center gap-2 m-0 fs-6 fw-bold">
+                    <span class="badge bg-danger rounded-2 px-2 py-1">LP</span>
+                    <span>LETSPLAY <span class="text-danger">GAMING</span></span>
+                </a>
+            </div>
 
-            <!-- Wallet Widget in Sidebar -->
-            <div class="mx-3 my-2 p-3 rounded-2xl bg-gradient-to-br from-red-950/30 via-[#131622] to-[#0d1017] border border-red-500/25 shadow-lg shadow-red-950/20">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-zinc-400 font-medium">ยอดเงินในกระเป๋า</span>
-                    <span class="salai-badge-gold text-[10px]">WALLET</span>
+            <!-- Quick Wallet for Mobile -->
+            <a href="{{ route('customer.topup') }}" class="badge text-bg-dark border border-secondary text-decoration-none py-2 px-2.5 d-flex align-items-center gap-1 fs-7">
+                <span class="text-warning fw-bold">฿</span>
+                <span class="fw-bold">{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
+            </a>
+        </header>
+
+        <!-- Desktop Fixed Sidebar -->
+        <aside class="bs-sidebar d-none d-lg-flex flex-column position-fixed top-0 bottom-0 start-0 z-3 p-3 overflow-y-auto overflow-x-hidden">
+            <!-- Brand -->
+            <a href="{{ route('dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none text-white mb-3 px-1">
+                <div class="rounded-3 bg-danger d-flex align-items-center justify-center fw-bold text-white" style="width: 36px; height: 36px; font-size: 15px; line-height: 1;">
+                    LP
                 </div>
-                <div class="mt-1 flex items-baseline justify-between">
-                    <span class="text-xl font-black text-white">
+                <div class="lh-sm">
+                    <div class="fw-black fs-6 tracking-wide">LETSPLAY <span class="text-danger">GAMING</span></div>
+                    <small class="text-secondary" style="font-size: 12px;">Cyber Cafe & Lounge</small>
+                </div>
+            </a>
+
+            <!-- Wallet Widget -->
+            <div class="bs-card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-secondary fw-semibold">ยอดเงินในกระเป๋า</small>
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 11px;">WALLET</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <span class="fs-5 fw-bold text-white font-monospace">
                         ฿{{ number_format(auth()->user()->balance ?? 0, 2) }}
                     </span>
-                    <a href="{{ route('customer.topup') }}" class="text-xs font-bold text-red-400 hover:text-red-300 hover:underline" wire:navigate>
+                    <a href="{{ route('customer.topup') }}" class="text-danger text-decoration-none fw-semibold small">
                         + เติมเงิน
                     </a>
                 </div>
             </div>
 
-            <flux:sidebar.nav>
-                <flux:sidebar.group heading="บริการลูกค้า (Customer)" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        แดชบอร์ดส่วนตัว
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="computer-desktop" :href="route('customer.seat-map')" :current="request()->routeIs('customer.seat-map')" wire:navigate>
-                        ผังที่นั่ง (Seat Map)
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="shopping-bag" :href="route('customer.food-order')" :current="request()->routeIs('customer.food-order')" wire:navigate>
-                        สั่งอาหาร/เครื่องดื่ม
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="credit-card" :href="route('customer.topup')" :current="request()->routeIs('customer.topup')" wire:navigate>
-                        เติมเงิน / ซื้อแพ็กเกจ
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+            <!-- Nav Links -->
+            <nav class="nav flex-column gap-1 flex-grow-1">
+                <div class="text-secondary text-uppercase fw-bold px-2 pt-2 pb-1" style="font-size: 11px; letter-spacing: 0.05em;">
+                    บริการลูกค้า
+                </div>
 
-                <flux:sidebar.group heading="ระบบจัดการร้าน (Staff & Admin)" class="grid mt-4">
-                    <flux:sidebar.item icon="chart-bar" :href="route('staff.seat-monitor')" :current="request()->routeIs('staff.seat-monitor')" wire:navigate>
-                        มอนิเตอร์ที่นั่งหน้าร้าน
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="clock" :href="route('staff.kitchen-queue')" :current="request()->routeIs('staff.kitchen-queue')" wire:navigate>
-                        คิวออเดอร์ห้องครัว
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="archive-box" :href="route('admin.stock-manager')" :current="request()->routeIs('admin.stock-manager')" wire:navigate>
-                        จัดการสต็อกสินค้า
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-text" :href="route('admin.sales-report')" :current="request()->routeIs('admin.sales-report')" wire:navigate>
-                        รายงานสรุปยอดขาย
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
-            </flux:sidebar.nav>
+                <a href="{{ route('dashboard') }}" class="bs-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2 fs-6"></i>
+                    <span>แดชบอร์ด</span>
+                </a>
 
-            <flux:spacer />
+                <a href="{{ route('customer.seat-map') }}" class="bs-nav-link {{ request()->routeIs('customer.seat-map') ? 'active' : '' }}">
+                    <i class="bi bi-display fs-6"></i>
+                    <span>เลือกที่นั่ง (Seat Map)</span>
+                </a>
 
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
+                <a href="{{ route('customer.food-order') }}" class="bs-nav-link {{ request()->routeIs('customer.food-order') ? 'active' : '' }}">
+                    <i class="bi bi-cup-hot fs-6"></i>
+                    <span>สั่งอาหารและเครื่องดื่ม</span>
+                </a>
 
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
+                <a href="{{ route('customer.topup') }}" class="bs-nav-link {{ request()->routeIs('customer.topup') ? 'active' : '' }}">
+                    <i class="bi bi-wallet2 fs-6"></i>
+                    <span>เติมเงิน / แพ็กเกจเวลา</span>
+                </a>
 
-            <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
-        </flux:sidebar>
+                @if (auth()->user()->isStaff())
+                    <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1" style="font-size: 11px; letter-spacing: 0.05em;">
+                        จัดการร้าน (เจ้าหน้าที่)
+                    </div>
 
-        <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+                    <a href="{{ route('staff.seat-monitor') }}" class="bs-nav-link {{ request()->routeIs('staff.seat-monitor') ? 'active' : '' }}">
+                        <i class="bi bi-grid-3x3-gap fs-6"></i>
+                        <span>มอนิเตอร์ที่นั่งหน้าร้าน</span>
+                    </a>
 
-            <flux:spacer />
+                    <a href="{{ route('staff.kitchen-queue') }}" class="bs-nav-link {{ request()->routeIs('staff.kitchen-queue') ? 'active' : '' }}">
+                        <i class="bi bi-fire fs-6"></i>
+                        <span>คิวออเดอร์ห้องครัว</span>
+                    </a>
 
-            <flux:dropdown position="top" align="end">
-                <flux:profile
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevron-down"
-                />
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.stock-manager') }}" class="bs-nav-link {{ request()->routeIs('admin.stock-manager') ? 'active' : '' }}">
+                            <i class="bi bi-box-seam fs-6"></i>
+                            <span>จัดการสต็อกสินค้า</span>
+                        </a>
 
-                <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <flux:avatar
-                                    :name="auth()->user()->name"
-                                    :initials="auth()->user()->initials()"
-                                />
+                        <a href="{{ route('admin.sales-report') }}" class="bs-nav-link {{ request()->routeIs('admin.sales-report') ? 'active' : '' }}">
+                            <i class="bi bi-graph-up-arrow fs-6"></i>
+                            <span>รายงานสรุปยอดขาย</span>
+                        </a>
+                    @endif
+                @endif
+            </nav>
 
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
-                                </div>
-                            </div>
-                        </div>
-                    </flux:menu.radio.group>
+            <hr class="border-secondary-subtle my-3">
 
-                    <flux:menu.separator />
+            <!-- Desktop User Dropdown -->
+            <div class="dropdown dropup mt-auto">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3 hover-bg-secondary w-100" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 0;">
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold me-2 flex-shrink-0" style="width: 36px; height: 36px; font-size: 13px;">
+                        {{ auth()->user()->initials() ?? 'U' }}
+                    </div>
+                    <div class="overflow-hidden lh-sm me-auto pe-1" style="min-width: 0;">
+                        <div class="text-truncate fw-bold text-white" style="font-size: 13px;">{{ auth()->user()->name }}</div>
+                        <small class="text-secondary text-truncate d-block" style="font-size: 11px;">{{ auth()->user()->email }}</small>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary-subtle w-100 mb-2 py-1" style="min-width: 100%; max-width: 100%;">
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-truncate" href="{{ route('profile.edit') }}">
+                            <i class="bi bi-gear text-secondary"></i>
+                            <span>การตั้งค่าโปรไฟล์</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-truncate" href="{{ route('appearance.edit') }}">
+                            <i class="bi bi-palette text-secondary"></i>
+                            <span>โหมดการแสดงผล</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider border-secondary-subtle my-1"></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}" class="m-0">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 text-truncate">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>ออกจากระบบ</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </aside>
 
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                            {{ __('Settings') }}
-                        </flux:menu.item>
-                    </flux:menu.radio.group>
+        <!-- Mobile Offcanvas Sidebar -->
+        <div class="offcanvas offcanvas-start bg-dark text-white border-end border-secondary-subtle d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header border-bottom border-secondary-subtle">
+                <div class="d-flex align-items-center gap-2" id="sidebarOffcanvasLabel">
+                    <span class="badge bg-danger rounded-2 px-2 py-1">LP</span>
+                    <span class="fw-bold">LETSPLAY <span class="text-danger">GAMING</span></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column p-3">
+                <!-- Mobile Wallet Card -->
+                <div class="bs-card p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small class="text-secondary">ยอดเงินในกระเป๋า</small>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 11px;">WALLET</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <span class="fs-5 fw-bold text-white font-monospace">฿{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
+                        <a href="{{ route('customer.topup') }}" class="text-danger text-decoration-none fw-semibold small">+ เติมเงิน</a>
+                    </div>
+                </div>
 
-                    <flux:menu.separator />
+                <nav class="nav flex-column gap-1 flex-grow-1">
+                    <div class="text-secondary text-uppercase fw-bold px-2 pt-1 pb-1" style="font-size: 11px;">บริการลูกค้า</div>
+                    <a href="{{ route('dashboard') }}" class="bs-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><i class="bi bi-speedometer2"></i> แดชบอร์ด</a>
+                    <a href="{{ route('customer.seat-map') }}" class="bs-nav-link {{ request()->routeIs('customer.seat-map') ? 'active' : '' }}"><i class="bi bi-display"></i> เลือกที่นั่ง</a>
+                    <a href="{{ route('customer.food-order') }}" class="bs-nav-link {{ request()->routeIs('customer.food-order') ? 'active' : '' }}"><i class="bi bi-cup-hot"></i> สั่งอาหารและเครื่องดื่ม</a>
+                    <a href="{{ route('customer.topup') }}" class="bs-nav-link {{ request()->routeIs('customer.topup') ? 'active' : '' }}"><i class="bi bi-wallet2"></i> เติมเงิน / แพ็กเกจ</a>
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    @if (auth()->user()->isStaff())
+                        <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1" style="font-size: 11px;">จัดการร้าน</div>
+                        <a href="{{ route('staff.seat-monitor') }}" class="bs-nav-link {{ request()->routeIs('staff.seat-monitor') ? 'active' : '' }}"><i class="bi bi-grid-3x3-gap"></i> มอนิเตอร์ที่นั่ง</a>
+                        <a href="{{ route('staff.kitchen-queue') }}" class="bs-nav-link {{ request()->routeIs('staff.kitchen-queue') ? 'active' : '' }}"><i class="bi bi-fire"></i> คิวห้องครัว</a>
+                        @if (auth()->user()->isAdmin())
+                            <a href="{{ route('admin.stock-manager') }}" class="bs-nav-link {{ request()->routeIs('admin.stock-manager') ? 'active' : '' }}"><i class="bi bi-box-seam"></i> จัดการสต็อก</a>
+                            <a href="{{ route('admin.sales-report') }}" class="bs-nav-link {{ request()->routeIs('admin.sales-report') ? 'active' : '' }}"><i class="bi bi-graph-up-arrow"></i> สรุปยอดขาย</a>
+                        @endif
+                    @endif
+                </nav>
+
+                <hr class="border-secondary-subtle my-3">
+
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fw-bold text-white">{{ auth()->user()->name }}</div>
+                        <small class="text-secondary">{{ auth()->user()->email }}</small>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <flux:menu.item
-                            as="button"
-                            type="submit"
-                            icon="arrow-right-start-on-rectangle"
-                            class="w-full cursor-pointer"
-                            data-test="logout-button"
-                        >
-                            {{ __('Log out') }}
-                        </flux:menu.item>
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-box-arrow-right"></i> ออก
+                        </button>
                     </form>
-                </flux:menu>
-            </flux:dropdown>
-        </flux:header>
+                </div>
+            </div>
+        </div>
 
-        {{ $slot }}
+        <!-- Main Content Area with Proper Margin Offset for Desktop Sidebar -->
+        <div class="bs-main-layout flex-grow-1 d-flex flex-column min-vh-100">
+            {{ $slot }}
+        </div>
+
+        @include('partials.floating-hud')
 
         @persist('toast')
             <flux:toast.group>
